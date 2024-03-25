@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+
+  # Application
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: styleup-admin
+    restart: always
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/build
+      - /app/node_modules
+    ports:
+      - 3000:80
