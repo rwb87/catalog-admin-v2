@@ -46,7 +46,7 @@ const EarningsView = () => {
 
             setData(response);
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
 
@@ -62,7 +62,7 @@ const EarningsView = () => {
 
             setDailyPayout(response);
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
     }
@@ -83,7 +83,7 @@ const EarningsView = () => {
 
             setDailyPayout(response);
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
     }

@@ -50,7 +50,7 @@ const BrandsView = () => {
 
             setData(response);
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
 
@@ -81,7 +81,7 @@ const BrandsView = () => {
                 getData();
             } else notify('An error occurred', 3000);
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
 
@@ -103,7 +103,7 @@ const BrandsView = () => {
             setData(data.filter((user: any) => user.id !== deletingData.id));
             setDeletingData({});
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
             setIsDeleting(false);
         }

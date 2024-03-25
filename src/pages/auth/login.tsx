@@ -23,8 +23,8 @@ const Login = () => {
 
         if (isProcessing) return;
 
-        if (payload.email?.trim() === '') return notify('Email is required', 3000);
-        if (payload.password?.trim() === '') return notify('Password is required', 3000);
+        if (payload?.email?.trim() === '') return notify('Email is required', 3000);
+        if (payload?.password?.trim() === '') return notify('Password is required', 3000);
 
         setIsProcessing(true);
 
@@ -45,7 +45,7 @@ const Login = () => {
                 navigate('/');
             }, 100)
         } catch (error: any) {
-            const message = error?.response?.data || error?.message;
+            const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
 

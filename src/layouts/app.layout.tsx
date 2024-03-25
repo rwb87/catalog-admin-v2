@@ -176,7 +176,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                 {/* Switch */}
                 {
                     isCollapsed
-                        ? <Box my={6} pl={3}>
+                        ? <Box my={6} textAlign='center'>
                             <Switch id='email-alerts' colorScheme="green" />
                         </Box>
                         : <Flex my={6} pl={4} alignItems='center' justifyContent='flex-start'>
