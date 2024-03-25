@@ -55,7 +55,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
             onComplete(response, editingUser?.isNew);
             setEditingUser({});
         } catch (error: any) {
-            const { message } = error.response.data ?? { message: 'An error occurred' };
+            const message = error?.response?.data || error?.message;
             notify(message, 3000);
         }
 

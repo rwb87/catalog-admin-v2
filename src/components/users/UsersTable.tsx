@@ -2,7 +2,7 @@ import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { IconEdit, IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import Pagination from "../Pagination";
+import Pagination from "@/components/Pagination";
 
 type UsersTableProps = {
     isLoading?: boolean;

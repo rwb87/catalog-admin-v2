@@ -53,7 +53,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
 
             setUsers(response);
         } catch (error: any) {
-            const { message } = error.response.data ?? { message: 'An error occurred' };
+            const message = error?.response?.data || error?.message;
             notify(message, 3000);
         }
 
@@ -75,7 +75,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             setUsers(users.filter((user: any) => user.id !== deletingUser.id));
             setDeletingUser({});
         } catch (error: any) {
-            const { message } = error.response.data ?? { message: 'An error occurred' };
+            const message = error?.response?.data || error?.message;
             notify(message, 3000);
             setIsDeleting(false);
         }

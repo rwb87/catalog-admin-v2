@@ -45,7 +45,7 @@ const Login = () => {
                 navigate('/');
             }, 100)
         } catch (error: any) {
-            const { message } = error.response.data ?? { message: 'An error occurred' };
+            const message = error?.response?.data || error?.message;
             notify(message, 3000);
         }
 
