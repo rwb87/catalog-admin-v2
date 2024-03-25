@@ -258,6 +258,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                                 aspectRatio={21 / 9}
                                 rounded='lg'
                                 objectFit='contain'
+                                bgColor='gray.100'
                                 onError={(e: any) => {
                                     e.target.src = '/images/cover-placeholder.webp';
                                     e.target.onerror = null;

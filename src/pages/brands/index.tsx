@@ -1,11 +1,12 @@
 import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
+import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import AppLayout from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconCamera, IconChevronLeft, IconChevronRight, IconEdit, IconLoader2, IconPlus, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { IconCamera, IconEdit, IconLoader2, IconPlus, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const BrandsView = () => {
@@ -211,6 +212,7 @@ const BrandsView = () => {
                                 aspectRatio={21 / 9}
                                 rounded='lg'
                                 objectFit='contain'
+                                bgColor='gray.100'
                                 onError={(e: any) => {
                                     e.target.src = '/images/cover-placeholder.webp';
                                     e.target.onerror = null;
@@ -267,15 +269,17 @@ type BrandsTableProps = {
     onDelete: (id: string) => void,
 }
 const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) => {
-    const limit = 15;
-    const totalPages = Math.ceil(data.length / limit);
+    const pagination = {
+        total: data?.length ?? 0,
+        limit: 15,
+    }
     const [page, setPage] = useState<number>(1);
-
-    const reconstructedData = data?.length > limit ? data.slice((page - 1) * limit, page * limit) : data;
 
     useEffect(() => {
         setPage(1);
-    }, [totalPages]);
+    }, [data.length]);
+
+    const reconstructedData = pagination.total > pagination.limit ? data.slice((page - 1) * pagination.limit, page * pagination.limit) : data;
 
     return (
         <>
@@ -376,55 +380,12 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
             </Box>
 
             {/* Pagination */}
-            <Flex
-                justifyContent='center'
-                alignItems='center'
-                mt={4}
-                mb={4}
-            >
-                {
-                    data.length > limit && (
-                        <Box>
-                            <IconButton
-                                aria-label='Previous'
-                                variant='ghost'
-                                colorScheme='gray'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconChevronLeft size={22} />}
-                                onClick={() => setPage(page - 1)}
-                                isDisabled={page === 1}
-                            />
-
-                            {Array.from({ length: Math.ceil(data.length / limit) }, (_, index) => (
-                                <IconButton
-                                    key={index}
-                                    aria-label={`Page ${index + 1}`}
-                                    variant='ghost'
-                                    colorScheme='gray'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={2}
-                                    isActive={page === index + 1}
-                                    icon={<Text fontWeight='bold'>{index + 1}</Text>}
-                                    onClick={() => setPage(index + 1)}
-                                />
-                            ))}
-
-                            <IconButton
-                                aria-label='Next'
-                                variant='ghost'
-                                colorScheme='gray'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconChevronRight size={22} />}
-                                onClick={() => setPage(page + 1)}
-                                isDisabled={page === Math.ceil(data.length / limit)}
-                            />
-                        </Box>
-                    )
-                }
-            </Flex>
+            <Pagination
+                total={pagination?.total || 0}
+                limit={pagination?.limit || 0}
+                page={page || 1}
+                setPage={setPage}
+            />
         </>
     )
 }

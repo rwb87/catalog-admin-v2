@@ -1,7 +1,8 @@
 import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
-import { IconChevronLeft, IconChevronRight, IconEdit, IconLoader2, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import Pagination from "../Pagination";
 
 type UsersTableProps = {
     isLoading?: boolean;
@@ -21,15 +22,17 @@ const UsersTable = (props: UsersTableProps) => {
         onDelete,
     } = props;
 
-    const limit = 15;
-    const totalPages = Math.ceil(data.length / limit);
+    const pagination = {
+        total: data?.length ?? 0,
+        limit: 15,
+    }
     const [page, setPage] = useState<number>(1);
-
-    const reconstructedData = data?.length > limit ? data.slice((page - 1) * limit, page * limit) : data;
 
     useEffect(() => {
         setPage(1);
-    }, [totalPages]);
+    }, [data.length]);
+
+    const reconstructedData = pagination.total > pagination.limit ? data.slice((page - 1) * pagination.limit, page * pagination.limit) : data;
 
     return (
         <>
@@ -40,11 +43,6 @@ const UsersTable = (props: UsersTableProps) => {
                 >
                     <Thead>
                         <Tr>
-                            {/* {
-                                (userType === 'admin' || userType === 'shopper') && <>
-                                    <Th>Name</Th>
-                                </>
-                            } */}
                             <Th>Username</Th>
                             <Th>Email</Th>
                             <Th>Gender</Th>
@@ -149,55 +147,12 @@ const UsersTable = (props: UsersTableProps) => {
             </Box>
 
             {/* Pagination */}
-            <Flex
-                justifyContent='center'
-                alignItems='center'
-                mt={4}
-                mb={4}
-            >
-                {
-                    data.length > limit && (
-                        <Box>
-                            <IconButton
-                                aria-label='Previous'
-                                variant='ghost'
-                                colorScheme='gray'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconChevronLeft size={22} />}
-                                onClick={() => setPage(page - 1)}
-                                isDisabled={page === 1}
-                            />
-
-                            {Array.from({ length: Math.ceil(data.length / limit) }, (_, index) => (
-                                <IconButton
-                                    key={index}
-                                    aria-label={`Page ${index + 1}`}
-                                    variant='ghost'
-                                    colorScheme='gray'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={2}
-                                    isActive={page === index + 1}
-                                    icon={<Text fontWeight='bold'>{index + 1}</Text>}
-                                    onClick={() => setPage(index + 1)}
-                                />
-                            ))}
-
-                            <IconButton
-                                aria-label='Next'
-                                variant='ghost'
-                                colorScheme='gray'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconChevronRight size={22} />}
-                                onClick={() => setPage(page + 1)}
-                                isDisabled={page === Math.ceil(data.length / limit)}
-                            />
-                        </Box>
-                    )
-                }
-            </Flex>
+            <Pagination
+                total={pagination?.total || 0}
+                limit={pagination?.limit || 0}
+                page={page || 1}
+                setPage={setPage}
+            />
         </>
     )
 }
