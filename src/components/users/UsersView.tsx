@@ -1,18 +1,17 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay,Button, Flex, IconButton, Input, Tooltip } from "@chakra-ui/react";
-import { useEffect, useRef, useState } from "react";
+import { Flex, IconButton, Input, Tooltip } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus } from "@tabler/icons-react";
+import Confirmation from "@/components/Confirmation";
 
 type UsersViewProps = {
     userType: 'admin' | 'creator' | 'shopper';
 }
 const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
-    const cancelDeleteRef = useRef(null);
-
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
     const [filteredUsers, setFilteredUsers] = useState<any>([]);
@@ -164,42 +163,14 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                 onClose={() => setEditingUser({})}
             />
 
-            {/* Delete User Dialog */}
-            <AlertDialog
-                leastDestructiveRef={cancelDeleteRef}
-                onClose={() => setDeletingUser({})}
+            {/* Delete Dialog */}
+            <Confirmation
                 isOpen={!!deletingUser?.id}
-                isCentered
-                closeOnOverlayClick={!isDeleting}
-                closeOnEsc={!isDeleting}
-            >
-                <AlertDialogOverlay />
-
-                <AlertDialogContent>
-
-                <AlertDialogHeader>Confirmation</AlertDialogHeader>
-
-                <AlertDialogCloseButton isDisabled={isDeleting}/>
-                <AlertDialogBody>Are you sure you want to delete <strong>{deletingUser?.username}</strong>? You can't undo this action afterwards.</AlertDialogBody>
-                <AlertDialogFooter>
-                    <Button
-                        ref={cancelDeleteRef}
-                        variant='ghost'
-                        size='sm'
-                        isDisabled={isDeleting}
-                        onClick={() => setDeletingUser({})}
-                    >Nevermind</Button>
-                    <Button
-                        colorScheme='red'
-                        size='sm'
-                        ml={4}
-                        isLoading={isDeleting}
-                        loadingText='Deleting...'
-                        onClick={handleDelete}
-                    >Yes, Delete</Button>
-                </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                text={`Are you sure you want to delete ${deletingUser?.username}? You can't undo this action afterwards.`}
+                isProcessing={isDeleting}
+                onConfirm={handleDelete}
+                onCancel={() => setDeletingUser({})}
+            />
         </>
     )
 }

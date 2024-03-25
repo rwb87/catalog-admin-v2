@@ -1,14 +1,14 @@
+import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import AppLayout from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Box, Button, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconCamera, IconChevronLeft, IconChevronRight, IconEdit, IconLoader2, IconPlus, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const BrandsView = () => {
-    const cancelDeleteRef = useRef<any>(null);
     const brandImageRef = useRef<any>(null);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -171,9 +171,7 @@ const BrandsView = () => {
                 title={editingData?.isNew ? `Create Brand` : 'Update Brand'}
                 isProcessing={isProcessing}
                 onSubmit={handleUpdateData}
-                onClose={() => {
-                    setEditingData({})
-                }}
+                onClose={() => setEditingData({})}
             >
                 <Grid
                     mt={4}
@@ -251,41 +249,13 @@ const BrandsView = () => {
             </CustomDrawer>
 
             {/* Delete Dialog */}
-            <AlertDialog
-                leastDestructiveRef={cancelDeleteRef}
-                onClose={() => setDeletingData({})}
+            <Confirmation
                 isOpen={!!deletingData?.id}
-                isCentered
-                closeOnOverlayClick={!isDeleting}
-                closeOnEsc={!isDeleting}
-            >
-                <AlertDialogOverlay />
-
-                <AlertDialogContent>
-
-                    <AlertDialogHeader>Confirmation</AlertDialogHeader>
-
-                    <AlertDialogCloseButton isDisabled={isDeleting}/>
-                    <AlertDialogBody>Are you sure you want to delete <strong>{deletingData?.name}</strong>? You can't undo this action afterwards.</AlertDialogBody>
-                    <AlertDialogFooter>
-                        <Button
-                            ref={cancelDeleteRef}
-                            variant='ghost'
-                            size='sm'
-                            isDisabled={isDeleting}
-                            onClick={() => setDeletingData({})}
-                        >Nevermind</Button>
-                        <Button
-                            colorScheme='red'
-                            size='sm'
-                            ml={4}
-                            isLoading={isDeleting}
-                            loadingText='Deleting...'
-                            onClick={handleDelete}
-                        >Yes, Delete</Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                text={`Are you sure you want to delete <strong>${deletingData?.name}</strong>? You can't undo this action afterwards.`}
+                isProcessing={isDeleting}
+                onConfirm={handleDelete}
+                onCancel={() => setDeletingData({})}
+            />
         </AppLayout>
     )
 }
