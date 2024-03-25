@@ -15,6 +15,7 @@ const EarningsView = () => {
     const [month, setMonth] = useState(moment().format('YYYY-MM'));
     const [data, setData] = useState<any>([]);
     const [dailyPayout, setDailyPayout] = useState<any>({});
+    const [isPayoutEditPopoverOpen, setIsPayoutEditPopoverOpen] = useState<boolean>(false);
 
     useAuthGuard('auth');
 
@@ -114,8 +115,10 @@ const EarningsView = () => {
 
                     {/* Edit Payout */}
                     <Popover
-                        placement='right'
-                        closeOnBlur={false}
+                        placement='left'
+                        closeOnBlur={true}
+                        isOpen={isPayoutEditPopoverOpen}
+                        onClose={() => setIsPayoutEditPopoverOpen(false)}
                     >
                         <PopoverTrigger>
                             <IconButton
@@ -126,6 +129,7 @@ const EarningsView = () => {
                                 borderWidth={2}
                                 borderColor='gray.100'
                                 icon={<IconEdit size={20} />}
+                                onClick={() => setIsPayoutEditPopoverOpen(true)}
                             />
                         </PopoverTrigger>
 

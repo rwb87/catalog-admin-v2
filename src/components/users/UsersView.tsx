@@ -109,7 +109,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         onChange={(event) => setSearch(event.target.value)}
                     />
 
-                    <Tooltip label={`Add new ${userType}`}>
+                    <Tooltip label={`Add new ${userType}`} placement="left">
                         <IconButton
                             aria-label="Add new user"
                             variant='solid'

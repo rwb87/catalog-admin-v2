@@ -137,7 +137,7 @@ const BrandsView = () => {
                         onChange={(event) => setSearch(event.target.value)}
                     />
 
-                    <Tooltip label='Add new brand'>
+                    <Tooltip label='Add new brand' placement="left">
                         <IconButton
                             aria-label="Add new user"
                             variant='solid'
