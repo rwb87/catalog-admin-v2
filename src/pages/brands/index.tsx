@@ -31,7 +31,8 @@ const BrandsView = () => {
     useEffect(() => {
         setFilteredData(
             data?.filter((item: any) => {
-                return item?.name.toLowerCase().includes(search.toLowerCase());
+                return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+                    item?.link?.toLowerCase().includes(search?.toLowerCase());
             })
         );
     }, [search, data]);
