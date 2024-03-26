@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { IconHanger, IconLogout, IconMenu2, IconSettings } from "@tabler/icons-react";
 import { useUi, useUser } from "@/_store";
 import { Link } from "react-router-dom";
@@ -52,43 +52,63 @@ type SidebarProps = {
 const Sidebar = ({ activePage }: SidebarProps) => {
     const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
     const { clearToken } = useUser() as any;
+    const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
 
     const sidebarItems = [
         {
             icon: <FaUserTie size={22} />,
             label: "Administrators",
-            link: "/administrators"
+            link: "/administrators",
+            isDefault: true,
         },
         {
             icon: <FaBasketShopping size={22} />,
             label: "Shoppers",
-            link: "/shoppers"
+            link: "/shoppers",
+            isDefault: true,
         },
         {
             icon: <FaUserPlus size={22} />,
             label: "Creators",
-            link: "/creators"
+            link: "/creators",
+            isDefault: true,
         },
         {
             icon: <IconHanger size={22} />,
             label: "Looks",
-            link: "/looks"
+            link: "/looks",
+            isDefault: true,
         },
         {
             icon: <FaTag size={22} />,
             label: "Brands",
-            link: "/brands"
+            link: "/brands",
+            isDefault: true,
         },
         {
             icon: <FaTshirt size={22} />,
             label: "Items",
-            link: "/items"
+            link: "/items",
+            isDefault: true,
         },
         {
             icon: <BiDollar size={22} />,
             label: "Earnings",
-            link: "/earnings"
-        }
+            link: "/earnings",
+            isDefault: true,
+        },
+        {
+            icon: <IconHanger size={22} />,
+            label: "Looks Management",
+            link: "/looks-management",
+            isDefault: false,
+        },
+        {
+            icon: <FaTshirt size={22} />,
+            label: "Items Management",
+            link: "/items-management",
+            isDefault: false,
+        },
     ]
 
     const SidebarItem = ({ icon, label, link, isActive = false, onClick }: { icon: ReactElement, label: string, link: string, isActive?: boolean, onClick?: () => void }) => {
@@ -177,7 +197,12 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                 {
                     isCollapsed
                         ? <Box my={6} textAlign='center'>
-                            <Switch id='email-alerts' colorScheme="green" />
+                            <Switch
+                                id='default-view'
+                                colorScheme="green"
+                                isChecked={!sidebarDefaultView}
+                                onChange={() => setSidebarDefaultView(!sidebarDefaultView)}
+                            />
                         </Box>
                         : <Flex my={6} pl={4} alignItems='center' justifyContent='flex-start'>
                             <IconButton
@@ -185,7 +210,10 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                                 roundedLeft='full'
                                 variant='outline'
                                 px={10}
+                                opacity={sidebarDefaultView ? 1 : 0.4}
+                                backgroundColor={sidebarDefaultView ? 'transparent' : 'gray.100'}
                                 icon={<FaRegCircleUser size={20} />}
+                                onClick={() => setSidebarDefaultView(true)}
                             >
                             </IconButton>
                             <IconButton
@@ -193,8 +221,10 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                                 roundedRight='full'
                                 variant='outline'
                                 px={10}
-                                opacity={0.4}
+                                opacity={sidebarDefaultView ? 0.4 : 1}
+                                backgroundColor={sidebarDefaultView ? 'gray.100' : 'transparent'}
                                 icon={<img src="/icons/icon-data.svg" alt="Data" width={20} />}
+                                onClick={() => setSidebarDefaultView(false)}
                             ></IconButton>
                         </Flex>
                 }
@@ -207,15 +237,17 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                     mt={4}
                     gap={3}
                 >
-                    {sidebarItems.map((item, index) => (
-                        <SidebarItem
-                            key={index}
-                            icon={item.icon}
-                            label={item.label}
-                            link={item.link}
-                            isActive={activePage === item.label}
-                        />
-                    ))}
+                    {
+                        sidebarItems.map((item, index) => item?.isDefault === sidebarDefaultView && (
+                            <SidebarItem
+                                key={index}
+                                icon={item.icon}
+                                label={item.label}
+                                link={item.link}
+                                isActive={activePage === item.label}
+                            />
+                        ))
+                    }
                 </Flex>
             </Box>
 

@@ -47,15 +47,15 @@ const Application = () => {
 				{/* Notification */}
 				<Box
 					position='fixed'
-					top={notification.open ? 2 : -200}
+					bottom={notification.open ? 4 : -200}
 					left='50%'
 					transform='translateX(-50%)'
-					transition='top 0.15s ease-in-out'
+					transition='bottom 0.15s ease-in-out'
 					px={4}
 					py={1}
 					backgroundColor='primary.500'
 					color='white'
-					rounded='10px'
+					rounded='10rem'
 					maxWidth='30rem'
 					minWidth='10rem'
 					textAlign='center'

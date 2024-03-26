@@ -44,6 +44,13 @@
     font-family: 'Montserrat', sans-serif !important;
 }
 
+.chakra-switch__track {
+    background: #d4d4d4 !important;
+    &[data-checked] {
+        background: var(--chakra-colors-green-500) !important;
+    }
+}
+
 .animate-spin {
     animation: spin 1s linear infinite;
 }
