@@ -162,7 +162,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
             direction='column'
             gap={4}
             justifyContent='space-between'
-            width={isCollapsed ? 16 : 64}
+            width={isCollapsed ? 16 : '17rem'}
             bgColor='white'
             borderRightWidth={1}
             borderRightColor="gray.100"
@@ -203,12 +203,12 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                                 onChange={() => setSidebarDefaultView(!sidebarDefaultView)}
                             />
                         </Box>
-                        : <Flex my={6} pl={4} alignItems='center' justifyContent='flex-start'>
+                        : <Flex my={6} px={4} alignItems='center' width='full'>
                             <IconButton
                                 aria-label="Toggle Sidebar View"
                                 roundedLeft='full'
                                 variant='outline'
-                                px={10}
+                                width='full'
                                 opacity={sidebarDefaultView ? 1 : 0.4}
                                 backgroundColor={sidebarDefaultView ? 'transparent' : 'gray.100'}
                                 icon={<img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />}
@@ -219,7 +219,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                                 aria-label="Toggle Sidebar View"
                                 roundedRight='full'
                                 variant='outline'
-                                px={10}
+                                width='full'
                                 opacity={sidebarDefaultView ? 0.4 : 1}
                                 backgroundColor={sidebarDefaultView ? 'gray.100' : 'transparent'}
                                 icon={<img src="/icons/icon-data.svg" alt="Data" width={20} />}
