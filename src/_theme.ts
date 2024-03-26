@@ -83,7 +83,8 @@ const theme = extendTheme({
 				fontFamily: `'Inter' !important`,
 			},
 			body: {
-				bg: mode('#f3f8f9', 'linear-gradient(#000, #000f1c)')(props),
+				// bg: mode('#f3f8f9', 'linear-gradient(#000, #000f1c)')(props),
+				bg: mode('#fcfcfc', 'linear-gradient(#000, #000f1c)')(props),
 			},
 			h1: {
 				fontSize: '48px',

@@ -25,7 +25,7 @@ const AppLayout = ({ children, activePage }: AppLayoutProps) => {
             <Sidebar activePage={activePage} />
 
             {/* Body */}
-            <Box flex={1} height='full'>
+            <Box flex={1} height='screen'>
 
                 {/* Top Bar */}
                 {/* <TopBar activePage={activePage} /> */}
@@ -33,9 +33,14 @@ const AppLayout = ({ children, activePage }: AppLayoutProps) => {
                 {/* Content */}
                 <Box
                     flex={1}
-                    p={{ base: 2, md: 4 }}
                     overflowY='auto'
-                    maxHeight='calc(100vh)'
+                    px={{
+                        base: 4,
+                        md: 16,
+                    }}
+                    pt={0}
+                    pb={8}
+                    maxHeight='100vh'
                     maxWidth={`calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`}
                 >{children}</Box>
             </Box>

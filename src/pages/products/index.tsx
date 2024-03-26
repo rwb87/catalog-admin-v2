@@ -111,10 +111,14 @@ const ProductsView = () => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                mb={4}
+                my={16}
             >
                 {/* Page Heading */}
-                <h1 className="page-heading">Products</h1>
+                <Flex gap={2} alignItems='center'>
+                    <h1 className="page-heading">Products</h1>
+
+                    <Text color='green.500' fontWeight='bold'>Clickouts: 0</Text>
+                </Flex>
 
                 {/* Search and Actions */}
                 <Flex gap={2} alignItems='center'>
@@ -220,9 +224,9 @@ const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps
                     <Thead>
                         <Tr>
                             <Th>Image</Th>
-                            <Th>Name</Th>
                             <Th>Brand</Th>
-                            {/* <Th>Style</Th> */}
+                            <Th>Name</Th>
+                            <Th>Style</Th>
                             <Th textAlign='center'>Link</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
@@ -265,8 +269,9 @@ const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps
                                                         : <IconUnlink size={26} />
                                                 }
                                             </Td>
-                                            <Td>{item?.name || '-'}</Td>
                                             <Td width={40}>{item?.brand?.name || '-'}</Td>
+                                            <Td>{item?.name || '-'}</Td>
+                                            <Td>{item?.style || '-'}</Td>
                                             <Td textAlign='center'>
                                                 {
                                                     item?.link
