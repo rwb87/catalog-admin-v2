@@ -87,8 +87,8 @@ const Sidebar = ({ activePage }: SidebarProps) => {
         },
         {
             icon: <FaTshirt size={22} />,
-            label: "Items",
-            link: "/items",
+            label: "Products",
+            link: "/products",
             isDefault: true,
         },
         {
@@ -105,8 +105,8 @@ const Sidebar = ({ activePage }: SidebarProps) => {
         },
         {
             icon: <FaTshirt size={22} />,
-            label: "Items Management",
-            link: "/items-management",
+            label: "Products Management",
+            link: "/products-management",
             isDefault: false,
         },
     ]
@@ -171,7 +171,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
         >
 
             <Box>
-                <Box pl={4}>
+                <Box pl={isCollapsed ? 0 : 4} textAlign={isCollapsed ? 'center' : 'left'}>
 
                     {/* Collapse Button */}
                     <Tooltip label={`${isCollapsed ? 'Expand' : 'Collapse'} Sidebar`} placement="right">

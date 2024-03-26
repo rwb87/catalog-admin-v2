@@ -150,7 +150,7 @@ const EarningsView = () => {
                                                 autoComplete="payout"
                                                 step={0.01}
                                                 min={0}
-                                                value={parseFloat(dailyPayout?.payoutValue)?.toFixed(2)}
+                                                value={dailyPayout?.payoutValue || 0}
                                                 onChange={(e: any) => setDailyPayout({ ...dailyPayout, payoutValue: e.target.value })}
                                                 onBlur={handleUpdatePayoutValue}
                                             />

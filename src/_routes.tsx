@@ -13,6 +13,7 @@ import LooksView from '@/pages/looks';
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
 import CreatorsView from '@/pages/creators';
+import ProductsView from './pages/products';
 import BrandsView from '@/pages/brands';
 import EarningsView from '@/pages/earnings';
 
@@ -33,6 +34,7 @@ export default function Routes() {
                 <Route path="/creators" element={<CreatorsView />} />
                 <Route path="/looks" element={<LooksView />} />
                 <Route path="/brands" element={<BrandsView />} />
+                <Route path="/products" element={<ProductsView />} />
                 <Route path="/earnings" element={<EarningsView />} />
 
                 {/* Error Pages */}

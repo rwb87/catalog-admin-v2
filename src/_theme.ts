@@ -93,6 +93,7 @@ const theme = extendTheme({
 			},
 			textarea: {
 				color: mode(textBlackColor, textWhiteColor)(props),
+				borderRadius: 'md',
 				_placeholder: {
 					color: mode('gray.200', 'gray.300')(props),
 				},
@@ -105,6 +106,20 @@ const theme = extendTheme({
 			input: {
 				color: mode(textBlackColor, textWhiteColor)(props),
 				fontWeight: 600,
+				borderRadius: 'md',
+				_placeholder: {
+					color: mode('gray.200', 'gray.300')(props),
+				},
+				_focusVisible: {
+					borderColor: `${themeColors.primary[400]} !important`,
+					boxShadow: `0 0 0 1px ${themeColors.primary[400]} !important`
+				},
+			},
+			select: {
+				color: mode(textBlackColor, textWhiteColor)(props),
+				fontWeight: 600,
+				cursor: 'pointer',
+				borderRadius: 'md',
 				_placeholder: {
 					color: mode('gray.200', 'gray.300')(props),
 				},
