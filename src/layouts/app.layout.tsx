@@ -1,10 +1,8 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
 import { ReactElement, useState } from "react";
-import { IconHanger, IconLogout, IconMenu2, IconSettings } from "@tabler/icons-react";
+import { IconLogout } from "@tabler/icons-react";
 import { useUi, useUser } from "@/_store";
 import { Link } from "react-router-dom";
-import { FaTag, FaTshirt, FaUserPlus, FaUserTie } from "react-icons/fa";
-import { FaBasketShopping, FaRegCircleUser } from "react-icons/fa6";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 
@@ -56,55 +54,55 @@ const Sidebar = ({ activePage }: SidebarProps) => {
 
     const sidebarItems = [
         {
-            icon: <FaUserTie size={22} />,
+            icon: <img src="/icons/icon-admins.svg" alt="Admins" width={20} />,
             label: "Administrators",
             link: "/administrators",
             isDefault: true,
         },
         {
-            icon: <FaBasketShopping size={22} />,
+            icon: <img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />,
             label: "Shoppers",
             link: "/shoppers",
             isDefault: true,
         },
         {
-            icon: <FaUserPlus size={22} />,
+            icon: <img src="/icons/icon-creators.svg" alt="Creators" width={20} />,
             label: "Creators",
             link: "/creators",
             isDefault: true,
         },
         {
-            icon: <IconHanger size={22} />,
+            icon: <img src="/icons/icon-looks.svg" alt="Looks" width={20} />,
             label: "Looks",
             link: "/looks",
             isDefault: true,
         },
         {
-            icon: <FaTag size={22} />,
+            icon: <img src="/icons/icon-brands.svg" alt="Brands" width={20} />,
             label: "Brands",
             link: "/brands",
             isDefault: true,
         },
         {
-            icon: <FaTshirt size={22} />,
+            icon: <img src="/icons/icon-products.svg" alt="Products" width={20} />,
             label: "Products",
             link: "/products",
             isDefault: true,
         },
         {
-            icon: <BiDollar size={22} />,
+            icon: <BiDollar size={24} />,
             label: "Earnings",
             link: "/earnings",
             isDefault: true,
         },
         {
-            icon: <IconHanger size={22} />,
+            icon: <img src="/icons/icon-looks-management.svg" alt="Looks Management" width={20} />,
             label: "Looks Management",
             link: "/looks-management",
             isDefault: false,
         },
         {
-            icon: <FaTshirt size={22} />,
+            icon: <img src="/icons/icon-products-management.svg" alt="Products Management" width={20} />,
             label: "Products Management",
             link: "/products-management",
             isDefault: false,
@@ -138,12 +136,13 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                         fontWeight='medium'
                         py='1.5rem'
                         colorScheme='gray'
-                        color={isActive? 'black' : 'blackAlpha.500'}
+                        opacity={isActive? 1 : 0.3}
                         borderLeftWidth={4}
                         borderLeftColor={isActive ? 'black' : 'transparent'}
                         _hover={{
                             borderLeftColor: 'black',
-                            color : 'black'
+                            color : 'black',
+                            opacity: 1,
                         }}
                     >
                         {icon}
@@ -212,7 +211,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                                 px={10}
                                 opacity={sidebarDefaultView ? 1 : 0.4}
                                 backgroundColor={sidebarDefaultView ? 'transparent' : 'gray.100'}
-                                icon={<FaRegCircleUser size={20} />}
+                                icon={<img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />}
                                 onClick={() => setSidebarDefaultView(true)}
                             >
                             </IconButton>
@@ -270,69 +269,69 @@ const Sidebar = ({ activePage }: SidebarProps) => {
     )
 }
 
-type TopBarProps = {
-    activePage: string;
-}
-const TopBar = ({ activePage }: TopBarProps) => {
-    const { clearToken } = useUser() as any;
-    const { isSidebarCollapsed, toggleSidebar } = useUi() as any;
+// type TopBarProps = {
+//     activePage: string;
+// }
+// const TopBar = ({ activePage }: TopBarProps) => {
+//     const { clearToken } = useUser() as any;
+//     const { isSidebarCollapsed, toggleSidebar } = useUi() as any;
 
-    return (
-        <Flex
-            bgColor="white"
-            px={4}
-            py={2}
-            borderBottomWidth={1}
-            borderBottomColor="gray.100"
-            gap={4}
-            justifyContent='space-between'
-            width='full'
-        >
-            <Flex alignItems='center' gap={4}>
-                <Tooltip label="Toggle Sidebar" placement="bottom">
-                    <IconButton
-                        aria-label="Expand / Collapse"
-                        variant="ghost"
-                        size="sm"
-                        rounded='full'
-                        icon={<IconMenu2 size={22} />}
-                        onClick={() => toggleSidebar(isSidebarCollapsed)}
-                    />
-                </Tooltip>
+//     return (
+//         <Flex
+//             bgColor="white"
+//             px={4}
+//             py={2}
+//             borderBottomWidth={1}
+//             borderBottomColor="gray.100"
+//             gap={4}
+//             justifyContent='space-between'
+//             width='full'
+//         >
+//             <Flex alignItems='center' gap={4}>
+//                 <Tooltip label="Toggle Sidebar" placement="bottom">
+//                     <IconButton
+//                         aria-label="Expand / Collapse"
+//                         variant="ghost"
+//                         size="sm"
+//                         rounded='full'
+//                         icon={<IconMenu2 size={22} />}
+//                         onClick={() => toggleSidebar(isSidebarCollapsed)}
+//                     />
+//                 </Tooltip>
 
-                <Text fontSize="lg">{activePage}</Text>
-            </Flex>
+//                 <Text fontSize="lg">{activePage}</Text>
+//             </Flex>
 
-            <Flex alignItems='center' gap={2}>
+//             <Flex alignItems='center' gap={2}>
 
-                {/* Settings */}
-                <Tooltip label="Settings" placement="bottom">
-                    <IconButton
-                        aria-label="Settings"
-                        variant="ghost"
-                        size="sm"
-                        rounded='full'
-                        icon={<IconSettings size={22} />}
-                    />
-                </Tooltip>
+//                 {/* Settings */}
+//                 <Tooltip label="Settings" placement="bottom">
+//                     <IconButton
+//                         aria-label="Settings"
+//                         variant="ghost"
+//                         size="sm"
+//                         rounded='full'
+//                         icon={<IconSettings size={22} />}
+//                     />
+//                 </Tooltip>
 
-                {/* Logout */}
-                <Tooltip label="Logout" placement="bottom">
-                    <IconButton
-                        aria-label="Logout"
-                        variant="ghost"
-                        size="sm"
-                        rounded='full'
-                        icon={<IconLogout size={22} />}
-                        onClick={() => {
-                            clearToken();
-                            window.location.href = '/login';
-                        }}
-                    />
-                </Tooltip>
-            </Flex>
-        </Flex>
-    )
-}
+//                 {/* Logout */}
+//                 <Tooltip label="Logout" placement="bottom">
+//                     <IconButton
+//                         aria-label="Logout"
+//                         variant="ghost"
+//                         size="sm"
+//                         rounded='full'
+//                         icon={<IconLogout size={22} />}
+//                         onClick={() => {
+//                             clearToken();
+//                             window.location.href = '/login';
+//                         }}
+//                     />
+//                 </Tooltip>
+//             </Flex>
+//         </Flex>
+//     )
+// }
 
 export default AppLayout;
