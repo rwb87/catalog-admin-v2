@@ -1,11 +1,11 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Flex, IconButton, Input, Tooltip } from "@chakra-ui/react";
+import { Flex, IconButton, Input, InputGroup, InputLeftElement, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
 
 type UsersViewProps = {
@@ -95,25 +95,42 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
 
                 {/* Search and Actions */}
                 <Flex gap={2} alignItems='center'>
-                    <Input
-                        type='search'
-                        placeholder='Search'
-                        size='sm'
-                        variant='outline'
-                        width='300px'
-                        rounded='md'
-                        bgColor='white'
-                        borderColor='gray.100'
 
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                    />
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents='none'
+                            color='gray.300'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            rounded='full'
+                        >
+                            <IconSearch size={16} strokeWidth={1.5} />
+                        </InputLeftElement>
+
+                        <Input
+                            type='search'
+                            placeholder='Search'
+                            variant='outline'
+                            width='300px'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            pl={12}
+                            fontWeight='medium'
+                            _focusVisible={{
+                                borderColor: 'gray.200 !important',
+                                boxShadow: 'none !important',
+                            }}
+                            value={search}
+                            onChange={(event) => setSearch(event.target.value)}
+                        />
+                    </InputGroup>
 
                     <Tooltip label={`Add new ${userType}`} placement="left">
                         <IconButton
                             aria-label="Add new user"
                             variant='solid'
-                            size='sm'
                             rounded='full'
                             borderWidth={2}
                             borderColor='gray.100'

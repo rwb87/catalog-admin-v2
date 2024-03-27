@@ -5,8 +5,8 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import AppLayout from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLoader2, IconPlus, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconCamera, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const BrandsView = () => {
@@ -132,25 +132,41 @@ const BrandsView = () => {
 
                 {/* Search and Actions */}
                 <Flex gap={2} alignItems='center'>
-                    <Input
-                        type='search'
-                        placeholder='Search'
-                        size='sm'
-                        variant='outline'
-                        width='300px'
-                        rounded='md'
-                        bgColor='white'
-                        borderColor='gray.100'
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents='none'
+                            color='gray.300'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            rounded='full'
+                        >
+                            <IconSearch size={16} strokeWidth={1.5} />
+                        </InputLeftElement>
 
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                    />
+                        <Input
+                            type='search'
+                            placeholder='Search'
+                            variant='outline'
+                            width='300px'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            pl={12}
+                            fontWeight='medium'
+                            _focusVisible={{
+                                borderColor: 'gray.200 !important',
+                                boxShadow: 'none !important',
+                            }}
+                            value={search}
+                            onChange={(event) => setSearch(event.target.value)}
+                        />
+                    </InputGroup>
 
                     <Tooltip label='Add new brand' placement="left">
                         <IconButton
                             aria-label="Add new user"
                             variant='solid'
-                            size='sm'
                             rounded='full'
                             borderWidth={2}
                             borderColor='gray.100'

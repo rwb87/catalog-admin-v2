@@ -5,8 +5,8 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import AppLayout from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLoader2, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { IconCamera, IconEdit, IconLoader2, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const ProductsView = () => {
@@ -45,8 +45,6 @@ const ProductsView = () => {
                 endpoint: `/items`,
                 method: 'GET',
             });
-
-            console.log(response);
 
             // Sort by createdAt
             response.sort((a: any, b: any) => {
@@ -117,24 +115,41 @@ const ProductsView = () => {
                 <Flex gap={2} alignItems='center'>
                     <h1 className="page-heading">Products</h1>
 
-                    <Text color='green.500' fontWeight='bold'>Clickouts: 0</Text>
+                    {/* <Text color='green.500' fontWeight='bold'>Clickouts: 0</Text> */}
                 </Flex>
 
                 {/* Search and Actions */}
                 <Flex gap={2} alignItems='center'>
-                    <Input
-                        type='search'
-                        placeholder='Search'
-                        size='sm'
-                        variant='outline'
-                        width='300px'
-                        rounded='md'
-                        bgColor='white'
-                        borderColor='gray.100'
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents='none'
+                            color='gray.300'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            rounded='full'
+                        >
+                            <IconSearch size={16} strokeWidth={1.5} />
+                        </InputLeftElement>
 
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                    />
+                        <Input
+                            type='search'
+                            placeholder='Search'
+                            variant='outline'
+                            width='300px'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            pl={12}
+                            fontWeight='medium'
+                            _focusVisible={{
+                                borderColor: 'gray.200 !important',
+                                boxShadow: 'none !important',
+                            }}
+                            value={search}
+                            onChange={(event) => setSearch(event.target.value)}
+                        />
+                    </InputGroup>
 
                     {/* <Tooltip label='Add new brand' placement="left">
                         <IconButton
@@ -266,7 +281,7 @@ const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps
                                                             alt={item?.name}
                                                             loading="lazy"
                                                         />
-                                                        : <IconUnlink size={26} />
+                                                        : '-'
                                                 }
                                             </Td>
                                             <Td width={40}>{item?.brand?.name || '-'}</Td>
@@ -284,7 +299,7 @@ const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps
                                                 }
                                             </Td>
                                             <Td textAlign='center'>
-                                                {
+                                                {/* {
                                                     item?.dealPrice
                                                         ? <>
                                                             <Text as='span' fontWeight='bold'>${parseFloat(item?.dealPrice).toFixed(2)}</Text>
@@ -295,7 +310,9 @@ const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps
                                                         : item?.price
                                                             ? <Text as='span'>${parseFloat(item?.price).toFixed(2)}</Text>
                                                             : '-'
-                                                }
+                                                } */}
+                                                <Text>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
+                                                { item?.dealPrice ? <Text>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
                                             </Td>
                                             <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                                             <Td textAlign='center'>

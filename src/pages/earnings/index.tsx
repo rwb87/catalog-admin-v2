@@ -106,9 +106,11 @@ const EarningsView = () => {
                     {/* Date Filters */}
                     <Input
                         type="month"
-                        size='sm'
                         bgColor='white'
-                        rounded='md'
+                        rounded='full'
+                        width='300px'
+                        borderWidth={2}
+                        borderColor='gray.100'
                         defaultValue={month ?? moment().format('YYYY-MM')}
                         onChange={(e: any) => setMonth(moment(e.target.value).format('YYYY-MM'))}
                     />
@@ -124,7 +126,6 @@ const EarningsView = () => {
                             <IconButton
                                 aria-label='Edit Payout'
                                 variant='solid'
-                                size='sm'
                                 rounded='full'
                                 borderWidth={2}
                                 borderColor='gray.100'

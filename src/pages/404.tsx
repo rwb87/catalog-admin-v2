@@ -17,7 +17,7 @@ export default function FourOhFour() {
                 <img
                     src="/images/404.webp"
                     alt="404"
-                    width={500}
+                    width={400}
                     height='auto'
                     loading="lazy"
                 />
