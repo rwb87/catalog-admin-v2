@@ -1,5 +1,4 @@
 import { defineStyleConfig, extendTheme } from '@chakra-ui/react';
-import { mode } from '@chakra-ui/theme-tools';
 import type { StyleFunctionProps } from '@chakra-ui/styled-system'
 
 // const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(menuAnatomy.keys);
@@ -78,13 +77,12 @@ const theme = extendTheme({
 		...themeColors,
 	},
 	styles: {
-		global: (props: StyleFunctionProps) => ({
+		global: () => ({
 			html: {
 				fontFamily: `'Inter' !important`,
 			},
 			body: {
-				// bg: mode('#f3f8f9', 'linear-gradient(#000, #000f1c)')(props),
-				bg: mode('#fcfcfc', 'linear-gradient(#000, #000f1c)')(props),
+				bg: '#fcfcfc',
 			},
 			h1: {
 				fontSize: '48px',
@@ -93,10 +91,10 @@ const theme = extendTheme({
 				fontSize: '36px',
 			},
 			textarea: {
-				color: mode(textBlackColor, textWhiteColor)(props),
+				color: textBlackColor,
 				borderRadius: 'md',
 				_placeholder: {
-					color: mode('gray.200', 'gray.300')(props),
+					color: 'gray.200',
 				},
 				_focusVisible: {
 					borderColor: `${themeColors.primary[400]} !important`,
@@ -105,11 +103,11 @@ const theme = extendTheme({
 				fontWeight: 600,
 			},
 			input: {
-				color: mode(textBlackColor, textWhiteColor)(props),
+				color: textBlackColor,
 				fontWeight: 600,
 				borderRadius: 'md',
 				_placeholder: {
-					color: mode('gray.200', 'gray.300')(props),
+					color: 'gray.200',
 				},
 				_focusVisible: {
 					borderColor: `${themeColors.primary[400]} !important`,
@@ -117,12 +115,12 @@ const theme = extendTheme({
 				},
 			},
 			select: {
-				color: mode(textBlackColor, textWhiteColor)(props),
+				color: textBlackColor,
 				fontWeight: 600,
 				cursor: 'pointer',
 				borderRadius: 'md',
 				_placeholder: {
-					color: mode('gray.200', 'gray.300')(props),
+					color: 'gray.200',
 				},
 				_focusVisible: {
 					borderColor: `${themeColors.primary[400]} !important`,
@@ -138,7 +136,7 @@ const theme = extendTheme({
 	components: {
 		Tooltip: defineStyleConfig({
 			baseStyle: {
-				backgroundColor: mode('gray.dark', 'gray.400'),
+				backgroundColor: 'gray.dark',
 				color: 'text-white',
 			}
 		})

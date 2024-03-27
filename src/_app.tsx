@@ -1,11 +1,13 @@
-import { Box, ChakraBaseProvider } from "@chakra-ui/react"
+import { Box, ChakraBaseProvider, createLocalStorageManager } from "@chakra-ui/react"
 import theme from "@/_theme";
 import './_app.scss'
 import { BrowserRouter } from "react-router-dom";
 import Routes from "@/_routes";
 import { useEffect, useState } from "react";
+import { Config } from "./_config";
 
 const Application = () => {
+	const manager = createLocalStorageManager(`${Config.APP_NAME?.toLowerCase()?.replaceAll(' ', '_')}.theme`);
 	const [notification, setNotification] = useState({
 		message: '',
 		open: false,
@@ -41,7 +43,7 @@ const Application = () => {
 
 	return (
 		<BrowserRouter>
-			<ChakraBaseProvider theme={theme}>
+			<ChakraBaseProvider theme={theme} colorModeManager={manager}>
 				<Routes />
 
 				{/* Notification */}
