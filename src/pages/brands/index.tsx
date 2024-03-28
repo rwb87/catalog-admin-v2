@@ -29,6 +29,8 @@ const BrandsView = () => {
     }, []);
 
     useEffect(() => {
+        if(search?.toString()?.trim() === '') return setFilteredData(data);
+
         setFilteredData(
             data?.filter((item: any) => {
                 return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
@@ -106,7 +108,7 @@ const BrandsView = () => {
                 method: 'DELETE',
             });
 
-            if (response) notify('User deleted successfully', 3000);
+            if (response) notify('Brand deleted successfully', 3000);
             else notify('An error occurred', 3000);
 
             setData(data.filter((user: any) => user.id !== deletingData.id));

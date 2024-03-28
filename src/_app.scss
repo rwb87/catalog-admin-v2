@@ -18,6 +18,25 @@ html, body {
     font-family: 'Montserrat', sans-serif !important;
 }
 
+.notification {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    background-color: var(--chakra-colors-primary-500);
+    color: white;
+    border-radius: 10rem;
+    max-width: 30rem;
+    min-width: 10rem;
+    z-index: 10000;
+    text-align: center;
+    bottom: -10rem;
+    transition: bottom 0.15s ease-in-out;
+    &.active {
+        bottom: 1rem;
+    }
+}
+
 .table-responsive {
     overflow-x: auto;
     width: 100%;

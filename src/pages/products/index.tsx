@@ -6,7 +6,7 @@ import notify from "@/helpers/notify";
 import AppLayout from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLoader2, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { IconCamera, IconEdit, IconLoader2, IconSearch, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const ProductsView = () => {
@@ -28,6 +28,8 @@ const ProductsView = () => {
     }, []);
 
     useEffect(() => {
+        if(search?.toString()?.trim() === '') return setFilteredData(data);
+
         setFilteredData(
             data?.filter((item: any) => {
                 return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
@@ -90,7 +92,7 @@ const ProductsView = () => {
                 method: 'DELETE',
             });
 
-            if (response) notify('User deleted successfully', 3000);
+            if (response) notify('Product deleted successfully', 3000);
             else notify('An error occurred', 3000);
 
             setData(data.filter((user: any) => user.id !== deletingData.id));
@@ -214,7 +216,7 @@ type ProductsTableProps = {
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
 }
-const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
+export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
         limit: 15,

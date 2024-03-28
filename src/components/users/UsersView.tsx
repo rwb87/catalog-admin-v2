@@ -28,6 +28,8 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     }, []);
 
     useEffect(() => {
+        if(search?.toString()?.trim() === '') return setFilteredUsers(users);
+
         setFilteredUsers(
             users.filter((user: any) => {
                 return user?.name.toLowerCase().includes(search.toLowerCase()) ||

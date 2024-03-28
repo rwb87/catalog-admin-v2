@@ -8,10 +8,11 @@ type ConfirmationProps = {
     cancelText?: string,
     confirmText?: string,
     processingConfirmText?: string,
+    isDangerous?: boolean,
     onConfirm: () => void,
     onCancel: () => void,
 }
-const Confirmation = ({ isOpen = false, isProcessing = false, text = '', cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
+const Confirmation = ({ isOpen = false, isProcessing = false, text = '', cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', isDangerous = true, onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
     const cancelRef = useRef<any>(null);
 
     return (
@@ -44,7 +45,7 @@ const Confirmation = ({ isOpen = false, isProcessing = false, text = '', cancelT
                         onClick={onCancel}
                     >{cancelText}</Button>
                     <Button
-                        colorScheme='red'
+                        colorScheme={isDangerous ? 'red' : 'green'}
                         size='sm'
                         ml={4}
                         isLoading={isProcessing}

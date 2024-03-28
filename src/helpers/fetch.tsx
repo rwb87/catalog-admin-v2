@@ -49,7 +49,7 @@ const fetch = async({ endpoint = '', method = 'GET', data = null, hasFiles = fal
     }
 
     return await axios({
-        url: `${BASE_URL}${endpoint}`,
+        url: encodeURI(`${BASE_URL}${endpoint}`),
         method: method,
         headers: headersConfig,
         data: data,
