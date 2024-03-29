@@ -4,7 +4,7 @@ import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
-import AppLayout from "@/layouts/app.layout"
+import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconChevronDown, IconCornerDownRight, IconLoader2, IconPhoto, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
@@ -103,6 +103,11 @@ const LooksView = () => {
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);
 
+        console.log(data);
+
+        setIsProcessing(false);
+        return
+
         try {
             const response = await fetch({
                 endpoint: `/looks/${id || editingData?.id}`,
@@ -148,7 +153,7 @@ const LooksView = () => {
     }
 
     return (
-        <AppLayout activePage="Looks">
+        <Content activePage="Looks">
 
             {/* Search and Options */}
             <Flex
@@ -242,16 +247,32 @@ const LooksView = () => {
             {/* Send look data to management alert */}
             <Confirmation
                 isOpen={!!sendingLookDataToManagement?.id}
-                text="Send this look to the management?"
+                title="Send look data to management"
+                html={<Input
+                    type="text"
+                    placeholder="Message for management (optional)"
+                    rounded='md'
+                    size='sm'
+                    width='full'
+                    name='management-message'
+                />}
                 isProcessing={isProcessing}
                 cancelText="Cancel"
                 confirmText="Send"
                 processingConfirmText="Sending..."
                 isDangerous={false}
-                onConfirm={() => handleUpdateData({ status: 'in_data_management' }, sendingLookDataToManagement?.id)}
+                onConfirm={() => {
+                    const message = document.querySelector('input[name="management-message"]') as HTMLInputElement;
+                    const messageValue: string = message?.value?.trim();
+
+                    handleUpdateData({
+                        status: 'in_data_management',
+                        messages: [messageValue],
+                    }, sendingLookDataToManagement?.id)
+                }}
                 onCancel={() => setSendingLookDataToManagement({})}
             />
-        </AppLayout>
+        </Content>
     )
 }
 
@@ -505,7 +526,13 @@ const TableRow = ({ item, isLive = true, products, onSendLookToManagement, handl
                                 _focusVisible={{
                                     backgroundColor: 'blackAlpha.800',
                                 }}
-                                icon={<IconChevronDown size={22} />}
+                                icon={<IconChevronDown
+                                    size={22}
+                                    style={{
+                                        transition: 'transform 0.15s',
+                                        transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                                    }}
+                                />}
                                 onClick={handleExpandProducts}
                             />
                         }

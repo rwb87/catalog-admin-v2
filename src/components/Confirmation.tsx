@@ -4,7 +4,9 @@ import { useRef } from "react";
 type ConfirmationProps = {
     isOpen: boolean,
     isProcessing: boolean,
-    text: string,
+    title?: string,
+    text?: string,
+    html?: React.ReactNode,
     cancelText?: string,
     confirmText?: string,
     processingConfirmText?: string,
@@ -12,7 +14,7 @@ type ConfirmationProps = {
     onConfirm: () => void,
     onCancel: () => void,
 }
-const Confirmation = ({ isOpen = false, isProcessing = false, text = '', cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', isDangerous = true, onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
+const Confirmation = ({ isOpen = false, isProcessing = false, title = 'Confirmation', text = '', html, cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', isDangerous = true, onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
     const cancelRef = useRef<any>(null);
 
     return (
@@ -28,12 +30,16 @@ const Confirmation = ({ isOpen = false, isProcessing = false, text = '', cancelT
 
             <AlertDialogContent>
 
-                <AlertDialogHeader>Confirmation</AlertDialogHeader>
+                <AlertDialogHeader>{title}</AlertDialogHeader>
 
                 <AlertDialogCloseButton isDisabled={isProcessing}/>
 
                 <AlertDialogBody>
-                    <div dangerouslySetInnerHTML={{ __html: text }} />
+                    {
+                        html
+                            ? html
+                            : <div dangerouslySetInnerHTML={{ __html: text }} />
+                    }
                 </AlertDialogBody>
 
                 <AlertDialogFooter>

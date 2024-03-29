@@ -1,4 +1,4 @@
-import AppLayout from "@/layouts/app.layout";
+import { Content } from "@/layouts/app.layout";
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,7 +6,7 @@ export default function FourOhFour() {
     const navigate = useNavigate();
 
     return (
-        <AppLayout activePage="">
+        <Content activePage="">
             <Flex
                 direction="column"
                 alignItems="center"
@@ -33,6 +33,6 @@ export default function FourOhFour() {
                     >Home</Button>
                 </Box>
             </Flex>
-        </AppLayout>
+        </Content>
     )
 }

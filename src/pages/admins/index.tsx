@@ -1,11 +1,11 @@
-import AppLayout from "@/layouts/app.layout"
+import { Content } from "@/layouts/app.layout"
 import UsersView from "@/components/users/UsersView";
 
 const AdminsView = () => {
     return (
-        <AppLayout activePage="Administrators">
+        <Content activePage="Administrators">
             <UsersView userType="admin" />
-        </AppLayout>
+        </Content>
     )
 }
 

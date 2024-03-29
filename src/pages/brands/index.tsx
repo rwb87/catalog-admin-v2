@@ -3,7 +3,7 @@ import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import AppLayout from "@/layouts/app.layout"
+import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconCamera, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
@@ -121,7 +121,7 @@ const BrandsView = () => {
     }
 
     return (
-        <AppLayout activePage="Brands">
+        <Content activePage="Brands">
 
             {/* Search and Options */}
             <Flex
@@ -285,7 +285,7 @@ const BrandsView = () => {
                 onConfirm={handleDelete}
                 onCancel={() => setDeletingData({})}
             />
-        </AppLayout>
+        </Content>
     )
 }
 

@@ -2,7 +2,7 @@ import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
-import AppLayout from "@/layouts/app.layout"
+import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, IconButton, Input, InputGroup, InputLeftAddon, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import {  IconEdit, IconLoader2 } from "@tabler/icons-react"
@@ -89,7 +89,7 @@ const EarningsView = () => {
     }
 
     return (
-        <AppLayout activePage="Earnings">
+        <Content activePage="Earnings">
 
             {/* Search and Options */}
             <Flex
@@ -169,7 +169,7 @@ const EarningsView = () => {
                 data={data}
                 isLoading={isLoading}
             />
-        </AppLayout>
+        </Content>
     )
 }
 

@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 import { IconLogout } from "@tabler/icons-react";
 import { useUi, useUser } from "@/_store";
 import { Link } from "react-router-dom";
@@ -7,89 +7,44 @@ import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 
 type AppLayoutProps = {
-    children: ReactElement | ReactElement[];
-    activePage: string;
+    children: ReactElement;
 }
-const AppLayout = ({ children, activePage }: AppLayoutProps) => {
-    const { isSidebarCollapsed } = useUi() as any;
+const AppLayout = ({ children }: AppLayoutProps) => {
+    const [activePage, setActivePage] = useState<string>('Administrators');
 
-    return (
-        <Box
-            minHeight="100dvh"
-            width="full"
-            display="flex"
-            flexDirection="row"
-        >
-
-            {/* Sidebar */}
-            <Sidebar activePage={activePage} />
-
-            {/* Body */}
-            <Box flex={1} height='screen'>
-
-                {/* Top Bar */}
-                {/* <TopBar activePage={activePage} /> */}
-
-                {/* Content */}
-                <Box
-                    flex={1}
-                    overflowY='auto'
-                    px={{
-                        base: 4,
-                        md: 16,
-                    }}
-                    pt={0}
-                    pb={8}
-                    maxHeight='100vh'
-                    maxWidth={`calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`}
-                >{children}</Box>
-            </Box>
-        </Box>
-    )
-
-}
-
-type SidebarProps = {
-    activePage: string;
-}
-const Sidebar = ({ activePage }: SidebarProps) => {
-    const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
-    const { clearToken } = useUser() as any;
-    const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
-
-    const sidebarItems = [
+    const sidebarItems = useMemo(() => ([
         {
-            icon: <img src="/icons/icon-admins.svg" alt="Admins" width={20} />,
+            icon: "/icons/icon-admins.svg",
             label: "Administrators",
             link: "/administrators",
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />,
+            icon: "/icons/icon-shoppers.svg",
             label: "Shoppers",
             link: "/shoppers",
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-creators.svg" alt="Creators" width={20} />,
+            icon: "/icons/icon-creators.svg",
             label: "Creators",
             link: "/creators",
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-looks.svg" alt="Looks" width={20} />,
+            icon: "/icons/icon-looks.svg",
             label: "Looks",
             link: "/looks",
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-brands.svg" alt="Brands" width={20} />,
+            icon: "/icons/icon-brands.svg",
             label: "Brands",
             link: "/brands",
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-products.svg" alt="Products" width={20} />,
+            icon: "/icons/icon-products.svg",
             label: "Products",
             link: "/products",
             isDefault: true,
@@ -101,18 +56,91 @@ const Sidebar = ({ activePage }: SidebarProps) => {
             isDefault: true,
         },
         {
-            icon: <img src="/icons/icon-looks-management.svg" alt="Looks Management" width={20} />,
+            icon: "/icons/icon-looks-management.svg",
             label: "Looks Management",
-            link: "/looks-management",
+            link: "/looks/management",
             isDefault: false,
         },
         {
-            icon: <img src="/icons/icon-products-management.svg" alt="Products Management" width={20} />,
+            icon: "/icons/icon-products-management.svg",
             label: "Products Management",
             link: "/products-management",
             isDefault: false,
         },
-    ]
+    ]), []);
+
+    useEffect(() => {
+        window?.addEventListener('set:active-page', (event: any) => {
+            setActivePage(event.detail.activePage);
+        });
+
+        return () => {
+            window?.removeEventListener('set:active-page', () => {});
+        }
+    }, []);
+
+    return (
+        <Box
+            minHeight="100dvh"
+            width="full"
+            display="flex"
+            flexDirection="row"
+        >
+
+            {/* Sidebar */}
+            <Sidebar
+                sidebarItems={sidebarItems}
+                activePage={activePage}
+            />
+
+            {/* Body */}
+            <Box flex={1} height='screen'>{children}</Box>
+        </Box>
+    )
+}
+
+const Content = ({ children, activePage }: { children: ReactElement | ReactElement[], activePage: string }) => {
+    const { isSidebarCollapsed } = useUi() as any;
+
+    useEffect(() => {
+        window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
+    }, [activePage]);
+
+    return (
+        <Box
+            flex={1}
+            overflowY='auto'
+            px={{
+                base: 4,
+                md: 16,
+            }}
+            pt={0}
+            pb={8}
+            maxHeight='100vh'
+            maxWidth={`calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`}
+        >{children}</Box>
+    )
+}
+
+type SidebarProps = {
+    sidebarItems: {
+        icon: ReactElement | string;
+        label: string;
+        link: string;
+        isDefault?: boolean;
+    }[];
+    activePage: string;
+}
+const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
+    const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
+    const { clearToken } = useUser() as any;
+    const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
+
+    useEffect(( ) => {
+        const activeSidebarItem = sidebarItems.find((item) => item.label === activePage);
+
+        if(activeSidebarItem?.isDefault === false) setSidebarDefaultView(false);
+    }, [sidebarItems, activePage]);
 
     const SidebarItem = ({ icon, label, link, isActive = false, onClick }: { icon: ReactElement, label: string, link: string, isActive?: boolean, onClick?: () => void }) => {
         return (
@@ -150,7 +178,11 @@ const Sidebar = ({ activePage }: SidebarProps) => {
                             opacity: 1,
                         }}
                     >
-                        {icon}
+                        {
+                            typeof icon === 'string'
+                                ? <img src={icon} alt={label} width={20} loading="eager" />
+                                : icon
+                        }
                         {
                             !isCollapsed
                                 ? <Text fontSize='lg'>{label}</Text>
@@ -274,69 +306,5 @@ const Sidebar = ({ activePage }: SidebarProps) => {
     )
 }
 
-// type TopBarProps = {
-//     activePage: string;
-// }
-// const TopBar = ({ activePage }: TopBarProps) => {
-//     const { clearToken } = useUser() as any;
-//     const { isSidebarCollapsed, toggleSidebar } = useUi() as any;
-
-//     return (
-//         <Flex
-//             bgColor="white"
-//             px={4}
-//             py={2}
-//             borderBottomWidth={1}
-//             borderBottomColor="gray.100"
-//             gap={4}
-//             justifyContent='space-between'
-//             width='full'
-//         >
-//             <Flex alignItems='center' gap={4}>
-//                 <Tooltip label="Toggle Sidebar" placement="bottom">
-//                     <IconButton
-//                         aria-label="Expand / Collapse"
-//                         variant="ghost"
-//                         size="sm"
-//                         rounded='full'
-//                         icon={<IconMenu2 size={22} />}
-//                         onClick={() => toggleSidebar(isSidebarCollapsed)}
-//                     />
-//                 </Tooltip>
-
-//                 <Text fontSize="lg">{activePage}</Text>
-//             </Flex>
-
-//             <Flex alignItems='center' gap={2}>
-
-//                 {/* Settings */}
-//                 <Tooltip label="Settings" placement="bottom">
-//                     <IconButton
-//                         aria-label="Settings"
-//                         variant="ghost"
-//                         size="sm"
-//                         rounded='full'
-//                         icon={<IconSettings size={22} />}
-//                     />
-//                 </Tooltip>
-
-//                 {/* Logout */}
-//                 <Tooltip label="Logout" placement="bottom">
-//                     <IconButton
-//                         aria-label="Logout"
-//                         variant="ghost"
-//                         size="sm"
-//                         rounded='full'
-//                         icon={<IconLogout size={22} />}
-//                         onClick={() => {
-//                             clearToken();
-//                             window.location.href = '/login';
-//                         }}
-//                     />
-//                 </Tooltip>
-//             </Flex>
-//         </Flex>
-//     )
-// }
-
 export default AppLayout;
+export { Content };

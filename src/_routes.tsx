@@ -10,36 +10,41 @@ import Login from '@/pages/auth/login';
 
 // App Pages
 import LooksView from '@/pages/looks';
+import LooksManagementView from '@/pages/looks/management';
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
 import CreatorsView from '@/pages/creators';
 import ProductsView from './pages/products';
 import BrandsView from '@/pages/brands';
 import EarningsView from '@/pages/earnings';
+import AppLayout from './layouts/app.layout';
 
 export default function Routes() {
     return(
         <AuthProvider>
-            <RoutesList>
+            <AppLayout>
+                <RoutesList>
 
-                {/* Redirect to /looks when visited home */}
-                <Route path="/" element={<Index />} />
+                    {/* Redirect to /looks when visited home */}
+                    <Route path="/" element={<Index />} />
 
-                {/* Auth Pages */}
-                <Route path="/login" element={<Login />} />
+                    {/* Auth Pages */}
+                    <Route path="/login" element={<Login />} />
 
-                {/* App Pages */}
-                <Route path="/administrators" element={<AdminsView />} />
-                <Route path="/shoppers" element={<ShoppersView />} />
-                <Route path="/creators" element={<CreatorsView />} />
-                <Route path="/looks" element={<LooksView />} />
-                <Route path="/brands" element={<BrandsView />} />
-                <Route path="/products" element={<ProductsView />} />
-                <Route path="/earnings" element={<EarningsView />} />
+                    {/* App Pages */}
+                    <Route path="/administrators" element={<AdminsView />} />
+                    <Route path="/shoppers" element={<ShoppersView />} />
+                    <Route path="/creators" element={<CreatorsView />} />
+                    <Route path="/looks" element={<LooksView />} />
+                    <Route path="/looks/management" element={<LooksManagementView />} />
+                    <Route path="/brands" element={<BrandsView />} />
+                    <Route path="/products" element={<ProductsView />} />
+                    <Route path="/earnings" element={<EarningsView />} />
 
-                {/* Error Pages */}
-                <Route path="*" element={<FourOhFour />} />
-            </RoutesList>
+                    {/* Error Pages */}
+                    <Route path="*" element={<FourOhFour />} />
+                </RoutesList>
+            </AppLayout>
         </AuthProvider>
     )
 }
