@@ -8,6 +8,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconCamera, IconEdit, IconLoader2, IconSearch, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ProductsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,6 +20,10 @@ const ProductsView = () => {
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const location = useLocation();
+    const isManagement = location.pathname.includes('management');
+    const pageName = isManagement ? 'Products Management' : 'Products';
 
     useAuthGuard('auth');
 
@@ -105,7 +110,7 @@ const ProductsView = () => {
     }
 
     return (
-        <Content activePage="Products">
+        <Content activePage={pageName}>
 
             {/* Search and Options */}
             <Flex
@@ -115,7 +120,7 @@ const ProductsView = () => {
             >
                 {/* Page Heading */}
                 <Flex gap={2} alignItems='center'>
-                    <h1 className="page-heading">Products</h1>
+                    <h1 className="page-heading">{pageName}</h1>
 
                     {/* <Text color='green.500' fontWeight='bold'>Clickouts: 0</Text> */}
                 </Flex>

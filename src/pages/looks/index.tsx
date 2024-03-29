@@ -369,7 +369,7 @@ type TableRowProps = {
     handleUpdateDirectly: (id: string, data: any) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, isLive = true, products, onSendLookToManagement, handleUpdateDirectly, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDirectly, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
     const [images, setImages] = useState<any[]>([]);

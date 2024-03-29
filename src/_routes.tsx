@@ -39,6 +39,7 @@ export default function Routes() {
                     <Route path="/looks/management" element={<LooksManagementView />} />
                     <Route path="/brands" element={<BrandsView />} />
                     <Route path="/products" element={<ProductsView />} />
+                    <Route path="/products/management" element={<ProductsView />} />
                     <Route path="/earnings" element={<EarningsView />} />
 
                     {/* Error Pages */}

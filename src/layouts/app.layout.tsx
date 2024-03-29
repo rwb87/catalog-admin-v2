@@ -64,7 +64,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         {
             icon: "/icons/icon-products-management.svg",
             label: "Products Management",
-            link: "/products-management",
+            link: "/products/management",
             isDefault: false,
         },
     ]), []);
@@ -142,7 +142,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
         if(activeSidebarItem?.isDefault === false) setSidebarDefaultView(false);
     }, [sidebarItems, activePage]);
 
-    const SidebarItem = ({ icon, label, link, isActive = false, onClick }: { icon: ReactElement, label: string, link: string, isActive?: boolean, onClick?: () => void }) => {
+    const SidebarItem = ({ icon, label, link, isActive = false, onClick }: { icon: ReactElement | string, label: string, link: string, isActive?: boolean, onClick?: () => void }) => {
         return (
             <Link
                 to={link}
