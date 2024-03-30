@@ -116,7 +116,7 @@ const ProductsView = () => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                my={16}
+                mb={16}
             >
                 {/* Page Heading */}
                 <Flex gap={2} alignItems='center'>
@@ -284,9 +284,10 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                                                             src={item?.pictureURL}
                                                             width={28}
                                                             height='auto'
-                                                            objectFit='contain'
+                                                            objectFit='cover'
                                                             alt={item?.name}
                                                             loading="lazy"
+                                                            rounded='md'
                                                         />
                                                         : '-'
                                                 }

@@ -90,7 +90,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                my={16}
+                mb={16}
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>

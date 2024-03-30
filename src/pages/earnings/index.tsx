@@ -95,7 +95,7 @@ const EarningsView = () => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                my={16}
+                mb={16}
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">Earnings</h1>

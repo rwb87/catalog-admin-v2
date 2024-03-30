@@ -127,7 +127,7 @@ const BrandsView = () => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                my={16}
+                mb={16}
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">Brands</h1>
@@ -358,8 +358,9 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                                                             src={item?.pictureURL}
                                                             width={28}
                                                             height='auto'
-                                                            objectFit='contain'
+                                                            objectFit='cover'
                                                             alt={item?.name}
+                                                            rounded='md'
                                                         />
                                                         : <IconUnlink size={26} />
                                                 }

@@ -2,15 +2,16 @@ import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import { IconLogout } from "@tabler/icons-react";
 import { useUi, useUser } from "@/_store";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 
 type AppLayoutProps = {
-    children: ReactElement;
+    children: ReactElement | ReactElement[],
 }
 const AppLayout = ({ children }: AppLayoutProps) => {
     const [activePage, setActivePage] = useState<string>('Administrators');
+    const location = useLocation();
 
     const sidebarItems = useMemo(() => ([
         {
@@ -88,10 +89,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         >
 
             {/* Sidebar */}
-            <Sidebar
-                sidebarItems={sidebarItems}
-                activePage={activePage}
-            />
+            {
+                sidebarItems?.find((item: any) => location?.pathname === item?.link)
+                ? <Sidebar
+                    sidebarItems={sidebarItems}
+                    activePage={activePage}
+                />
+                : null
+            }
 
             {/* Body */}
             <Box flex={1} height='screen'>{children}</Box>
@@ -114,7 +119,7 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
                 base: 4,
                 md: 16,
             }}
-            pt={0}
+            pt={16}
             pb={8}
             maxHeight='100vh'
             maxWidth={`calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`}
