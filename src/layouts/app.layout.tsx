@@ -346,6 +346,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
 const Topbar = ({ sidebarItems, activePage }: SidebarProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const { clearToken } = useUser() as any;
 
     useEffect(() => {
         setIsOpen(false);
@@ -440,6 +441,10 @@ const Topbar = ({ sidebarItems, activePage }: SidebarProps) => {
                     opacity={0.3}
                     borderLeftWidth={4}
                     borderColor='transparent'
+                    onClick={() => {
+                        clearToken();
+                        window.location.href = '/login';
+                    }}
                 >
                     <IconLogout size={22} />
                     <Text fontSize='lg'>Logout</Text>
