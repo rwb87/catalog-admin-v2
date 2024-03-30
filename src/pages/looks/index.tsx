@@ -1,13 +1,14 @@
 import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
+import LookProducts from "@/components/looks/LookProducts";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconChevronDown, IconCornerDownRight, IconLoader2, IconPhoto, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { Avatar, Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconChevronDown, IconLoader2, IconPhoto, IconSearch, IconTrash, IconUnlink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 const LooksView = () => {
@@ -102,11 +103,6 @@ const LooksView = () => {
 
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);
-
-        console.log(data);
-
-        setIsProcessing(false);
-        return
 
         try {
             const response = await fetch({
@@ -231,7 +227,7 @@ const LooksView = () => {
                 }}
                 isLoading={isLoading}
                 onSendLookToManagement={(item: any) => setSendingLookDataToManagement(item)}
-                handleUpdateDirectly={(id: string, data: any) => handleUpdateData(data, id)}
+                onUpdate={(data: any, id: string) => handleUpdateData(data, id)}
                 onDelete={(id: string) => setDeletingData(id)}
             />
 
@@ -283,10 +279,10 @@ type LooksTableProps = {
     onPaginate: (page: number) => void,
     isLoading: boolean,
     onSendLookToManagement: (item: any) => void,
-    handleUpdateDirectly: (id: string, data: any) => void,
+    onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const LooksTable = ({ data, pagination, products, onPaginate, isLoading, onSendLookToManagement, handleUpdateDirectly, onDelete }: LooksTableProps) => {
+const LooksTable = ({ data, pagination, products, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
     const isLive = data?.[0]?.status === 'live';
 
     const reconstructedData = data;
@@ -342,7 +338,7 @@ const LooksTable = ({ data, pagination, products, onPaginate, isLoading, onSendL
                                         isLive={isLive}
                                         products={products}
                                         onSendLookToManagement={onSendLookToManagement}
-                                        handleUpdateDirectly={handleUpdateDirectly}
+                                        onUpdate={onUpdate}
                                         onDelete={onDelete}
                                     />)
                         }
@@ -366,10 +362,10 @@ type TableRowProps = {
     isLive: boolean,
     products: any,
     onSendLookToManagement: (item: any) => void,
-    handleUpdateDirectly: (id: string, data: any) => void,
+    onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDirectly, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
     const [images, setImages] = useState<any[]>([]);
@@ -437,9 +433,9 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                                 colorScheme='blue'
                                 size='md'
                                 defaultChecked={item?.enabled}
-                                onChange={() => handleUpdateDirectly(item?.id, {
+                                onChange={() => onUpdate({
                                     enabled: !item?.enabled,
-                                })}
+                                }, item?.id)}
                             />
                         </Td>
                         <Td textAlign='center'>
@@ -447,9 +443,9 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                                 colorScheme='blue'
                                 size='md'
                                 defaultChecked={item?.carouselEnabled}
-                                onChange={() => handleUpdateDirectly(item?.id, {
+                                onChange={() => onUpdate({
                                     carouselEnabled: !item?.carouselEnabled,
-                                })}
+                                }, item?.id)}
                             />
                         </Td>
                         <Td textAlign='center'>
@@ -463,9 +459,9 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                                 onBlur={(e: any) => {
                                     if(parseInt(e.target.value) === parseInt(item?.priority)) return;
 
-                                    handleUpdateDirectly(item?.id, {
+                                    onUpdate({
                                         priority: parseInt(e.target.value),
-                                    })
+                                    }, item?.id)
                                 }}
                             />
                         </Td>
@@ -491,7 +487,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                                         backgroundColor: 'blackAlpha.800',
                                     }}
                                     icon={<img
-                                        src="/icons/icon-look-change.svg"
+                                        src="/icons/icon-send-look-to-management.svg"
                                         alt="Change Look"
                                         width={24}
                                     />}
@@ -549,7 +545,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                     <DragDropResetPosition
                         images={images}
                         onSave={(list: any) => {
-                            handleUpdateDirectly(item?.id, { photos: list });
+                            onUpdate({ photos: list }, item?.id);
                             setIsImagesExpanded(false);
                         }}
                         onCancel={() => setIsImagesExpanded(false)}
@@ -563,102 +559,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, handleUpdateDir
                 bgColor='gray.50'
             >
                 <Td colSpan={20}>
-                    <Table>
-                        <Tbody>
-                            {
-                                item?.tags?.map((tag: any, index: number) => <Tr key={index}>
-                                    <Td width='30px' textAlign='left'>
-                                        <IconCornerDownRight size={20} />
-                                    </Td>
-                                    <Td>
-
-                                        {
-                                            tag?.item?.pictureURL
-                                                ? <Image
-                                                    src={tag?.item?.pictureURL}
-                                                    width={20}
-                                                    height={28}
-                                                    objectFit='cover'
-                                                    rounded='md'
-                                                    alt={tag?.item?.name}
-                                                    loading="lazy"
-                                                    onError={(e: any) => {
-                                                        e.target.src = '/images/cover-placeholder.webp';
-                                                        e.target.onerror = null;
-                                                    }}
-                                                />
-                                                : '-'
-                                        }
-                                    </Td>
-                                    <Td width={40}>{tag?.item?.brand?.name || '-'}</Td>
-                                    <Td>{tag?.item?.name || '-'}</Td>
-                                    <Td>{tag?.item?.style || '-'}</Td>
-                                    <Td textAlign='center'>
-                                        {
-                                            tag?.item?.link
-                                                ? <a
-                                                    href={['http', 'https'].includes(tag?.item?.link?.substr(0, 4))? tag?.item?.link : `http://${tag?.item?.link}`}
-                                                    target='_blank'
-                                                    style={{ display: 'inline-grid', placeSelf: 'center' }}
-                                                ><IconWorldWww size={26} strokeWidth={1.2} /></a>
-                                                : '-'
-                                        }
-                                    </Td>
-                                    <Td textAlign='center'>
-                                        <Text>Price: <strong>${parseFloat(tag?.item?.price || 0)?.toFixed(2)}</strong></Text>
-                                        { tag?.item?.dealPrice ? <Text>Deal Price: <strong>${parseFloat(tag?.item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
-                                    </Td>
-                                    <Td textAlign='center' color='green.500'>{tag?.item?.clickouts || 0}</Td>
-                                    <Td textAlign='right'>
-                                        <IconButton
-                                            aria-label='Move Up'
-                                            variant='ghost'
-                                            colorScheme='blue'
-                                            rounded='full'
-                                            size='sm'
-                                            icon={<IconArrowUp size={22} />}
-                                        />
-
-                                        <IconButton
-                                            aria-label='Move Down'
-                                            variant='ghost'
-                                            colorScheme='blue'
-                                            rounded='full'
-                                            size='sm'
-                                            ml={4}
-                                            icon={<IconArrowDown size={22} />}
-                                        />
-
-                                        <IconButton
-                                            aria-label='Delete'
-                                            variant='ghost'
-                                            colorScheme='red'
-                                            rounded='full'
-                                            size='sm'
-                                            ml={4}
-                                            icon={<IconTrash size={22} />}
-                                        />
-                                    </Td>
-                                </Tr>
-                            )}
-                        </Tbody>
-                    </Table>
-
-                    {/* Actions */}
-                    <Flex alignItems='center' justifyContent='space-between' mt={4}>
-                        <Button
-                            variant='solid'
-                            colorScheme='green'
-                            size='sm'
-                            leftIcon={<IconPlus size={20} />}
-                        >Add Product</Button>
-
-                        <Button
-                            variant='solid'
-                            colorScheme='green'
-                            size='sm'
-                        >Save Products List</Button>
-                    </Flex>
+                    <LookProducts products={item?.tags} />
                 </Td>
             </Tr>
         </>
