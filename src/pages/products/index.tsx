@@ -114,19 +114,35 @@ const ProductsView = () => {
 
             {/* Search and Options */}
             <Flex
+                direction={{
+                    base: 'column',
+                    md: 'row',
+                }}
                 justifyContent='space-between'
-                alignItems='center'
-                mb={16}
+                alignItems={{
+                    base: 'flex-start',
+                    md: 'center',
+                }}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
+                gap={2}
+                width='full'
             >
                 {/* Page Heading */}
-                <Flex gap={2} alignItems='center'>
-                    <h1 className="page-heading">{pageName}</h1>
-
-                    {/* <Text color='green.500' fontWeight='bold'>Clickouts: 0</Text> */}
-                </Flex>
+                <h1 className="page-heading">{pageName}</h1>
 
                 {/* Search and Actions */}
-                <Flex gap={2} alignItems='center'>
+                <Flex
+                    gap={2}
+                    alignItems='center'
+                    width={{
+                        base: 'full',
+                        md: 'auto',
+                    }}
+                >
                     <InputGroup>
                         <InputLeftElement
                             pointerEvents='none'
@@ -142,7 +158,10 @@ const ProductsView = () => {
                             type='search'
                             placeholder='Search'
                             variant='outline'
-                            width='300px'
+                            width={{
+                                base: 'full',
+                                md: '300px',
+                            }}
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}
@@ -319,11 +338,11 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                                                             ? <Text as='span'>${parseFloat(item?.price).toFixed(2)}</Text>
                                                             : '-'
                                                 } */}
-                                                <Text>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
-                                                { item?.dealPrice ? <Text>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
+                                                <Text whiteSpace='nowrap'>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
+                                                { item?.dealPrice ? <Text whiteSpace='nowrap'>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
                                             </Td>
                                             <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                                            <Td textAlign='center'>
+                                            <Td textAlign='center' whiteSpace='nowrap'>
                                                 <IconButton
                                                     aria-label="Edit"
                                                     variant='ghost'

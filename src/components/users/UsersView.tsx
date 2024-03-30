@@ -88,15 +88,35 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
 
             {/* Search and Options */}
             <Flex
+                direction={{
+                    base: 'column',
+                    md: 'row',
+                }}
                 justifyContent='space-between'
-                alignItems='center'
-                mb={16}
+                alignItems={{
+                    base: 'flex-start',
+                    md: 'center',
+                }}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
+                gap={2}
+                width='full'
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>
 
                 {/* Search and Actions */}
-                <Flex gap={2} alignItems='center'>
+                <Flex
+                    gap={2}
+                    alignItems='center'
+                    width={{
+                        base: 'full',
+                        md: 'auto',
+                    }}
+                >
 
                     <InputGroup>
                         <InputLeftElement
@@ -113,7 +133,10 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                             type='search'
                             placeholder='Search'
                             variant='outline'
-                            width='300px'
+                            width={{
+                                base: 'full',
+                                md: '300px',
+                            }}
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}

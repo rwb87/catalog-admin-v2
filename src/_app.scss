@@ -67,6 +67,12 @@ html, body {
     font-family: 'Montserrat', sans-serif !important;
 }
 
+@media only screen and (max-width: 768px) {
+    .page-heading {
+        font-size: 1.2rem !important;
+    }
+}
+
 .chakra-switch__track {
     background: #d4d4d4 !important;
     &[data-checked] {

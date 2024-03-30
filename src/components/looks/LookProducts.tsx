@@ -53,7 +53,7 @@ const LookProducts = ({ products }: LookProductsProps) => {
                                 { tag?.item?.dealPrice ? <Text>Deal Price: <strong>${parseFloat(tag?.item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
                             </Td>
                             <Td textAlign='center' color='green.500'>{tag?.item?.clickouts || 0}</Td>
-                            <Td textAlign='right'>
+                            <Td textAlign='right' whiteSpace='nowrap'>
                                 <IconButton
                                     aria-label='Move Up'
                                     variant='ghost'

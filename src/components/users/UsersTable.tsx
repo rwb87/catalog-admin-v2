@@ -114,8 +114,8 @@ const UsersTable = (props: UsersTableProps) => {
                                                     <Td textAlign='center'>{user?.invitations?.length || 0}</Td>
                                                 </>
                                             }
-                                            <Td>{formatDateTime(user?.createdAt, false)}</Td>
-                                            <Td textAlign='center'>
+                                            <Td whiteSpace='nowrap'>{formatDateTime(user?.createdAt, false)}</Td>
+                                            <Td textAlign='center' whiteSpace='nowrap'>
                                                 {
                                                     typeof onEdit === 'function' && <IconButton
                                                         aria-label='Edit'

@@ -7,9 +7,9 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconChevronDown, IconLoader2, IconPhoto, IconSearch, IconTrash, IconUnlink } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { Avatar, Box, Flex, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconChevronDown, IconLoader2, IconPhoto, IconTrash, IconUnlink } from "@tabler/icons-react";
+import { useEffect, useMemo, useState } from "react";
 
 const LooksView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -127,6 +127,34 @@ const LooksView = () => {
         setIsProcessing(false);
     }
 
+    const handleSendLookDataToManagement = async () => {
+        const message = document.querySelector('input[name="management-message"]') as HTMLInputElement;
+        const messageValue: string = message?.value?.trim();
+
+        setIsProcessing(true);
+
+        // Create message
+        if(messageValue !== '') {
+            try {
+                await fetch({
+                    endpoint: `/looks/${sendingLookDataToManagement?.id}/messages`,
+                    method: 'POST',
+                    data: {
+                        message: messageValue,
+                    },
+                });
+            } catch (error: any) {
+                notify('Look sent to management but message could not be sent', 7000);
+            }
+        }
+
+        handleUpdateData({
+            status: 'in_data_management',
+            enabled: false,
+            carouselEnabled: false,
+        }, sendingLookDataToManagement?.id)
+    }
+
     const handleDelete = async () => {
         setIsDeleting(true);
 
@@ -153,64 +181,44 @@ const LooksView = () => {
 
             {/* Search and Options */}
             <Flex
+                direction={{
+                    base: 'column',
+                    md: 'row',
+                }}
                 justifyContent='space-between'
-                alignItems='center'
-                mb={16}
+                alignItems={{
+                    base: 'flex-start',
+                    md: 'center',
+                }}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
+                gap={2}
+                width='full'
             >
                 {/* Page Heading */}
-                <Flex gap={2} alignItems='center'>
-                    <h1 className="page-heading">Looks</h1>
+                <h1 className="page-heading">Looks</h1>
 
-                    <Select
-                        ml={4}
-                        variant='filled'
-                        width='200px'
-                        rounded='full'
-                        bgColor='white'
-                        borderWidth={2}
-                        borderColor='gray.100'
-                        fontWeight='medium'
-                        value={isLive ? 'in_data_management' : 'submitted_for_approval'}
-                        onChange={(event: any) => setIsLive(event.target.value === 'in_data_management')}
-                    >
-                        <option value="submitted_for_approval">Submitted for Approval</option>
-                        <option value="in_data_management">Live</option>
-                    </Select>
-                </Flex>
-
-                {/* Search and Actions */}
-                <Flex display='none' gap={2} alignItems='center'>
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width='300px'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={12}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
-                </Flex>
+                {/* Filter */}
+                <Select
+                    variant='filled'
+                    width={{
+                        base: 'full',
+                        md: '200px',
+                    }}
+                    rounded='full'
+                    bgColor='white'
+                    borderWidth={2}
+                    borderColor='gray.100'
+                    fontWeight='medium'
+                    value={isLive ? 'in_data_management' : 'submitted_for_approval'}
+                    onChange={(event: any) => setIsLive(event.target.value === 'in_data_management')}
+                >
+                    <option value="submitted_for_approval">Submitted for Approval</option>
+                    <option value="in_data_management">Live</option>
+                </Select>
             </Flex>
 
             {/* Table */}
@@ -251,21 +259,14 @@ const LooksView = () => {
                     size='sm'
                     width='full'
                     name='management-message'
+                    autoComplete='off'
                 />}
                 isProcessing={isProcessing}
                 cancelText="Cancel"
                 confirmText="Send"
                 processingConfirmText="Sending..."
                 isDangerous={false}
-                onConfirm={() => {
-                    const message = document.querySelector('input[name="management-message"]') as HTMLInputElement;
-                    const messageValue: string = message?.value?.trim();
-
-                    handleUpdateData({
-                        status: 'in_data_management',
-                        messages: [messageValue],
-                    }, sendingLookDataToManagement?.id)
-                }}
+                onConfirm={handleSendLookDataToManagement}
                 onCancel={() => setSendingLookDataToManagement({})}
             />
         </Content>
@@ -370,6 +371,17 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
     const [images, setImages] = useState<any[]>([]);
 
+    const dateTime = useMemo(() => {
+        const date = formatDateTime(item?.createdAt, false);
+        const time = new Intl.DateTimeFormat('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        }).format(new Date(item?.createdAt));
+
+        return `${date}, <br /> ${time}`;
+    }, [item?.createdAt]);
+
     const handleExpandImages = () => {
         setIsProductsExpanded(false);
 
@@ -425,7 +437,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         <Text>{item?.user?.username || '-'}</Text>
                     </Flex>
                 </Td>
-                <Td textAlign='center'>{formatDateTime(item?.createdAt) || '-'}</Td>
+                <Td textAlign='center' minWidth='150px' dangerouslySetInnerHTML={{ __html: dateTime }} />
                 {
                     isLive && <>
                         <Td textAlign='center'>
@@ -468,71 +480,70 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         <Td textAlign='center' color='blue.500'>{item?.incomingDiscovers || 0}</Td>
                     </>
                 }
-                <Td textAlign='center'>
-                    <Flex justifyContent='center' alignItems='center' gap={4}>
-
-                        {/* Send to Management button */}
-                        {
-                            !isLive && <Tooltip label="Send look to management" placement="bottom">
-                                <IconButton
-                                    aria-label="Edit"
-                                    variant='ghost'
-                                    rounded='full'
-                                    size='sm'
-                                    backgroundColor='black'
-                                    _hover={{
-                                        backgroundColor: 'blackAlpha.700',
-                                    }}
-                                    _focusVisible={{
-                                        backgroundColor: 'blackAlpha.800',
-                                    }}
-                                    icon={<img
-                                        src="/icons/icon-send-look-to-management.svg"
-                                        alt="Change Look"
-                                        width={24}
-                                    />}
-                                    onClick={() => onSendLookToManagement?.(item)}
-                                />
-                            </Tooltip>
-                        }
-
-                        {/* Delete */}
-                        <IconButton
-                            aria-label='Delete'
-                            variant='ghost'
-                            colorScheme='red'
-                            rounded='full'
-                            size='sm'
-                            icon={<IconTrash size={22} />}
-                            onClick={() => onDelete?.(item)}
-                        />
-
-                        {/* Expand Products */}
-                        {
-                            isLive && <IconButton
-                                aria-label='Expand'
+                <Td textAlign='center' whiteSpace='nowrap'>
+                    {/* Send to Management button */}
+                    {
+                        !isLive && <Tooltip label="Send look to management" placement="bottom">
+                            <IconButton
+                                aria-label="Edit"
                                 variant='ghost'
                                 rounded='full'
                                 size='sm'
+                                mr={4}
                                 backgroundColor='black'
-                                color='white'
                                 _hover={{
                                     backgroundColor: 'blackAlpha.700',
                                 }}
                                 _focusVisible={{
                                     backgroundColor: 'blackAlpha.800',
                                 }}
-                                icon={<IconChevronDown
-                                    size={22}
-                                    style={{
-                                        transition: 'transform 0.15s',
-                                        transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
-                                    }}
+                                icon={<img
+                                    src="/icons/icon-send-look-to-management.svg"
+                                    alt="Change Look"
+                                    width={24}
                                 />}
-                                onClick={handleExpandProducts}
+                                onClick={() => onSendLookToManagement?.(item)}
                             />
-                        }
-                    </Flex>
+                        </Tooltip>
+                    }
+
+                    {/* Delete */}
+                    <IconButton
+                        aria-label='Delete'
+                        variant='ghost'
+                        colorScheme='red'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconTrash size={22} />}
+                        onClick={() => onDelete?.(item)}
+                    />
+
+                    {/* Expand Products */}
+                    {
+                        isLive && <IconButton
+                            aria-label='Expand'
+                            variant='ghost'
+                            rounded='full'
+                            size='sm'
+                            backgroundColor='black'
+                            color='white'
+                            ml={4}
+                            _hover={{
+                                backgroundColor: 'blackAlpha.700',
+                            }}
+                            _focusVisible={{
+                                backgroundColor: 'blackAlpha.800',
+                            }}
+                            icon={<IconChevronDown
+                                size={22}
+                                style={{
+                                    transition: 'transform 0.15s',
+                                    transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                                }}
+                            />}
+                            onClick={handleExpandProducts}
+                        />
+                    }
                 </Td>
             </Tr>
 

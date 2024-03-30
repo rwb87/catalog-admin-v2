@@ -150,7 +150,11 @@ const LooksManagementView = () => {
             <Flex
                 justifyContent='space-between'
                 alignItems='center'
-                mb={16}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
             >
                 {/* Page Heading */}
                 <Flex gap={2} alignItems='center'>
@@ -237,11 +241,14 @@ type LooksManagementTableProps = {
 const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoading, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: LooksManagementTableProps) => {
     return (
         <>
-            <Grid
+            <Flex
+                direction='column'
                 bgColor='white'
                 rounded='md'
                 borderWidth={1}
                 borderColor='gray.100'
+                overflowX='auto'
+                width='full'
             >
                 {
                     isLoading
@@ -264,7 +271,7 @@ const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoadin
                                 onDelete={onDelete}
                             />)
                 }
-            </Grid>
+            </Flex>
 
             {/* Pagination */}
             <Pagination
@@ -316,14 +323,15 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
     }
 
     return (
-        <>
+        <Box minWidth='1024px'>
             <Flex
-                gap={4}
+                gap={20}
                 justifyContent='space-between'
                 alignItems='center'
                 borderBottomWidth={isLastItem ? 0 : 1}
                 borderColor='gray.100'
                 p={4}
+                width='full'
             >
 
                 {/* Images and Creator */}
@@ -364,7 +372,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                 </Flex>
 
                 {/* Actions */}
-                <Flex gap={4} alignItems='center'>
+                <Flex gap={4} alignItems='center' whiteSpace='nowrap'>
                     <Button
                         size='md'
                         colorScheme='green'
@@ -509,7 +517,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
             >
                 <LookProducts products={item?.tags} />
             </Box>
-        </>
+        </Box>
     )
 }
 

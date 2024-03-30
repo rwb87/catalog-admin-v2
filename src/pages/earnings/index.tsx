@@ -93,22 +93,45 @@ const EarningsView = () => {
 
             {/* Search and Options */}
             <Flex
+                direction={{
+                    base: 'column',
+                    md: 'row',
+                }}
                 justifyContent='space-between'
-                alignItems='center'
-                mb={16}
+                alignItems={{
+                    base: 'flex-start',
+                    md: 'center',
+                }}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
+                gap={2}
+                width='full'
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">Earnings</h1>
 
                 {/* Search and Actions */}
-                <Flex gap={2} alignItems='center'>
+                <Flex
+                    gap={2}
+                    alignItems='center'
+                    width={{
+                        base: 'full',
+                        md: 'auto',
+                    }}
+                >
 
                     {/* Date Filters */}
                     <Input
                         type="month"
                         bgColor='white'
                         rounded='full'
-                        width='300px'
+                        width={{
+                            base: 'full',
+                            md: '300px',
+                        }}
                         borderWidth={2}
                         borderColor='gray.100'
                         defaultValue={month ?? moment().format('YYYY-MM')}
@@ -228,7 +251,7 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                                     </Tr>
                                     : reconstructedData.map((item: any, index: number) => (
                                         <Tr key={index}>
-                                            <Td>{formatDateTime(item?.date, false)}</Td>
+                                            <Td whiteSpace='nowrap'>{formatDateTime(item?.date, false)}</Td>
                                             <Td textAlign='center' color='blue.500'>{item?.discovers || 0}</Td>
                                             <Td textAlign='center' color='green.500'>${parseFloat(item?.dailyTotalEarnings)?.toFixed(2) || 0}</Td>
                                         </Tr>

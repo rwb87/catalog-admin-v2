@@ -89,17 +89,37 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         >
 
             {/* Sidebar */}
-            {
-                sidebarItems?.find((item: any) => location?.pathname === item?.link)
-                ? <Sidebar
-                    sidebarItems={sidebarItems}
+            <Box
+                display={{
+                    base: 'none',
+                    md: 'contents',
+                }}
+            >
+                {
+                    sidebarItems?.find((item: any) => location?.pathname === item?.link)
+                    ? <Sidebar
+                        sidebarItems={sidebarItems}
+                        activePage={activePage}
+                    />
+                    : null
+                }
+            </Box>
+
+            {/* Topbar for Mobile */}
+            <Box
+                display={{
+                    base: 'contents',
+                    md: 'none',
+                }}
+            >
+                <Topbar
                     activePage={activePage}
+                    sidebarItems={sidebarItems}
                 />
-                : null
-            }
+            </Box>
 
             {/* Body */}
-            <Box flex={1} height='screen'>{children}</Box>
+            <Box flex={1} height='100dvh'>{children}</Box>
         </Box>
     )
 }
@@ -115,14 +135,26 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
         <Box
             flex={1}
             overflowY='auto'
+            overflowX='hidden'
             px={{
-                base: 4,
-                md: 16,
+                base: 3,
+                md: 4,
+                xl: 16,
             }}
-            pt={16}
-            pb={8}
+            pt={{
+                base: 16,
+                md: 8,
+                xl: 16,
+            }}
+            pb={{
+                base: 4,
+                md: 8,
+            }}
             maxHeight='100vh'
-            maxWidth={`calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`}
+            maxWidth={{
+                base: '100vw',
+                md: `calc(100vw - ${(isSidebarCollapsed ? '4rem' : '16rem')})`
+            }}
         >{children}</Box>
     )
 }
@@ -306,6 +338,112 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                         window.location.href = '/login';
                     }}
                 />
+            </Flex>
+        </Flex>
+    )
+}
+
+const Topbar = ({ sidebarItems, activePage }: SidebarProps) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        setIsOpen(false);
+
+        document?.addEventListener('click', (event: any) => {
+            if(event?.target?.closest('button')?.getAttribute('aria-label') !== 'Toggle Sidebar') {
+                setIsOpen(false);
+            }
+        });
+
+        return () => {
+            document?.removeEventListener('click', () => {});
+        }
+    }, [location]);
+
+    return (
+        <Flex
+            direction='column'
+            position='fixed'
+            zIndex={100}
+            bgColor='white'
+            borderBottomWidth={1}
+            borderColor='gray.100'
+            width='full'
+            shadow={isOpen ? 'md' : 'none'}
+        >
+            <Flex
+                justifyContent='space-between'
+                alignItems='center'
+                py={2}
+                px={3}
+            >
+                <Heading fontSize='2xl'>S</Heading>
+
+                <IconButton
+                    aria-label="Toggle Sidebar"
+                    variant="solid"
+                    size="sm"
+                    rounded='full'
+                    icon={<RiMenu5Line size={20} strokeWidth={1} />}
+                    onClick={() => setIsOpen(!isOpen)}
+                />
+            </Flex>
+
+            {/* Items */}
+            <Flex
+                display={isOpen ? 'flex' : 'none'}
+                direction="column"
+                pl={0.5}
+                pr={1}
+                gap={1}
+            >
+                {
+                    sidebarItems.map((item, index) => (
+                        <Link to={item.link} key={index}>
+                            <Button
+                                variant='none'
+                                width='full'
+                                rounded='none'
+                                gap={4}
+                                justifyContent='flex-start'
+                                textAlign='left'
+                                fontWeight='medium'
+                                py={1}
+                                colorScheme='gray'
+                                opacity={activePage === item.label ? 1 : 0.3}
+                                borderLeftWidth={4}
+                                borderLeftColor={activePage === item.label ? 'black' : 'transparent'}
+                            >
+                                {
+                                    typeof item.icon === 'string'
+                                        ? <img src={item.icon} alt={item.label} width={20} loading="eager" />
+                                        : item.icon
+                                }
+                                <Text fontSize='lg'>{item.label}</Text>
+                            </Button>
+                        </Link>
+                    ))
+                }
+
+                {/* Logout Button */}
+                <Button
+                    variant='none'
+                    width='full'
+                    rounded='none'
+                    gap={4}
+                    justifyContent='flex-start'
+                    textAlign='left'
+                    fontWeight='medium'
+                    py={1}
+                    colorScheme='gray'
+                    opacity={0.3}
+                    borderLeftWidth={4}
+                    borderColor='transparent'
+                >
+                    <IconLogout size={22} />
+                    <Text fontSize='lg'>Logout</Text>
+                </Button>
             </Flex>
         </Flex>
     )

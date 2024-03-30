@@ -125,15 +125,35 @@ const BrandsView = () => {
 
             {/* Search and Options */}
             <Flex
+                direction={{
+                    base: 'column',
+                    md: 'row',
+                }}
                 justifyContent='space-between'
-                alignItems='center'
-                mb={16}
+                alignItems={{
+                    base: 'flex-start',
+                    md: 'center',
+                }}
+                mb={{
+                    base: 4,
+                    md: 8,
+                    xl: 16,
+                }}
+                gap={2}
+                width='full'
             >
                 {/* Page Heading */}
                 <h1 className="page-heading">Brands</h1>
 
                 {/* Search and Actions */}
-                <Flex gap={2} alignItems='center'>
+                <Flex
+                    gap={2}
+                    alignItems='center'
+                    width={{
+                        base: 'full',
+                        md: 'auto',
+                    }}
+                >
                     <InputGroup>
                         <InputLeftElement
                             pointerEvents='none'
@@ -149,7 +169,10 @@ const BrandsView = () => {
                             type='search'
                             placeholder='Search'
                             variant='outline'
-                            width='300px'
+                            width={{
+                                base: 'full',
+                                md: '300px',
+                            }}
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}
@@ -379,7 +402,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                                             <Td textAlign='center'>{item?.items?.length || 0}</Td>
                                             <Td textAlign='center'>{item?.partnership || '-'}</Td>
                                             <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                                            <Td textAlign='center'>
+                                            <Td textAlign='center' whiteSpace='nowrap'>
                                                 <IconButton
                                                     aria-label="Edit"
                                                     variant='ghost'

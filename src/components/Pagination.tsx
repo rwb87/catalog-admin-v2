@@ -54,8 +54,7 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                 md: 'center',
             }}
             alignItems="center"
-            mt={4}
-            mb={4}
+            my={totalPages > 1 ? 4 : 0}
             width='full'
         >
             {total > limit ? (
