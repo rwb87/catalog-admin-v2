@@ -1,6 +1,6 @@
 import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
-import { IconEdit, IconLoader2, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconLoader2, IconMail, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Pagination from "@/components/Pagination";
 
@@ -44,14 +44,22 @@ const UsersTable = (props: UsersTableProps) => {
                     <Thead>
                         <Tr>
                             <Th>Username</Th>
+                            { userType !== 'admin' && <Th>SSO</Th> }
                             <Th>Email</Th>
+                            <Th>Created At</Th>
                             <Th>Gender</Th>
                             {
                                 userType === 'creator' && <>
+                                    <Th>Location</Th>
+                                    <Th textAlign='center'>Height</Th>
                                     <Th textAlign='center'>Looks</Th>
-                                    <Th>Venmo</Th>
+                                    {/* <Th>Venmo</Th> */}
+                                    <Th textAlign='center' color='blue.500'>Incoming <br /> Discovers</Th>
+                                    <Th textAlign='center' color='green.500'>Incoming <br /> Clickouts</Th>
+                                    <Th textAlign='center' color='blue.500'>Outgoing <br /> Discovers</Th>
+                                    <Th textAlign='center' color='green.500'>Outgoing <br /> Clickouts</Th>
                                     <Th textAlign='center'>Earnings</Th>
-                                    <Th textAlign='center'>Pending</Th>
+                                    {/* <Th textAlign='center'>Pending</Th> */}
                                 </>
                             }
                             {
@@ -59,7 +67,6 @@ const UsersTable = (props: UsersTableProps) => {
                                     <Th textAlign='center'>Invited</Th>
                                 </>
                             }
-                            <Th>Created At</Th>
                             { hasActions && <Th textAlign='center'>Actions</Th> }
                         </Tr>
                     </Thead>
@@ -99,14 +106,58 @@ const UsersTable = (props: UsersTableProps) => {
                                                     {user?.username || '-'}
                                                 </Flex>
                                             </Td>
-                                            <Td>{user?.email || '-'}</Td>
+                                            {
+                                                userType !== 'admin' && <Td>
+                                                    <IconButton
+                                                        aria-label='SSO'
+                                                        variant='ghost'
+                                                        rounded='full'
+                                                        size='sm'
+                                                        icon={<img src="/icons/icon-cloud-meter.svg" alt="SSO" style={{ width: '22px' }} />}
+                                                        onClick={() => window.open(`mailto:${user?.ssoEmail}`)}
+                                                    />
+                                                </Td>
+                                            }
+                                            <Td>
+                                                {
+                                                    user?.email
+                                                        ? userType !== 'admin'
+                                                            ? <IconButton
+                                                                aria-label='Email'
+                                                                variant='ghost'
+                                                                rounded='full'
+                                                                size='sm'
+                                                                icon={<IconMail size={22} />}
+                                                                onClick={() => window.open(`mailto:${user?.email}`)}
+                                                            />
+                                                            : user?.email
+                                                        : '-'
+                                                }
+                                            </Td>
+                                            <Td minWidth='160px' maxWidth='160px'>{formatDateTime(user?.createdAt, true)}</Td>
                                             <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                             {
                                                 userType === 'creator' && <>
+                                                    <Td>{user?.location || '-'}</Td>
+                                                    <Td textAlign='center'>{user?.height || '-'}</Td>
                                                     <Td textAlign='center'>{user?.looksCount || 0}</Td>
-                                                    <Td>{user?.venmoHandle || '-'}</Td>
-                                                    <Td textAlign='center'>${parseFloat(user?.currentEarnings).toFixed(2) || 0}</Td>
-                                                    <Td textAlign='center'>${parseFloat(user?.currentPending).toFixed(2) || 0}</Td>
+                                                    {/* <Td>{user?.venmoHandle || '-'}</Td> */}
+                                                    <Td textAlign='center' color='blue.500'>{user?.incomingDiscoversCount || 0}</Td>
+                                                    <Td textAlign='center' color='green.500'>{user?.incomingClickoutsCount || 0}</Td>
+                                                    <Td textAlign='center' color='blue.500'>{user?.outgoingDiscoversCount || 0}</Td>
+                                                    <Td textAlign='center' color='green.500'>{user?.outgoingClickoutsCount || 0}</Td>
+                                                    <Td textAlign='center'>
+                                                        <Text
+                                                            borderWidth={2}
+                                                            borderColor='green.500'
+                                                            rounded='full'
+                                                            py={1}
+                                                            px={2}
+                                                            shadow='md'
+                                                            bgColor='white'
+                                                        >${parseFloat(user?.currentEarnings).toFixed(2) || 0}</Text>
+                                                    </Td>
+                                                    {/* <Td textAlign='center'>${parseFloat(user?.currentPending).toFixed(2) || 0}</Td> */}
                                                 </>
                                             }
                                             {
@@ -114,7 +165,6 @@ const UsersTable = (props: UsersTableProps) => {
                                                     <Td textAlign='center'>{user?.invitations?.length || 0}</Td>
                                                 </>
                                             }
-                                            <Td whiteSpace='nowrap'>{formatDateTime(user?.createdAt, false)}</Td>
                                             <Td textAlign='center' whiteSpace='nowrap'>
                                                 {
                                                     typeof onEdit === 'function' && <IconButton

@@ -38,7 +38,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
         if (profilePhotoRef.current.files[0]) payload.append('picture', profilePhotoRef.current.files[0]);
-        if (user?.type === 'creator' && creatorBannerRef.current.files[0]) payload.append('creatorBanner', creatorBannerRef.current.files[0]);
+        // if (user?.type === 'creator' && creatorBannerRef.current.files[0]) payload.append('creatorBanner', creatorBannerRef.current.files[0]);
 
         if (editingUser?.password) payload.append('password', editingUser?.password);
 
@@ -77,6 +77,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
 
                 {/* Photos */}
                 <Box position='relative'>
+
                     {/* Cover Photo */}
                     <Image
                         src={editingUser?.coverURL}
@@ -246,7 +247,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
 
                 {/* Creator Banner */}
                 {
-                    editingUser?.type === 'creator' && <FormControl mt={4} id="creatorBanner">
+                    editingUser?.type === 'creator' && <FormControl mt={4} id="creatorBanner" display='none'>
                         <FormLabel>Creator Banner</FormLabel>
 
                         <Box position='relative'>

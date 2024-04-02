@@ -1,7 +1,7 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
@@ -117,12 +117,12 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             <Flex
                 direction={{
                     base: 'column',
-                    lg: 'row',
+                    xl: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    lg: 'center',
+                    xl: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -141,11 +141,33 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     alignItems='center'
                     width={{
                         base: 'full',
-                        lg: 'auto',
+                        xl: 'auto',
                     }}
                     gap={2}
                 >
                     <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>
+
+                    <Box
+                        display={{
+                            base: 'none',
+                            lg: userType !== 'admin' ? 'contents' : 'none'
+                        }}
+                        fontWeight='bold'
+                        fontSize={{
+                            base: '10px',
+                            '2xl': '12px',
+                        }}
+                        whiteSpace='break-spaces'
+                    >
+                        {
+                            userType === 'creator' && <>
+                                <Text ml={2} color='blue.500'>Incoming <br />Discovers: 0</Text>
+                                <Text ml={2} color='green.500'>Incoming <br />Clickouts: 0</Text>
+                            </>
+                        }
+                        <Text ml={2} color='blue.500'>Outgoing <br />Discovers: 0</Text>
+                        <Text ml={2} color='green.500'>Outgoing <br />Clickouts: 0</Text>
+                    </Box>
 
                     {/* Create button for mobile */}
                     <IconButton
@@ -190,13 +212,13 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     }}
                     width={{
                         base: 'full',
-                        lg: 'auto',
+                        xl: 'auto',
                     }}
                 >
 
                     {/* Created At */}
                     <Select
-                        display={userType === 'shopper' ? 'block' : 'none'}
+                        display={userType !== 'admin' ? 'block' : 'none'}
                         variant='outline'
                         width={{
                             base: 'full',
