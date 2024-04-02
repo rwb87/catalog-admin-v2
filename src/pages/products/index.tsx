@@ -3,6 +3,7 @@ import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
@@ -16,6 +17,7 @@ const ProductsView = () => {
     const [brands, setBrands] = useState<any[]>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
+    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -28,9 +30,14 @@ const ProductsView = () => {
     useAuthGuard('auth');
 
     useEffect(() => {
-        getData();
         getBrands();
     }, []);
+
+    useEffect(() => {
+        setIsLoading(true);
+
+        getData();
+    }, [sortBy]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -54,11 +61,10 @@ const ProductsView = () => {
             });
 
             // Sort by createdAt
-            response.sort((a: any, b: any) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
+            response?.map((item: any) => item.brand_name = item?.brand?.name || '');
+            const sortedData = sortData(response, sortBy);
 
-            setData(response);
+            setData(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -116,12 +122,12 @@ const ProductsView = () => {
             <Flex
                 direction={{
                     base: 'column',
-                    md: 'row',
+                    lg: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    md: 'center',
+                    lg: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -136,20 +142,75 @@ const ProductsView = () => {
 
                 {/* Search and Actions */}
                 <Flex
+                    direction={{
+                        base: 'column',
+                        md: 'row',
+                    }}
                     gap={2}
                     alignItems='center'
+                    justifyContent={{
+                        base: 'flex-end',
+                        md: 'space-between',
+                    }}
                     width={{
                         base: 'full',
-                        md: 'auto',
+                        lg: 'auto',
                     }}
                 >
-                    <InputGroup>
+
+                    {/* Sorting */}
+                    <Select
+                        variant='outline'
+                        width={{
+                            base: 'full',
+                            lg: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={sortBy}
+                        onChange={(event) => setSortBy(event.target.value)}
+                    >
+                        <optgroup label="Brand Name">
+                            <option value='brand_name:asc'>A - Z</option>
+                            <option value='brand_name:desc'>Z - A</option>
+                        </optgroup>
+                        <optgroup label="Product Name">
+                            <option value='name:asc'>A - Z</option>
+                            <option value='name:desc'>Z - A</option>
+                        </optgroup>
+                        <optgroup label="Price">
+                            <option value='price:asc'>Low - High</option>
+                            <option value='price:desc'>High - Low</option>
+                        </optgroup>
+                        <optgroup label="Deal Price">
+                            <option value='dealPrice:asc'>Low - High</option>
+                            <option value='dealPrice:desc'>High - Low</option>
+                        </optgroup>
+                        <optgroup label="Creation Date">
+                            <option value='createdAt:desc'>Newest First</option>
+                            <option value='createdAt:asc'>Oldest First</option>
+                        </optgroup>
+                    </Select>
+
+                    {/* Search */}
+                    <InputGroup
+                        width={{
+                            base: 'full',
+                            lg: '300px',
+                        }}
+                    >
                         <InputLeftElement
                             pointerEvents='none'
                             color='gray.300'
                             borderWidth={2}
                             borderColor='gray.100'
                             rounded='full'
+                            width='2rem'
+                            height='2rem'
                         >
                             <IconSearch size={16} strokeWidth={1.5} />
                         </InputLeftElement>
@@ -160,8 +221,9 @@ const ProductsView = () => {
                             variant='outline'
                             width={{
                                 base: 'full',
-                                md: '300px',
+                                lg: '300px',
                             }}
+                            size='sm'
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}
@@ -176,25 +238,6 @@ const ProductsView = () => {
                             onChange={(event) => setSearch(event.target.value)}
                         />
                     </InputGroup>
-
-                    {/* <Tooltip label='Add new brand' placement="left">
-                        <IconButton
-                            aria-label="Add new user"
-                            variant='solid'
-                            size='sm'
-                            rounded='full'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            icon={<IconPlus size={20} />}
-                            onClick={() => setEditingData({
-                                id: Math.random().toString(36).substring(7),
-                                name: '',
-                                pageLink: '',
-                                pictureURL: '',
-                                isNew: true,
-                            })}
-                        />
-                    </Tooltip> */}
                 </Flex>
             </Flex>
 

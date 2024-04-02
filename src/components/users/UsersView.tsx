@@ -1,12 +1,13 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Flex, IconButton, Input, InputGroup, InputLeftElement, Tooltip } from "@chakra-ui/react";
+import { Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
+import sortData from "@/helpers/sorting";
 
 type UsersViewProps = {
     userType: 'admin' | 'creator' | 'shopper';
@@ -16,6 +17,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     const [users, setUsers] = useState<any>([]);
     const [filteredUsers, setFilteredUsers] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
+    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [editingUser, setEditingUser] = useState<any>({});
     const [deletingUser, setDeletingUser] = useState<any>({});
@@ -24,8 +26,10 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     useAuthGuard('auth');
 
     useEffect(() => {
+        setIsLoading(true);
+
         getUsers();
-    }, []);
+    }, [sortBy]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredUsers(users);
@@ -48,12 +52,8 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                 method: 'GET',
             });
 
-            // Sort by createdAt
-            response.sort((a: any, b: any) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
-
-            setUsers(response);
+            const sortedData = sortData(response, sortBy);
+            setUsers(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -90,12 +90,12 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             <Flex
                 direction={{
                     base: 'column',
-                    md: 'row',
+                    lg: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    md: 'center',
+                    lg: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -106,27 +106,136 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                 width='full'
             >
                 {/* Page Heading */}
-                <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>
-
-                {/* Search and Actions */}
                 <Flex
-                    gap={2}
+                    justifyContent={{
+                        base: 'space-between',
+                        lg: 'flex-start',
+                    }}
                     alignItems='center'
                     width={{
                         base: 'full',
-                        md: 'auto',
+                        lg: 'auto',
+                    }}
+                    gap={2}
+                >
+                    <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>
+
+                    {/* Create button for mobile */}
+                    <IconButton
+                        aria-label="Add new user"
+                        variant='solid'
+                        rounded='full'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        display={{
+                            base: 'inline-flex',
+                            lg: 'none',
+                        }}
+                        size='sm'
+                        icon={<IconPlus size={20} />}
+                        onClick={() => setEditingUser({
+                            id: Math.random().toString(36).substring(7),
+                            name: '',
+                            lastName: '',
+                            username: '',
+                            email: '',
+                            password: '',
+                            type: userType,
+                            coverURL: '',
+                            pictureURL: '',
+                            creatorBannerURL: '',
+                            isNew: true,
+                        })}
+                    />
+                </Flex>
+
+                {/* Search and Actions */}
+                <Flex
+                    direction={{
+                        base: 'column',
+                        md: 'row',
+                    }}
+                    gap={2}
+                    alignItems='center'
+                    justifyContent={{
+                        base: 'flex-end',
+                        md: 'space-between',
+                    }}
+                    width={{
+                        base: 'full',
+                        lg: 'auto',
                     }}
                 >
 
-                    <InputGroup>
+                    {/* Sorting */}
+                    <Select
+                        variant='outline'
+                        width={{
+                            base: 'full',
+                            lg: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={sortBy}
+                        onChange={(event: any) => setSortBy(event.target.value)}
+                    >
+                        <optgroup label="Username">
+                            <option value='username:asc'>A - Z</option>
+                            <option value='username:desc'>Z - A</option>
+                        </optgroup>
+                        <optgroup label="Email">
+                            <option value='email:asc'>A - Z</option>
+                            <option value='email:desc'>Z - A</option>
+                        </optgroup>
+                        {
+                            userType === 'shopper' && <optgroup label="Invitation Count">
+                                <option value='invitations.length:asc'>Low - High</option>
+                                <option value='invitations.length:desc'>High - Low</option>
+                            </optgroup>
+                        }
+                        {
+                            userType === 'creator' && <>
+                                <optgroup label="Looks Count">
+                                    <option value='looksCount:desc'>Low - High</option>
+                                    <option value='looksCount:asc'>High - Low</option>
+                                </optgroup>
+                                <optgroup label="Earning Amount">
+                                    <option value='currentEarnings:desc'>$0 - $9+</option>
+                                    <option value='currentEarnings:asc'>+$9 - $0</option>
+                                </optgroup>
+                                <optgroup label="Pending Amount">
+                                    <option value='currentPending:desc'>$0 - $9+</option>
+                                    <option value='currentPending:asc'>+$9 - $0</option>
+                                </optgroup>
+                            </>
+                        }
+                        <optgroup label="Creation Date">
+                            <option value='createdAt:desc'>Newest First</option>
+                            <option value='createdAt:asc'>Oldest First</option>
+                        </optgroup>
+                    </Select>
+
+                    {/* Search */}
+                    <InputGroup
+                        width={{
+                            base: 'full',
+                            lg: '300px',
+                        }}
+                    >
                         <InputLeftElement
                             pointerEvents='none'
                             color='gray.300'
                             borderWidth={2}
                             borderColor='gray.100'
                             rounded='full'
+                            width='2rem'
+                            height='2rem'
                         >
-                            <IconSearch size={16} strokeWidth={1.5} />
+                            <IconSearch size={12} strokeWidth={2} />
                         </InputLeftElement>
 
                         <Input
@@ -135,8 +244,9 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                             variant='outline'
                             width={{
                                 base: 'full',
-                                md: '300px',
+                                lg: '300px',
                             }}
+                            size='sm'
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}
@@ -152,13 +262,22 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         />
                     </InputGroup>
 
-                    <Tooltip label={`Add new ${userType}`} placement="left">
+                    {/* Create button for Desktop */}
+                    <Tooltip
+                        label={`Add new ${userType}`}
+                        placement="left"
+                    >
                         <IconButton
                             aria-label="Add new user"
                             variant='solid'
                             rounded='full'
                             borderWidth={2}
                             borderColor='gray.100'
+                            display={{
+                                base: 'none',
+                                lg: 'inline-flex',
+                            }}
+                            size='sm'
                             icon={<IconPlus size={20} />}
                             onClick={() => setEditingUser({
                                 id: Math.random().toString(36).substring(7),

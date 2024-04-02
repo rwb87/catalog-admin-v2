@@ -132,6 +132,7 @@ const EarningsView = () => {
                             base: 'full',
                             md: '300px',
                         }}
+                        size='sm'
                         borderWidth={2}
                         borderColor='gray.100'
                         defaultValue={month ?? moment().format('YYYY-MM')}
@@ -152,6 +153,7 @@ const EarningsView = () => {
                                 rounded='full'
                                 borderWidth={2}
                                 borderColor='gray.100'
+                                size='sm'
                                 icon={<IconEdit size={20} />}
                                 onClick={() => setIsPayoutEditPopoverOpen(true)}
                             />

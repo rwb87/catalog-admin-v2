@@ -259,7 +259,7 @@ const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoadin
                             />
                         </Box>
                         : !data?.length
-                            ? <Text>NO DATA</Text>
+                            ? <Text fontStyle='italic' opacity={0.5} textAlign='center' my={6}>NO RESULT</Text>
                             : data?.map((item: any, index: number) => <TableRow
                                 key={item?.id}
                                 item={item}

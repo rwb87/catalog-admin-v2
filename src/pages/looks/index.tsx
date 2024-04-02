@@ -18,6 +18,7 @@ const LooksView = () => {
     const [products, setProducts] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
+    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -42,7 +43,7 @@ const LooksView = () => {
         setIsLoading(true);
 
         getData();
-    }, [isLive, pagination.page]);
+    }, [isLive, pagination.page, sortBy]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -67,10 +68,13 @@ const LooksView = () => {
                     "submitted_for_approval","in_admin"
                 ]
             }
+        const sortByString = sortBy?.split(':')[0];
+        const orderByString = sortBy?.split(':')[1]?.toUpperCase();
+        const finalSortByString = `${sortByString}+${orderByString}`;
 
         try {
             const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(filter)}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/looks?filter=${JSON.stringify(filter)}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
@@ -183,12 +187,12 @@ const LooksView = () => {
             <Flex
                 direction={{
                     base: 'column',
-                    md: 'row',
+                    lg: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    md: 'center',
+                    lg: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -201,24 +205,70 @@ const LooksView = () => {
                 {/* Page Heading */}
                 <h1 className="page-heading">Looks</h1>
 
-                {/* Filter */}
-                <Select
-                    variant='filled'
+                {/* Search and Filter */}
+                <Flex
+                    direction={{
+                        base: 'column',
+                        md: 'row',
+                    }}
+                    gap={2}
+                    alignItems='center'
+                    justifyContent={{
+                        base: 'flex-end',
+                        md: 'space-between',
+                    }}
                     width={{
                         base: 'full',
-                        md: '200px',
+                        lg: 'auto',
                     }}
-                    rounded='full'
-                    bgColor='white'
-                    borderWidth={2}
-                    borderColor='gray.100'
-                    fontWeight='medium'
-                    value={isLive ? 'in_data_management' : 'submitted_for_approval'}
-                    onChange={(event: any) => setIsLive(event.target.value === 'in_data_management')}
                 >
-                    <option value="submitted_for_approval">Submitted for Approval</option>
-                    <option value="in_data_management">Live</option>
-                </Select>
+
+                    {/* Sorting */}
+                    <Select
+                        variant='outline'
+                        width={{
+                            base: 'full',
+                            lg: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={sortBy}
+                        onChange={(event) => setSortBy(event.target.value)}
+                    >
+                        <optgroup label="Priority">
+                            <option value='priority:asc'>Low - High</option>
+                            <option value='priority:desc'>High - Low</option>
+                        </optgroup>
+                        <optgroup label="Creation Date">
+                            <option value='createdAt:desc'>Newest First</option>
+                            <option value='createdAt:asc'>Oldest First</option>
+                        </optgroup>
+                    </Select>
+
+                    {/* Live / Incoming */}
+                    <Select
+                        variant='filled'
+                        width={{
+                            base: 'full',
+                            md: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={isLive ? 'in_data_management' : 'submitted_for_approval'}
+                        onChange={(event: any) => setIsLive(event.target.value === 'in_data_management')}
+                    >
+                        <option value="submitted_for_approval">Submitted for Approval</option>
+                        <option value="in_data_management">Live</option>
+                    </Select>
+                </Flex>
             </Flex>
 
             {/* Table */}

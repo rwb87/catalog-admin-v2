@@ -30,7 +30,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         // Common Fields
         payload.append('name', editingUser?.name);
         payload.append('lastName', editingUser?.lastName);
-        payload.append('email', editingUser?.email);
+        payload.append('email', editingUser?.email?.toLowerCase());
         payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);

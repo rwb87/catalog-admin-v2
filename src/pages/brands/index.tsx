@@ -3,9 +3,10 @@ import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconCamera, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -16,6 +17,7 @@ const BrandsView = () => {
     const [data, setData] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
+    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -25,8 +27,10 @@ const BrandsView = () => {
     useAuthGuard('auth');
 
     useEffect(() => {
+        setIsLoading(true);
+
         getData();
-    }, []);
+    }, [sortBy]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -47,11 +51,9 @@ const BrandsView = () => {
             });
 
             // Sort by createdAt
-            response.sort((a: any, b: any) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
+            const sortedData = sortData(response, sortBy);
 
-            setData(response);
+            setData(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -127,12 +129,12 @@ const BrandsView = () => {
             <Flex
                 direction={{
                     base: 'column',
-                    md: 'row',
+                    lg: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    md: 'center',
+                    lg: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -142,25 +144,104 @@ const BrandsView = () => {
                 gap={2}
                 width='full'
             >
-                {/* Page Heading */}
-                <h1 className="page-heading">Brands</h1>
 
-                {/* Search and Actions */}
+                {/* Page Heading */}
                 <Flex
-                    gap={2}
+                    justifyContent={{
+                        base: 'space-between',
+                        lg: 'flex-start',
+                    }}
                     alignItems='center'
                     width={{
                         base: 'full',
-                        md: 'auto',
+                        lg: 'auto',
+                    }}
+                    gap={2}
+                >
+                    <h1 className="page-heading">Brands</h1>
+
+                    {/* Create button for mobile */}
+                    <IconButton
+                        aria-label="Add new user"
+                        variant='solid'
+                        rounded='full'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        display={{
+                            base: 'inline-flex',
+                            lg: 'none',
+                        }}
+                        size='sm'
+                        icon={<IconPlus size={20} />}
+                        onClick={() => setEditingData({
+                            id: Math.random().toString(36).substring(7),
+                            name: '',
+                            pageLink: '',
+                            pictureURL: '',
+                            isNew: true,
+                        })}
+                    />
+                </Flex>
+
+                {/* Search and Actions */}
+                <Flex
+                    direction={{
+                        base: 'column',
+                        md: 'row',
+                    }}
+                    gap={2}
+                    alignItems='center'
+                    justifyContent={{
+                        base: 'flex-end',
+                        md: 'space-between',
+                    }}
+                    width={{
+                        base: 'full',
+                        lg: 'auto',
                     }}
                 >
-                    <InputGroup>
+
+                    {/* Sorting */}
+                    <Select
+                        variant='outline'
+                        width={{
+                            base: 'full',
+                            lg: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={sortBy}
+                        onChange={(event) => setSortBy(event.target.value)}
+                    >
+                        <optgroup label="Name">
+                            <option value='name:asc'>A - Z</option>
+                            <option value='name:desc'>Z - A</option>
+                        </optgroup>
+                        <optgroup label="Creation Date">
+                            <option value='createdAt:desc'>Newest First</option>
+                            <option value='createdAt:asc'>Oldest First</option>
+                        </optgroup>
+                    </Select>
+
+                    {/* Search */}
+                    <InputGroup
+                        width={{
+                            base: 'full',
+                            lg: '300px',
+                        }}
+                    >
                         <InputLeftElement
                             pointerEvents='none'
                             color='gray.300'
                             borderWidth={2}
                             borderColor='gray.100'
                             rounded='full'
+                            width='2rem'
+                            height='2rem'
                         >
                             <IconSearch size={16} strokeWidth={1.5} />
                         </InputLeftElement>
@@ -171,8 +252,9 @@ const BrandsView = () => {
                             variant='outline'
                             width={{
                                 base: 'full',
-                                md: '300px',
+                                lg: '300px',
                             }}
+                            size='sm'
                             rounded='full'
                             bgColor='white'
                             borderWidth={2}
@@ -188,6 +270,7 @@ const BrandsView = () => {
                         />
                     </InputGroup>
 
+                    {/* Create button for Desktop */}
                     <Tooltip label='Add new brand' placement="left">
                         <IconButton
                             aria-label="Add new user"
@@ -195,6 +278,11 @@ const BrandsView = () => {
                             rounded='full'
                             borderWidth={2}
                             borderColor='gray.100'
+                            display={{
+                                base: 'none',
+                                lg: 'inline-flex',
+                            }}
+                            size='sm'
                             icon={<IconPlus size={20} />}
                             onClick={() => setEditingData({
                                 id: Math.random().toString(36).substring(7),
