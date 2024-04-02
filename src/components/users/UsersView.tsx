@@ -8,6 +8,7 @@ import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
 import sortData from "@/helpers/sorting";
+import moment from "moment";
 
 type UsersViewProps = {
     userType: 'admin' | 'creator' | 'shopper';
@@ -18,6 +19,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     const [filteredUsers, setFilteredUsers] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
+    const [filterShoppersByCreatedAt, setFilterShoppersByCreatedAt] = useState<string>('');
 
     const [editingUser, setEditingUser] = useState<any>({});
     const [deletingUser, setDeletingUser] = useState<any>({});
@@ -29,7 +31,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
         setIsLoading(true);
 
         getUsers();
-    }, [sortBy]);
+    }, [sortBy, filterShoppersByCreatedAt]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredUsers(users);
@@ -53,7 +55,32 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             });
 
             const sortedData = sortData(response, sortBy);
-            setUsers(sortedData);
+
+            // Filter by created date
+            if(filterShoppersByCreatedAt === '') setUsers(sortedData);
+            else {
+                let filteredData = [];
+                const dateNow = moment(new Date()).format('YYYY-MM-DD');
+
+                switch(filterShoppersByCreatedAt) {
+                    case 'today':
+                        filteredData = sortedData.filter((user: any) => moment(new Date(user.createdAt)).format('YYYY-MM-DD') === dateNow);
+                        break;
+                    case 'yesterday':
+                        filteredData = sortedData.filter((user: any) => moment(new Date(user.createdAt)).format('YYYY-MM-DD') === moment(new Date()).subtract(1, 'days').format('YYYY-MM-DD'));
+                        break;
+                    case 'this week':
+                        filteredData = sortedData.filter((user: any) => moment(new Date(user?.createdAt)).isBetween(moment(new Date()).startOf('week'), moment(new Date()).endOf('week')));
+                        break;
+                    case 'this month':
+                        filteredData = sortedData.filter((user: any) => moment(new Date(user?.createdAt)).isBetween(moment(new Date()).startOf('month'), moment(new Date()).endOf('month')));
+                        break;
+                    default:
+                        filteredData = sortedData;
+                }
+
+                setUsers(filteredData);
+            }
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -166,6 +193,30 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         lg: 'auto',
                     }}
                 >
+
+                    {/* Created At */}
+                    <Select
+                        display={userType === 'shopper' ? 'block' : 'none'}
+                        variant='outline'
+                        width={{
+                            base: 'full',
+                            lg: '200px',
+                        }}
+                        size='sm'
+                        rounded='full'
+                        bgColor='white'
+                        borderWidth={2}
+                        borderColor='gray.100'
+                        fontWeight='medium'
+                        value={filterShoppersByCreatedAt}
+                        onChange={(event: any) => setFilterShoppersByCreatedAt(event.target.value)}
+                    >
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="this week">This Week</option>
+                        <option value="this month">This Month</option>
+                        <option value=''>All Time</option>
+                    </Select>
 
                     {/* Sorting */}
                     <Select
