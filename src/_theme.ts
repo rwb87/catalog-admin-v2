@@ -1,6 +1,5 @@
 import { defineStyleConfig, extendTheme } from '@chakra-ui/react';
-import type { StyleFunctionProps } from '@chakra-ui/styled-system'
-
+// import type { StyleFunctionProps } from '@chakra-ui/styled-system';
 // const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(menuAnatomy.keys);
 
 const textBlackColor = '#121212';
@@ -66,9 +65,9 @@ const theme = extendTheme({
 		useSystemColorMode: false,
 	},
 	fonts: {
-		body: "Roboto, sans-serif",
-		heading: "Roboto, serif",
-		mono: "Menlo, monospace",
+		body: "Poppins, sans-serif",
+		heading: "Poppins, serif",
+		mono: "Poppins, monospace",
 	},
 	colors: {
 		base: '#FFFFFF',

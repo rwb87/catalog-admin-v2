@@ -20,8 +20,8 @@ export default function FourOhFour() {
                 loading="lazy"
             />
 
-            <Heading mt={4} className="font-secondary">Error 404</Heading>
-            <Heading fontSize='md' className="font-secondary">Looks like you have followed a broken link.</Heading>
+            <Heading mt={4}>Error 404</Heading>
+            <Heading fontSize='md'>Looks like you have followed a broken link.</Heading>
 
             <Box mt={6}>
                 <Button
