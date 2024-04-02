@@ -200,7 +200,7 @@ const ProductsView = () => {
                     <InputGroup
                         width={{
                             base: 'full',
-                            lg: '300px',
+                            lg: '250px',
                         }}
                     >
                         <InputLeftElement
@@ -221,7 +221,7 @@ const ProductsView = () => {
                             variant='outline'
                             width={{
                                 base: 'full',
-                                lg: '300px',
+                                lg: '250px',
                             }}
                             size='sm'
                             rounded='full'

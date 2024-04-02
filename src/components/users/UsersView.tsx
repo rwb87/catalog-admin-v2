@@ -274,7 +274,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     <InputGroup
                         width={{
                             base: 'full',
-                            lg: '300px',
+                            lg: '250px',
                         }}
                     >
                         <InputLeftElement
@@ -295,7 +295,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                             variant='outline'
                             width={{
                                 base: 'full',
-                                lg: '300px',
+                                lg: '250px',
                             }}
                             size='sm'
                             rounded='full'

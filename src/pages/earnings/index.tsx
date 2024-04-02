@@ -130,7 +130,7 @@ const EarningsView = () => {
                         rounded='full'
                         width={{
                             base: 'full',
-                            md: '300px',
+                            lg: '250px',
                         }}
                         size='sm'
                         borderWidth={2}
