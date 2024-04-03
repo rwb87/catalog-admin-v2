@@ -7,7 +7,7 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Flex, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconPhoto, IconTrash, IconUnlink } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -23,6 +23,7 @@ const LooksView = () => {
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
     const [sendingLookDataToManagement, setSendingLookDataToManagement] = useState<any>({});
+    const [sendingAllLookDataToManagement, setSendingAllLookDataToManagement] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -122,6 +123,7 @@ const LooksView = () => {
 
             setEditingData({});
             setSendingLookDataToManagement({});
+            setSendingAllLookDataToManagement(false);
             getData();
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
@@ -147,16 +149,46 @@ const LooksView = () => {
                         message: messageValue,
                     },
                 });
+
+                handleUpdateData({
+                    status: 'in_data_management',
+                    enabled: false,
+                    carouselEnabled: false,
+                }, sendingLookDataToManagement?.id)
             } catch (error: any) {
                 notify('Look sent to management but message could not be sent', 7000);
             }
         }
+    }
 
-        handleUpdateData({
-            status: 'in_data_management',
-            enabled: false,
-            carouselEnabled: false,
-        }, sendingLookDataToManagement?.id)
+    const handleSendAllLookDataToManagement = async () => {
+        const message = document.querySelector('input[name="management-message-for-all"]') as HTMLInputElement;
+        const messageValue: string = message?.value?.trim();
+
+        setIsProcessing(true);
+
+        // Create message
+        if(messageValue !== '') {
+            try {
+                filteredData.forEach(async (item: any) => {
+                    await fetch({
+                        endpoint: `/looks/${item?.id}/messages`,
+                        method: 'POST',
+                        data: {
+                            message: messageValue,
+                        },
+                    });
+
+                    handleUpdateData({
+                        status: 'in_data_management',
+                        enabled: false,
+                        carouselEnabled: false,
+                    }, item?.id);
+                });
+            } catch (error: any) {
+                notify('All submitted looks sent to management but message could not be sent', 7000);
+            }
+        }
     }
 
     const handleDelete = async () => {
@@ -268,6 +300,28 @@ const LooksView = () => {
                         <option value="submitted_for_approval">Submitted for Approval</option>
                         <option value="in_data_management">Live</option>
                     </Select>
+
+                    {/* Send all look data to management */}
+                    {
+                        !isLive && <Button
+                            size='sm'
+                            rounded='full'
+                            backgroundColor='black'
+                            color='white'
+                            _hover={{
+                                backgroundColor: 'blackAlpha.700',
+                            }}
+                            _focusVisible={{
+                                backgroundColor: 'blackAlpha.800',
+                            }}
+                            leftIcon={<img
+                                src="/icons/icon-send-look-to-management.svg"
+                                alt="Change Look"
+                                width={24}
+                            />}
+                            onClick={() => setSendingAllLookDataToManagement(data)}
+                        >Send all to management</Button>
+                    }
                 </Flex>
             </Flex>
 
@@ -319,6 +373,28 @@ const LooksView = () => {
                 onConfirm={handleSendLookDataToManagement}
                 onCancel={() => setSendingLookDataToManagement({})}
             />
+
+            {/* Send all look data to management alert */}
+            <Confirmation
+                isOpen={sendingAllLookDataToManagement}
+                title="Send all look data to management"
+                html={<Input
+                    type="text"
+                    placeholder="Message for management (optional)"
+                    rounded='md'
+                    size='sm'
+                    width='full'
+                    name='management-message-for-all'
+                    autoComplete='off'
+                />}
+                isProcessing={isProcessing}
+                cancelText="Cancel"
+                confirmText="Send"
+                processingConfirmText="Sending..."
+                isDangerous={false}
+                onConfirm={handleSendAllLookDataToManagement}
+                onCancel={() => setSendingAllLookDataToManagement(false)}
+            />
         </Content>
     )
 }
@@ -355,7 +431,7 @@ const LooksTable = ({ data, pagination, products, onPaginate, isLoading, onSendL
                             {
                                 isLive && <>
                                     <Th textAlign='center'>Platform</Th>
-                                    <Th textAlign='center'>Catalog</Th>
+                                    <Th textAlign='center'>Featured</Th>
                                     <Th textAlign='center'>Priority</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                 </>
