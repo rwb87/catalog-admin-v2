@@ -72,9 +72,10 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                             colorScheme="gray"
                             rounded="full"
                             size="sm"
+                            title="First Page"
+                            isDisabled={page === 1}
                             icon={<IconChevronsLeft size={22} />}
                             onClick={() => onPageChange(1)}
-                            isDisabled={page === 1}
                         />
 
                         <IconButton
@@ -83,9 +84,10 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                             colorScheme="gray"
                             rounded="full"
                             size="sm"
+                            title="Previous"
+                            isDisabled={page === 1}
                             icon={<IconChevronLeft size={22} />}
                             onClick={() => onPageChange(page - 1)}
-                            isDisabled={page === 1}
                         />
                     </Flex>
 
@@ -105,6 +107,7 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                                 size="sm"
                                 ml={2}
                                 isActive={page === pageNumber}
+                                title={`Page ${pageNumber}`}
                                 icon={
                                     <Text fontWeight="bold">
                                         {pageNumber === "..." ? "..." : pageNumber}
@@ -143,9 +146,10 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                             colorScheme="gray"
                             rounded="full"
                             size="sm"
+                            title="Next"
+                            isDisabled={page === totalPages}
                             icon={<IconChevronRight size={22} />}
                             onClick={() => onPageChange(page + 1)}
-                            isDisabled={page === totalPages}
                         />
 
                         <IconButton
@@ -154,9 +158,10 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
                             colorScheme="gray"
                             rounded="full"
                             size="sm"
+                            title="Last Page"
+                            isDisabled={page === totalPages}
                             icon={<IconChevronsRight size={22} />}
                             onClick={() => onPageChange(totalPages)}
-                            isDisabled={page === totalPages}
                         />
                     </Flex>
                 </>

@@ -6,8 +6,13 @@ const sortData = (data: any[], sortBy: string) => {
     const order = split[1]?.toString()?.trim()?.toLowerCase();
 
     data.sort((a: any, b: any) => {
-        if(a[sort]?.toString()?.trim() === '' || a[sort] === null) return 1;
-        if(b[sort]?.toString()?.trim() === '' || b[sort] === null) return -1;
+        if(typeof a[sort] === 'string' && typeof b[sort] === 'string') {
+            if(a[sort]?.toString()?.trim() === '' || a[sort] === null) return 1;
+            if(b[sort]?.toString()?.trim() === '' || b[sort] === null) return -1;
+        } else {
+            if(a[sort] === null) return 1;
+            if(b[sort] === null) return -1;
+        }
 
         let aSort = typeof a[sort] === 'string' ? a[sort]?.toLowerCase()?.trim() : a[sort];
         let bSort = typeof b[sort] === 'string' ? b[sort]?.toLowerCase()?.trim() : b[sort];

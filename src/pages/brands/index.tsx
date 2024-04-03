@@ -1,13 +1,14 @@
 import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
+import LookProducts from "@/components/looks/LookProducts";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { IconCamera, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 const BrandsView = () => {
@@ -44,22 +45,45 @@ const BrandsView = () => {
     }, [search, data]);
 
     const getData = async () => {
+        const products = await getProducts();
+
         try {
             const response = await fetch({
                 endpoint: `/brands`,
                 method: 'GET',
             });
 
-            // Sort by createdAt
-            const sortedData = sortData(response, sortBy);
+            // Map products to all brands
+            const mappedData = response?.map((brand: any) => {
+                return {
+                    ...brand,
+                    products: products?.filter((product: any) => product?.brandId === brand?.id),
+                }
+            });
+
+            const sortedData = sortData(mappedData, sortBy);
 
             setData(sortedData);
+            console.log('Brands:', sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
 
         setIsLoading(false);
+    }
+
+    const getProducts = async () => {
+        try {
+            const response = await fetch({
+                endpoint: `/items`,
+                method: 'GET',
+            });
+
+            return response;
+        } catch (error: any) {
+            return [];
+        }
     }
 
     const handleUpdateData = async () => {
@@ -220,6 +244,10 @@ const BrandsView = () => {
                         <optgroup label="Name">
                             <option value='name:asc'>A - Z</option>
                             <option value='name:desc'>Z - A</option>
+                        </optgroup>
+                        <optgroup label="# of Products">
+                            <option value='products.length:desc'>Most Products</option>
+                            <option value='products.length:asc'>Least Products</option>
                         </optgroup>
                         <optgroup label="Creation Date">
                             <option value='createdAt:desc'>Newest First</option>
@@ -433,7 +461,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                             <Th>Name</Th>
                             <Th>Image</Th>
                             <Th textAlign='center'>Website</Th>
-                            <Th textAlign='center'># of Items</Th>
+                            <Th textAlign='center'># of Products</Th>
                             <Th textAlign='center'>Partnership</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='center'>Actions</Th>
@@ -459,60 +487,12 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : reconstructedData.map((item: any) => (
-                                        <Tr key={item?.id}>
-                                            <Td>{item?.name || '-'}</Td>
-                                            <Td>
-                                                {
-                                                    item?.pictureURL
-                                                        ? <Image
-                                                            src={item?.pictureURL}
-                                                            width={28}
-                                                            height='auto'
-                                                            objectFit='cover'
-                                                            alt={item?.name}
-                                                            rounded='md'
-                                                        />
-                                                        : <IconUnlink size={26} />
-                                                }
-                                            </Td>
-                                            <Td textAlign='center'>
-                                                {
-                                                    item?.pageLink
-                                                        ? <a
-                                                            href={['http', 'https'].includes(item?.pageLink?.substr(0, 4))? item?.pageLink : `http://${item?.pageLink}`}
-                                                            target='_blank'
-                                                            style={{ display: 'inline-grid', placeSelf: 'center' }}
-                                                        ><IconWorldWww size={26} strokeWidth={1.2} /></a>
-                                                        : '-'
-                                                }
-                                            </Td>
-                                            <Td textAlign='center'>{item?.items?.length || 0}</Td>
-                                            <Td textAlign='center'>{item?.partnership || '-'}</Td>
-                                            <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                                            <Td textAlign='center' whiteSpace='nowrap'>
-                                                <IconButton
-                                                    aria-label="Edit"
-                                                    variant='ghost'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    icon={<IconEdit size={22} />}
-                                                    onClick={() => onEdit?.(item)}
-                                                />
-
-                                                <IconButton
-                                                    aria-label='Delete'
-                                                    variant='ghost'
-                                                    colorScheme='red'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    ml={4}
-                                                    icon={<IconTrash size={22} />}
-                                                    onClick={() => onDelete?.(item)}
-                                                />
-                                            </Td>
-                                        </Tr>
-                                    ))
+                                    : reconstructedData.map((item: any) => <TableRow
+                                        key={item?.id}
+                                        item={item}
+                                        onEdit={onEdit}
+                                        onDelete={onDelete}
+                                    />)
                         }
                     </Tbody>
                 </Table>
@@ -525,6 +505,109 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                 page={page || 1}
                 setPage={setPage}
             />
+        </>
+    )
+}
+
+type TableRowProps = {
+    item: any,
+    onEdit: (item: any) => void,
+    onDelete: (item: any) => void,
+}
+const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+    const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
+
+    const handleExpandProducts = () => {
+        setIsProductsExpanded(!isProductsExpanded);
+    }
+
+    return (
+        <>
+            <Tr key={item?.id}>
+                <Td>{item?.name || '-'}</Td>
+                <Td>
+                    {
+                        item?.pictureURL
+                            ? <Image
+                                src={item?.pictureURL}
+                                width={28}
+                                height='auto'
+                                objectFit='cover'
+                                alt={item?.name}
+                                rounded='md'
+                            />
+                            : <IconUnlink size={26} />
+                    }
+                </Td>
+                <Td textAlign='center'>
+                    {
+                        item?.pageLink
+                            ? <a
+                                href={['http', 'https'].includes(item?.pageLink?.substr(0, 4))? item?.pageLink : `http://${item?.pageLink}`}
+                                target='_blank'
+                                style={{ display: 'inline-grid', placeSelf: 'center' }}
+                            ><IconWorldWww size={26} strokeWidth={1.2} /></a>
+                            : '-'
+                    }
+                </Td>
+                <Td textAlign='center'>{item?.products?.length || 0}</Td>
+                <Td textAlign='center'>{item?.partnership || 'None'}</Td>
+                <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
+                <Td textAlign='center' whiteSpace='nowrap'>
+                    <IconButton
+                        aria-label="Edit"
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconEdit size={22} />}
+                        onClick={() => onEdit?.(item)}
+                    />
+
+                    <IconButton
+                        aria-label='Delete'
+                        variant='ghost'
+                        colorScheme='red'
+                        rounded='full'
+                        size='sm'
+                        ml={4}
+                        icon={<IconTrash size={22} />}
+                        onClick={() => onDelete?.(item)}
+                    />
+                    <IconButton
+                        aria-label='Expand'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        backgroundColor='black'
+                        color='white'
+                        ml={4}
+                        _hover={{
+                            backgroundColor: 'blackAlpha.700',
+                        }}
+                        _focusVisible={{
+                            backgroundColor: 'blackAlpha.800',
+                        }}
+                        icon={<IconChevronDown
+                            size={22}
+                            style={{
+                                transition: 'transform 0.15s',
+                                transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                            }}
+                        />}
+                        onClick={handleExpandProducts}
+                    />
+                </Td>
+            </Tr>
+
+            {/* Products */}
+            <Tr
+                display={isProductsExpanded ? 'table-row' : 'none'}
+                bgColor='gray.50'
+            >
+                <Td colSpan={20}>
+                    <LookProducts products={item?.products} />
+                </Td>
+            </Tr>
         </>
     )
 }
