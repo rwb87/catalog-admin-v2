@@ -1,16 +1,46 @@
 import { Button, Flex, IconButton, Image, Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconPlus, IconTrash, IconWorldWww } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash, IconWorldWww } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
 type LookProductsProps = {
     products: any;
+    onSave: (products: any) => void;
 }
 const LookProducts = ({ products }: LookProductsProps) => {
+    const [editedProducts, setEditedProducts] = useState<any>(products);
+
+    useEffect(() => {
+        setEditedProducts(products);
+    }, [products]);
+
+    const handleAddNew = () => {}
+
+    const handleRemove = (index: number) => {
+        const newLinks = [...editedProducts];
+        newLinks.splice(index, 1);
+        setEditedProducts(newLinks);
+    }
+
+    const handleMoveUp = (index: number) => {
+        const newLinks = [...editedProducts];
+        const [removed] = newLinks.splice(index, 1);
+        newLinks.splice(index - 1, 0, removed);
+        setEditedProducts(newLinks);
+    }
+
+    const handleMoveDown = (index: number) => {
+        const newLinks = [...editedProducts];
+        const [removed] = newLinks.splice(index, 1);
+        newLinks.splice(index + 1, 0, removed);
+        setEditedProducts(newLinks);
+    }
+
     return (
         <>
             <Table>
                 <Tbody>
                     {
-                        products?.map((tag: any, index: number) => <Tr key={index}>
+                        editedProducts?.map((tag: any, index: number) => <Tr key={index}>
                             <Td width='30px' textAlign='left'>
                                 <IconCornerDownRight size={20} />
                             </Td>
@@ -61,6 +91,7 @@ const LookProducts = ({ products }: LookProductsProps) => {
                                     rounded='full'
                                     size='sm'
                                     icon={<IconArrowUp size={22} />}
+                                    onClick={() => handleMoveUp(index)}
                                 />
 
                                 <IconButton
@@ -71,6 +102,7 @@ const LookProducts = ({ products }: LookProductsProps) => {
                                     size='sm'
                                     ml={4}
                                     icon={<IconArrowDown size={22} />}
+                                    onClick={() => handleMoveDown(index)}
                                 />
 
                                 <IconButton
@@ -81,6 +113,7 @@ const LookProducts = ({ products }: LookProductsProps) => {
                                     size='sm'
                                     ml={4}
                                     icon={<IconTrash size={22} />}
+                                    onClick={() => handleRemove(index)}
                                 />
                             </Td>
                         </Tr>
@@ -95,13 +128,15 @@ const LookProducts = ({ products }: LookProductsProps) => {
                     colorScheme='green'
                     size='sm'
                     leftIcon={<IconPlus size={20} />}
-                >Add Product</Button>
+                    onClick={handleAddNew}
+                >Add</Button>
 
                 <Button
                     variant='solid'
                     colorScheme='green'
                     size='sm'
-                >Save Products List</Button>
+                    leftIcon={<IconDeviceFloppy size={20} />}
+                >Save</Button>
             </Flex>
         </>
     )

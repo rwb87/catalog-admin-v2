@@ -64,7 +64,6 @@ const BrandsView = () => {
             const sortedData = sortData(mappedData, sortBy);
 
             setData(sortedData);
-            console.log('Brands:', sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -605,7 +604,10 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 bgColor='gray.50'
             >
                 <Td colSpan={20}>
-                    <LookProducts products={item?.products} />
+                    <LookProducts
+                        products={item?.products}
+                        onSave={(products: any) => console.log(products)}
+                    />
                 </Td>
             </Tr>
         </>

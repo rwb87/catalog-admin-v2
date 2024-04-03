@@ -1,13 +1,14 @@
 import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
+import ProductLinks from "@/components/products/ProductLinks";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLoader2, IconSearch, IconTrash, IconWorldWww } from "@tabler/icons-react";
+import { IconCamera, IconEdit, IconLink, IconLoader2, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -122,12 +123,12 @@ const ProductsView = () => {
             <Flex
                 direction={{
                     base: 'column',
-                    lg: 'row',
+                    xl: 'row',
                 }}
                 justifyContent='space-between'
                 alignItems={{
                     base: 'flex-start',
-                    lg: 'center',
+                    xl: 'center',
                 }}
                 mb={{
                     base: 4,
@@ -138,7 +139,106 @@ const ProductsView = () => {
                 width='full'
             >
                 {/* Page Heading */}
-                <h1 className="page-heading">{pageName}</h1>
+                <Flex
+                    direction={{
+                        base: 'column',
+                        xl: 'row',
+                    }}
+                    alignItems={{
+                        base: 'flex-start',
+                        xl: 'center',
+                    }}
+                    width={{
+                        base: 'full',
+                        xl: 'auto',
+                    }}
+                    gap={2}
+                >
+                    <h1 className="page-heading">{pageName}</h1>
+
+                    <Flex
+                        width='full'
+                        gap={2}
+                    >
+                        {/* Link Type */}
+                        <Select
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                xl: '120px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            fontWeight='medium'
+                        >
+                            <option value='GAAN'>GAAN</option>
+                            <option value='creator-affiliate'>⭐ Creator Affiliate</option>
+                            <option value='Basic'>Basic</option>
+                            <option value='None'>None</option>
+                        </Select>
+
+                        {/* Link Class */}
+                        <Select
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                xl: '120px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            fontWeight='medium'
+                        >
+                            <option value='alpha'>👑 Alpha</option>
+                            <option value='backup'>Backup</option>
+                        </Select>
+                    </Flex>
+
+                    {/* Clickouts */}
+                    <Flex
+                        alignItems='center'
+                        gap={2}
+                        width={{
+                            base: 'full',
+                            xl: 'auto',
+                        }}
+                    >
+                        <Select
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                xl: '120px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            fontWeight='medium'
+                        >
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="this week">This Week</option>
+                            <option value="this month">This Month</option>
+                            <option value=''>All Time</option>
+                        </Select>
+
+                        <Text
+                            color='green.500'
+                            fontWeight='bold'
+                            fontSize={{
+                                base: '10px',
+                                '2xl': '12px',
+                            }}
+                            whiteSpace='nowrap'
+                        >Clickouts: 0</Text>
+                    </Flex>
+                </Flex>
 
                 {/* Search and Actions */}
                 <Flex
@@ -154,7 +254,7 @@ const ProductsView = () => {
                     }}
                     width={{
                         base: 'full',
-                        lg: 'auto',
+                        xl: 'auto',
                     }}
                 >
 
@@ -163,7 +263,7 @@ const ProductsView = () => {
                         variant='outline'
                         width={{
                             base: 'full',
-                            lg: '200px',
+                            xl: '200px',
                         }}
                         size='sm'
                         rounded='full'
@@ -200,7 +300,7 @@ const ProductsView = () => {
                     <InputGroup
                         width={{
                             base: 'full',
-                            lg: '250px',
+                            xl: '250px',
                         }}
                     >
                         <InputLeftElement
@@ -219,10 +319,7 @@ const ProductsView = () => {
                             type='search'
                             placeholder='Search'
                             variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
+                            width='full'
                             size='sm'
                             rounded='full'
                             bgColor='white'
@@ -311,7 +408,7 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                             <Th>Brand</Th>
                             <Th>Name</Th>
                             <Th>Style</Th>
-                            <Th textAlign='center'>Link</Th>
+                            <Th textAlign='center'>Links</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='center'>Actions</Th>
@@ -337,77 +434,12 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : reconstructedData.map((item: any) => (
-                                        <Tr key={item?.id}>
-                                            <Td>
-                                                {
-                                                    item?.pictureURL
-                                                        ? <Image
-                                                            src={item?.pictureURL}
-                                                            width={28}
-                                                            height='auto'
-                                                            objectFit='cover'
-                                                            alt={item?.name}
-                                                            loading="lazy"
-                                                            rounded='md'
-                                                        />
-                                                        : '-'
-                                                }
-                                            </Td>
-                                            <Td width={40}>{item?.brand?.name || '-'}</Td>
-                                            <Td>{item?.name || '-'}</Td>
-                                            <Td>{item?.style || '-'}</Td>
-                                            <Td textAlign='center'>
-                                                {
-                                                    item?.link
-                                                        ? <a
-                                                            href={['http', 'https'].includes(item?.link?.substr(0, 4))? item?.link : `http://${item?.link}`}
-                                                            target='_blank'
-                                                            style={{ display: 'inline-grid', placeSelf: 'center' }}
-                                                        ><IconWorldWww size={26} strokeWidth={1.2} /></a>
-                                                        : '-'
-                                                }
-                                            </Td>
-                                            <Td textAlign='center'>
-                                                {/* {
-                                                    item?.dealPrice
-                                                        ? <>
-                                                            <Text as='span' fontWeight='bold'>${parseFloat(item?.dealPrice).toFixed(2)}</Text>
-                                                            <br />
-                                                            <Text as='span' textDecoration='line-through' opacity={0.5}>${parseFloat(item?.price).toFixed(2)}</Text>
-                                                            <Tag size='sm' ml={2} colorScheme="teal">{parseInt(item?.dealPercent || 0)}%</Tag>
-                                                        </>
-                                                        : item?.price
-                                                            ? <Text as='span'>${parseFloat(item?.price).toFixed(2)}</Text>
-                                                            : '-'
-                                                } */}
-                                                <Text whiteSpace='nowrap'>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
-                                                { item?.dealPrice ? <Text whiteSpace='nowrap'>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
-                                            </Td>
-                                            <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                                            <Td textAlign='center' whiteSpace='nowrap'>
-                                                <IconButton
-                                                    aria-label="Edit"
-                                                    variant='ghost'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    icon={<IconEdit size={22} />}
-                                                    onClick={() => onEdit(item)}
-                                                />
-
-                                                <IconButton
-                                                    aria-label='Delete'
-                                                    variant='ghost'
-                                                    colorScheme='red'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    ml={4}
-                                                    icon={<IconTrash size={22} />}
-                                                    onClick={() => onDelete(item)}
-                                                />
-                                            </Td>
-                                        </Tr>
-                                    ))
+                                    : reconstructedData.map((item: any) => <TableRow
+                                        key={item?.id}
+                                        item={item}
+                                        onEdit={onEdit}
+                                        onDelete={onDelete}
+                                    />)
                         }
                     </Tbody>
                 </Table>
@@ -420,6 +452,126 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                 page={page || 1}
                 setPage={setPage}
             />
+        </>
+    )
+}
+
+type TableRowProps = {
+    item: any,
+    onEdit: (id: string) => void,
+    onDelete: (id: string) => void,
+}
+const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+    const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
+
+    return (
+        <>
+            <Tr key={item?.id}>
+                <Td>
+                    {
+                        item?.pictureURL
+                            ? <Image
+                                src={item?.pictureURL}
+                                width={28}
+                                height='auto'
+                                objectFit='cover'
+                                alt={item?.name}
+                                loading="lazy"
+                                rounded='md'
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
+                            />
+                            : item?.name || '-'
+                    }
+                </Td>
+                <Td width={40}>
+                    {
+                        item?.brand?.pictureURL
+                            ? <Image
+                                src={item?.brand?.pictureURL}
+                                width={28}
+                                height='auto'
+                                objectFit='cover'
+                                alt={item?.brand?.name}
+                                loading="lazy"
+                                rounded='md'
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
+                            />
+                            : item?.brand?.name || '-'
+                    }
+                </Td>
+                <Td>{item?.name || '-'}</Td>
+                <Td>{item?.style || '-'}</Td>
+                <Td textAlign='center'>
+                    {
+                        item?.link
+                            ? <IconButton
+                                aria-label='View Links'
+                                variant='ghost'
+                                rounded='full'
+                                size='sm'
+                                icon={<IconLink size={22} />}
+                                onClick={() => setIsLinksExpanded(!isLinksExpanded)}
+                            />
+                            : '-'
+                    }
+                </Td>
+                <Td textAlign='center'>
+                    {/* {
+                        item?.dealPrice
+                            ? <>
+                                <Text as='span' fontWeight='bold'>${parseFloat(item?.dealPrice).toFixed(2)}</Text>
+                                <br />
+                                <Text as='span' textDecoration='line-through' opacity={0.5}>${parseFloat(item?.price).toFixed(2)}</Text>
+                                <Tag size='sm' ml={2} colorScheme="teal">{parseInt(item?.dealPercent || 0)}%</Tag>
+                            </>
+                            : item?.price
+                                ? <Text as='span'>${parseFloat(item?.price).toFixed(2)}</Text>
+                                : '-'
+                    } */}
+                    <Text whiteSpace='nowrap'>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
+                    { item?.dealPrice ? <Text whiteSpace='nowrap'>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
+                </Td>
+                <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
+                <Td textAlign='center' whiteSpace='nowrap'>
+                    <IconButton
+                        aria-label="Edit"
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconEdit size={22} />}
+                        onClick={() => onEdit(item)}
+                    />
+
+                    <IconButton
+                        aria-label='Delete'
+                        variant='ghost'
+                        colorScheme='red'
+                        rounded='full'
+                        size='sm'
+                        ml={4}
+                        icon={<IconTrash size={22} />}
+                        onClick={() => onDelete(item)}
+                    />
+                </Td>
+            </Tr>
+
+            <Tr
+                display={isLinksExpanded ? 'table-row' : 'none'}
+                bgColor='gray.50'
+            >
+                <Td colSpan={20}>
+                    <ProductLinks
+                        links={(item?.links ?? [item?.link]) || []}
+                        onSave={(links: any) => console.log(links)}
+                    />
+                </Td>
+            </Tr>
         </>
     )
 }
