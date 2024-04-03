@@ -133,6 +133,7 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
 
     return (
         <Box
+            id='body-container'
             flex={1}
             overflowY='auto'
             overflowX='hidden'

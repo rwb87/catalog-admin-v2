@@ -12,7 +12,14 @@ const Pagination = ({ total, limit, page, setPage }: PaginationProps) => {
     const totalPages = Math.ceil(total / limit);
 
     const onPageChange = (pageNumber: string | number) => {
+        const $bodyContainer = document.getElementById('body-container');
+
         setPage(parseInt(pageNumber.toString()));
+
+        if($bodyContainer) $bodyContainer?.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
 
     const getPageNumbers = () => {
