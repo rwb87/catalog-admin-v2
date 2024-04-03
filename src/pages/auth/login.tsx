@@ -15,13 +15,18 @@ const Login = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [payload, setPayload] = useState({
         email: '',
-        password: ''
+        password: '',
+        honeypot: ''
     });
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         if (isProcessing) return;
+
+        if(payload?.honeypot !== '') return notify('Honeypot trap triggered', 3000);
+
+        console.log(payload);
 
         if (payload?.email?.trim() === '') return notify('Email is required', 3000);
         if (payload?.password?.trim() === '') return notify('Password is required', 3000);
@@ -103,6 +108,19 @@ const Login = () => {
                             onChange={(e) => setPayload({ ...payload, password: e.target.value })}
                         />
                     </FormControl>
+
+                    <input
+                        type='text'
+                        autoComplete='off'
+                        name='honeypot'
+                        style={{
+                            opacity: 0,
+                            position: 'absolute',
+                            pointerEvents: 'none',
+                        }}
+                        value={payload.honeypot}
+                        onChange={(e) => setPayload({ ...payload, honeypot: e.target.value })}
+                    />
 
                     {/* Submit */}
                     <Button
