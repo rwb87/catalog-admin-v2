@@ -7,7 +7,7 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Button, Divider, Flex, Grid, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
+import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash, IconUnlink } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -505,7 +505,10 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         onUpdate({ photos: list }, item?.id);
                         setIsImagesExpanded(false);
                     }}
-                    onCancel={() => setIsImagesExpanded(false)}
+                    onCancel={() => {
+                        setIsImagesExpanded(false)
+                        setImages([]);
+                    }}
                 />
             </Box>
 

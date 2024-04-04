@@ -30,7 +30,7 @@ const LooksView = () => {
     const [pagination, setPagination] = useState({
         page: 1,
         offset: 0,
-        limit: 15,
+        limit: 50,
         total: 0,
     });
 
@@ -685,7 +685,10 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                             onUpdate({ photos: list }, item?.id);
                             setIsImagesExpanded(false);
                         }}
-                        onCancel={() => setIsImagesExpanded(false)}
+                        onCancel={() => {
+                            setIsImagesExpanded(false)
+                            setImages([]);
+                        }}
                     />
                 </Td>
             </Tr>
@@ -696,7 +699,10 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                 bgColor='gray.50'
             >
                 <Td colSpan={20}>
-                    <LookProducts products={item?.tags} />
+                    <LookProducts
+                        products={item?.tags}
+                        onSave={(list: any) => console.log(list)}
+                    />
                 </Td>
             </Tr>
         </>

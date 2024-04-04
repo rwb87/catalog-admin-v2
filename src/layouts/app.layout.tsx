@@ -79,10 +79,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         }
 
         window?.addEventListener('set:active-page', onActivePageChange);
-
-        return () => {
-            window?.removeEventListener('set:active-page', onActivePageChange);
-        }
     }, []);
 
     return (
@@ -102,11 +98,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             >
                 {
                     sidebarItems?.find((item: any) => location?.pathname === item?.link)
-                    ? <Sidebar
-                        sidebarItems={sidebarItems}
-                        activePage={activePage}
-                    />
-                    : null
+                        ? <Sidebar
+                            sidebarItems={sidebarItems}
+                            activePage={activePage}
+                        />
+                        : null
                 }
             </Box>
 

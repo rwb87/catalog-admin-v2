@@ -107,7 +107,7 @@ const DragDropResetPosition = ({ images, onSave, onCancel }: DragDropResetPositi
                 {
                     list.map((image: any, index: number) => (
                         <Box
-                            key={index}
+                            key={image?.id ?? index}
                             data-position={index}
                             height={28}
                             width={20}
