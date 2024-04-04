@@ -5,6 +5,7 @@ import { useUi, useUser } from "@/_store";
 import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
+import Lightcase from "@/components/Lightcase";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -71,12 +72,16 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     ]), []);
 
     useEffect(() => {
-        window?.addEventListener('set:active-page', (event: any) => {
-            setActivePage(event.detail.activePage);
-        });
+        const onActivePageChange = (event: any) => {
+            if(!event?.detail?.activePage) return;
+
+            setActivePage(event?.detail?.activePage);
+        }
+
+        window?.addEventListener('set:active-page', onActivePageChange);
 
         return () => {
-            window?.removeEventListener('set:active-page', () => {});
+            window?.removeEventListener('set:active-page', onActivePageChange);
         }
     }, []);
 
@@ -120,6 +125,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
             {/* Body */}
             <Box flex={1} height='100dvh'>{children}</Box>
+
+            {/* Lightcase */}
+            <Lightcase />
         </Box>
     )
 }

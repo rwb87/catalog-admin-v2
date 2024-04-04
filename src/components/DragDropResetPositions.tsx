@@ -86,6 +86,10 @@ const DragDropResetPosition = ({ images, onSave, onCancel }: DragDropResetPositi
         onSave(list);
     }
 
+    const handleOnOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
+
     return (
         <Flex
             direction='row'
@@ -105,15 +109,16 @@ const DragDropResetPosition = ({ images, onSave, onCancel }: DragDropResetPositi
                         <Box
                             key={index}
                             data-position={index}
-                            cursor={dragAndDrop.isDragging ? 'grabbing' : 'grab'}
                             height={28}
                             width={20}
+                            transform={dragAndDrop.isDragging && dragAndDrop?.draggedFrom === index ? 'scale(1.10)' : 'scale(1)'}
+                            transition='all .2s ease-in-out'
+                            cursor={dragAndDrop.isDragging ? 'grabbing' : 'grab'}
                             draggable="true"
                             onDragStart={onDragStart}
                             onDragOver={onDragOver}
                             onDrop={onDrop}
-                            transform={dragAndDrop.isDragging && dragAndDrop?.draggedFrom === index ? 'scale(1.10)' : 'scale(1)'}
-                            transition='all .2s ease-in-out'
+                            onClick={() => handleOnOpenImage(image?.link)}
                         >
                             <Image
                                 src={image?.link}

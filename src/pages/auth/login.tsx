@@ -26,8 +26,6 @@ const Login = () => {
 
         if(payload?.honeypot !== '') return notify('Honeypot trap triggered', 3000);
 
-        console.log(payload);
-
         if (payload?.email?.trim() === '') return notify('Email is required', 3000);
         if (payload?.password?.trim() === '') return notify('Password is required', 3000);
 
