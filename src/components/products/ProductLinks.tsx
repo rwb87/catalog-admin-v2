@@ -92,11 +92,24 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     <option value='backup'>Backup</option>
                                 </Select>
                             </Td>
-                            <Td>
+                            <Td maxWidth='200px'>
                                 <Input
                                     type="number"
                                     step="0.01"
                                     placeholder='Price'
+                                    variant='solid'
+                                    borderWidth={1}
+                                    borderColor='gray.100'
+                                    px={6}
+                                    size='sm'
+                                    rounded='full'
+                                />
+                            </Td>
+                            <Td maxWidth='200px'>
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder='Discount Price'
                                     variant='solid'
                                     borderWidth={1}
                                     borderColor='gray.100'

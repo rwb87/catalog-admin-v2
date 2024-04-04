@@ -7,7 +7,7 @@ import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconCamera, IconEdit, IconLink, IconLoader2, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -471,20 +471,52 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 <Td>
                     {
                         item?.pictureURL
-                            ? <Image
-                                src={item?.pictureURL}
+                            ? <Box
+                                position='relative'
+                                textAlign='center'
                                 width={28}
-                                height='auto'
-                                objectFit='cover'
-                                alt={item?.name}
-                                loading="lazy"
-                                rounded='md'
-                                onError={(e: any) => {
-                                    e.target.src = '/images/cover-placeholder.webp';
-                                    e.target.onerror = null;
-                                }}
-                            />
-                            : item?.name || '-'
+                            >
+                                <Image
+                                    src={item?.pictureURL}
+                                    width={28}
+                                    height='auto'
+                                    objectFit='cover'
+                                    alt={item?.name}
+                                    loading="lazy"
+                                    rounded='md'
+                                    onError={(e: any) => {
+                                        e.target.src = '/images/cover-placeholder.webp';
+                                        e.target.onerror = null;
+                                    }}
+                                />
+
+                                {
+                                    item?.dealPrice && item?.dealPercent && item?.price !== item?.dealPrice
+                                        ? <Tag
+                                            position='absolute'
+                                            top='0'
+                                            right='0'
+                                            bgColor='black'
+                                            color='white'
+                                            rounded='md'
+                                            size='sm'
+                                        >{parseInt(item?.dealPercent || 0)}%</Tag>
+                                        : null
+                                }
+                            </Box>
+                            : <>
+                                <Text>{item?.name || '-'}</Text>
+                                {
+                                    item?.dealPrice && item?.dealPercent && item?.price !== item?.dealPrice
+                                        ? <Tag
+                                            bgColor='black'
+                                            color='white'
+                                            rounded='md'
+                                            size='sm'
+                                        >{parseInt(item?.dealPercent || 0)}%</Tag>
+                                        : null
+                                }
+                            </>
                     }
                 </Td>
                 <Td width={40}>
@@ -562,6 +594,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 </Td>
             </Tr>
 
+            {/* Product Links */}
             <Tr
                 display={isLinksExpanded ? 'table-row' : 'none'}
                 bgColor='gray.50'
