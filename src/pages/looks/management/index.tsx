@@ -28,7 +28,7 @@ const LooksManagementView = () => {
     const [pagination, setPagination] = useState({
         page: 1,
         offset: 0,
-        limit: 15,
+        limit: 50,
         total: 0,
     });
 

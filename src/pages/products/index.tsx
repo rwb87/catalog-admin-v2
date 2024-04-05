@@ -384,7 +384,7 @@ type ProductsTableProps = {
 export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
-        limit: 15,
+        limit: 50,
     }
     const [page, setPage] = useState<number>(1);
 

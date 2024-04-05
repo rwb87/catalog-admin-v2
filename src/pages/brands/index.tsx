@@ -436,7 +436,7 @@ type BrandsTableProps = {
 const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
-        limit: 15,
+        limit: 50,
     }
     const [page, setPage] = useState<number>(1);
 

@@ -205,7 +205,7 @@ type EarningsTableProps = {
 const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
-        limit: 15,
+        limit: 50,
     }
     const [page, setPage] = useState<number>(1);
 
