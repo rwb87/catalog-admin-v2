@@ -273,16 +273,16 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         {
                             userType === 'creator' && <>
                                 <optgroup label="Looks Count">
-                                    <option value='looksCount:desc'>Low - High</option>
-                                    <option value='looksCount:asc'>High - Low</option>
+                                    <option value='looksCount:asc'>Low - High</option>
+                                    <option value='looksCount:desc'>High - Low</option>
                                 </optgroup>
                                 <optgroup label="Earning Amount">
-                                    <option value='currentEarnings:desc'>$0 - $9+</option>
-                                    <option value='currentEarnings:asc'>+$9 - $0</option>
+                                    <option value='currentEarnings:asc'>$0 - $9+</option>
+                                    <option value='currentEarnings:desc'>+$9 - $0</option>
                                 </optgroup>
                                 <optgroup label="Pending Amount">
-                                    <option value='currentPending:desc'>$0 - $9+</option>
-                                    <option value='currentPending:asc'>+$9 - $0</option>
+                                    <option value='currentPending:asc'>$0 - $9+</option>
+                                    <option value='currentPending:desc'>+$9 - $0</option>
                                 </optgroup>
                             </>
                         }
