@@ -43,23 +43,33 @@ const UsersTable = (props: UsersTableProps) => {
                 >
                     <Thead>
                         <Tr>
-                            <Th>Username</Th>
+                            <Th textTransform='capitalize'>{userType}</Th>
                             { userType !== 'admin' && <Th>SSO</Th> }
                             <Th>Email</Th>
                             <Th>Created At</Th>
                             <Th>Gender</Th>
                             {
-                                userType === 'creator' && <>
+                                userType !== 'admin' && <>
                                     <Th>Location</Th>
                                     <Th textAlign='center'>Height</Th>
+                                </>
+                            }
+                            {
+                                userType === 'creator' && <>
                                     <Th textAlign='center'>Looks</Th>
-                                    {/* <Th>Venmo</Th> */}
                                     <Th textAlign='center' color='blue.500'>Incoming <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Incoming <br /> Clickouts</Th>
+                                </>
+                            }
+                            {
+                                userType !== 'admin' && <>
                                     <Th textAlign='center' color='blue.500'>Outgoing <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Outgoing <br /> Clickouts</Th>
+                                </>
+                            }
+                            {
+                                userType === 'creator' && <>
                                     <Th textAlign='center'>Earnings</Th>
-                                    {/* <Th textAlign='center'>Pending</Th> */}
                                 </>
                             }
                             {
@@ -95,14 +105,12 @@ const UsersTable = (props: UsersTableProps) => {
                                         <Tr key={user?.id}>
                                             <Td>
                                                 <Flex alignItems='center'>
-                                                    {
-                                                        userType === 'admin' && <Avatar
-                                                            size='sm'
-                                                            mr={2}
-                                                            name={user?.username}
-                                                            src={user?.pictureURL}
-                                                        />
-                                                    }
+                                                    <Avatar
+                                                        size='sm'
+                                                        mr={2}
+                                                        name={user?.username}
+                                                        src={user?.pictureURL}
+                                                    />
                                                     {user?.username || '-'}
                                                 </Flex>
                                             </Td>
@@ -137,15 +145,26 @@ const UsersTable = (props: UsersTableProps) => {
                                             <Td minWidth='160px' maxWidth='160px'>{formatDateTime(user?.createdAt, true)}</Td>
                                             <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                             {
-                                                userType === 'creator' && <>
-                                                    <Td>{user?.location || '-'}</Td>
+                                                userType !== 'admin' && <>
+                                                    <Td textTransform='capitalize'>{user?.location || '-'}</Td>
                                                     <Td textAlign='center'>{user?.height || '-'}</Td>
+                                                </>
+                                            }
+                                            {
+                                                userType === 'creator' && <>
                                                     <Td textAlign='center'>{user?.looksCount || 0}</Td>
-                                                    {/* <Td>{user?.venmoHandle || '-'}</Td> */}
                                                     <Td textAlign='center' color='blue.500'>{user?.incomingDiscoversCount || 0}</Td>
                                                     <Td textAlign='center' color='green.500'>{user?.incomingClickoutsCount || 0}</Td>
+                                                </>
+                                            }
+                                            {
+                                                userType !== 'admin' && <>
                                                     <Td textAlign='center' color='blue.500'>{user?.outgoingDiscoversCount || 0}</Td>
                                                     <Td textAlign='center' color='green.500'>{user?.outgoingClickoutsCount || 0}</Td>
+                                                </>
+                                            }
+                                            {
+                                                userType === 'creator' && <>
                                                     <Td textAlign='center'>
                                                         <Text
                                                             borderWidth={2}
@@ -157,7 +176,6 @@ const UsersTable = (props: UsersTableProps) => {
                                                             bgColor='white'
                                                         >${parseFloat(user?.currentEarnings).toFixed(2) || 0}</Text>
                                                     </Td>
-                                                    {/* <Td textAlign='center'>${parseFloat(user?.currentPending).toFixed(2) || 0}</Td> */}
                                                 </>
                                             }
                                             {
