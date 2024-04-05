@@ -1,7 +1,7 @@
 import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
-import LookProducts from "@/components/looks/LookProducts";
+import BrandProducts from "@/components/brands/BrandProducts";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
@@ -63,6 +63,7 @@ const BrandsView = () => {
 
             const sortedData = sortData(mappedData, sortBy);
 
+            console.log(sortedData);
             setData(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
@@ -182,6 +183,21 @@ const BrandsView = () => {
                     gap={2}
                 >
                     <h1 className="page-heading">Brands</h1>
+
+                    <Box
+                        display={{
+                            base: 'none',
+                            lg: 'contents',
+                        }}
+                        fontWeight='bold'
+                        fontSize={{
+                            base: '10px',
+                            '2xl': '12px',
+                        }}
+                        whiteSpace='break-spaces'
+                    >
+                        <Text ml={2} color='green.500'>Clickouts: 0</Text>
+                    </Box>
 
                     {/* Create button for mobile */}
                     <IconButton
@@ -604,7 +620,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 bgColor='gray.50'
             >
                 <Td colSpan={20}>
-                    <LookProducts
+                    <BrandProducts
                         products={item?.products}
                         onSave={(products: any) => console.log(products)}
                     />

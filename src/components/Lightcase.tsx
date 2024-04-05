@@ -1,12 +1,14 @@
 import { Box, IconButton, Image } from "@chakra-ui/react"
 import { IconLoader2, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { MdBrokenImage } from "react-icons/md";
 
 const Lightcase = () => {
     const [lightcase, setLightcase] = useState<any>({
         open: false,
         isLoading: true,
         src: null,
+        error: false,
     });
 
     useEffect(() => {
@@ -17,6 +19,7 @@ const Lightcase = () => {
                 open: true,
                 isLoading: true,
                 src: event?.detail?.image,
+                error: false,
             });
         }
 
@@ -32,6 +35,7 @@ const Lightcase = () => {
             open: false,
             isLoading: true,
             src: null,
+            error: false,
         });
     }
 
@@ -65,17 +69,18 @@ const Lightcase = () => {
             />
 
             <Box
-                display={lightcase.isLoading ? 'grid' : 'none'}
+                display={lightcase.isLoading || lightcase.error ? 'grid' : 'none'}
                 placeSelf='center'
                 position='absolute'
                 zIndex={1001}
-                className="animate-spin"
+                className={!lightcase?.error ? "animate-spin" : ""}
                 onClick={handleCloseLightcase}
             >
-                <IconLoader2
-                    size={64}
-                    color='white'
-                />
+                {
+                    lightcase?.error
+                        ? <MdBrokenImage size={64} color='white' />
+                        : <IconLoader2 size={64} color='white' />
+                }
             </Box>
 
             <Image
@@ -87,8 +92,15 @@ const Lightcase = () => {
                 maxHeight='calc(100dvh - 2rem)'
                 objectFit='contain'
                 rounded='10px'
-                display={lightcase.isLoading ? 'none' : 'block'}
+                display={lightcase.isLoading || lightcase.error ? 'none' : 'block'}
                 onLoad={() => setLightcase({ ...lightcase, isLoading: false })}
+                onError={() => {
+                    setLightcase({
+                        ...lightcase,
+                        isLoading: false,
+                        error: true,
+                    });
+                }}
             />
         </Box>
     )
