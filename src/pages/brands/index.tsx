@@ -536,6 +536,10 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
         setIsProductsExpanded(!isProductsExpanded);
     }
 
+    const handleOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
+
     return (
         <>
             <Tr key={item?.id}>
@@ -550,6 +554,13 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                 objectFit='cover'
                                 alt={item?.name}
                                 rounded='md'
+                                cursor='pointer'
+                                loading="lazy"
+                                onClick={() => handleOpenImage(item?.pictureURL)}
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
                             />
                             : <IconUnlink size={26} />
                     }

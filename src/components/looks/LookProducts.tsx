@@ -35,6 +35,10 @@ const LookProducts = ({ products }: LookProductsProps) => {
         setEditedProducts(newLinks);
     }
 
+    const handleOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
+
     return (
         <>
             <Table>
@@ -55,7 +59,9 @@ const LookProducts = ({ products }: LookProductsProps) => {
                                             objectFit='cover'
                                             rounded='md'
                                             alt={tag?.item?.name}
+                                            cursor='pointer'
                                             loading="lazy"
+                                            onClick={() => handleOpenImage(tag?.item?.pictureURL)}
                                             onError={(e: any) => {
                                                 e.target.src = '/images/cover-placeholder.webp';
                                                 e.target.onerror = null;

@@ -465,6 +465,10 @@ type TableRowProps = {
 const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
     const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
 
+    const handleOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
+
     return (
         <>
             <Tr key={item?.id}>
@@ -482,8 +486,10 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                     height='auto'
                                     objectFit='cover'
                                     alt={item?.name}
-                                    loading="lazy"
                                     rounded='md'
+                                    cursor='pointer'
+                                    loading="lazy"
+                                    onClick={() => handleOpenImage(item?.pictureURL)}
                                     onError={(e: any) => {
                                         e.target.src = '/images/cover-placeholder.webp';
                                         e.target.onerror = null;

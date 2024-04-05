@@ -352,6 +352,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                                     alt={item?.name}
                                     cursor='pointer'
                                     rounded='md'
+                                    loading="lazy"
                                     onClick={handleExpandImages}
                                 />
 
@@ -514,11 +515,14 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
 
             {/* Products */}
             <Box
-                bgColor='gray.100'
+                bgColor='gray.50'
                 display={isProductsExpanded ? 'block' : 'none'}
                 p={4}
             >
-                <LookProducts products={item?.tags} />
+                <LookProducts
+                    products={item?.tags}
+                    onSave={(list: any) => console.log(list)}
+                />
             </Box>
         </Box>
     )

@@ -543,8 +543,9 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                                     height='full'
                                     objectFit='cover'
                                     alt={item?.name}
-                                    cursor='pointer'
                                     rounded='md'
+                                    cursor='pointer'
+                                    loading="lazy"
                                     onClick={handleExpandImages}
                                 />
 
