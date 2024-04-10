@@ -9,7 +9,7 @@ import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconCamera, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const BrandsView = () => {
     const brandImageRef = useRef<any>(null);
@@ -43,6 +43,12 @@ const BrandsView = () => {
             })
         );
     }, [search, data]);
+
+    const totalClickouts = useMemo(() => {
+        return data?.reduce((total: number, brand: any) => {
+            return total + (parseInt(brand?.clickouts) || 0);
+        }, 0);
+    }, [data]);
 
     const getData = async () => {
         const products = await getProducts();
@@ -93,6 +99,7 @@ const BrandsView = () => {
 
         payload.append('name', editingData?.name);
         payload.append('pageLink', editingData?.pageLink);
+        payload.append('partnership', editingData?.partnership);
 
         if (brandImageRef?.current.files[0]) payload.append('picture', brandImageRef?.current.files[0]);
 
@@ -196,7 +203,7 @@ const BrandsView = () => {
                         }}
                         whiteSpace='break-spaces'
                     >
-                        <Text ml={2} color='green.500'>Clickouts: 0</Text>
+                        <Text ml={2} color='green.500'>Clickouts: {totalClickouts || 0}</Text>
                     </Box>
 
                     {/* Create button for mobile */}
@@ -379,6 +386,17 @@ const BrandsView = () => {
                             value={editingData?.pageLink}
                             onChange={(e) => setEditingData({ ...editingData, pageLink: e.target?.value?.toLowerCase() })}
                         />
+                    </FormControl>
+
+                    <FormControl id="partnership">
+                        <FormLabel>Brand Partnership</FormLabel>
+                        <Select
+                            value={editingData?.partnership}
+                            onChange={(e) => setEditingData({ ...editingData, partnership: e.target.value })}
+                        >
+                            <option value="NONE">None</option>
+                            <option value="GAAN">GAAN</option>
+                        </Select>
                     </FormControl>
 
                     <FormControl mt={4} id="creatorBanner">
