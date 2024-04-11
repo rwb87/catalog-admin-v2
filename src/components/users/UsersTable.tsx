@@ -147,20 +147,20 @@ const UsersTable = (props: UsersTableProps) => {
                                             {
                                                 userType !== 'admin' && <>
                                                     <Td textTransform='capitalize'>{user?.location || '-'}</Td>
-                                                    <Td textAlign='center'>{user?.height || '-'}</Td>
+                                                    <Td textAlign='center'>{user?.heightFeet + '.' + user?.heightInch + 'ft' || '-'}</Td>
                                                 </>
                                             }
                                             {
                                                 userType === 'creator' && <>
                                                     <Td textAlign='center'>{user?.looksCount || 0}</Td>
-                                                    <Td textAlign='center' color='blue.500'>{user?.incomingDiscoversCount || 0}</Td>
-                                                    <Td textAlign='center' color='green.500'>{user?.incomingClickoutsCount || 0}</Td>
+                                                    <Td textAlign='center' color='blue.500'>{user?.incomingDiscovers || 0}</Td>
+                                                    <Td textAlign='center' color='green.500'>{user?.incomingClickouts || 0}</Td>
                                                 </>
                                             }
                                             {
                                                 userType !== 'admin' && <>
-                                                    <Td textAlign='center' color='blue.500'>{user?.outgoingDiscoversCount || 0}</Td>
-                                                    <Td textAlign='center' color='green.500'>{user?.outgoingClickoutsCount || 0}</Td>
+                                                    <Td textAlign='center' color='blue.500'>{user?.outgoingDiscovers || 0}</Td>
+                                                    <Td textAlign='center' color='green.500'>{user?.outgoingClickouts || 0}</Td>
                                                 </>
                                             }
                                             {

@@ -2,7 +2,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Box, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
@@ -110,6 +110,27 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
         }
     }
 
+    const totalIncomingClickouts = useMemo(() => {
+        return users?.reduce((total: number, user: any) => {
+            return total + (parseInt(user?.incomingClickouts) || 0);
+        }, 0);
+    }, [users]);
+    const totalOutgoingClickouts = useMemo(() => {
+        return users?.reduce((total: number, user: any) => {
+            return total + (parseInt(user?.outgoingClickouts) || 0);
+        }, 0);
+    }, [users]);
+    const totalIncomingDiscovers = useMemo(() => {
+        return users?.reduce((total: number, user: any) => {
+            return total + (parseInt(user?.incomingDiscovers) || 0);
+        }, 0);
+    }, [users]);
+    const totalOutgoingDiscovers = useMemo(() => {
+        return users?.reduce((total: number, user: any) => {
+            return total + (parseInt(user?.outgoingDiscovers) || 0);
+        }, 0);
+    }, [users]);
+
     return (
         <>
 
@@ -161,12 +182,12 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     >
                         {
                             userType === 'creator' && <>
-                                <Text ml={2} color='blue.500'>Incoming <br />Discovers: 0</Text>
-                                <Text ml={2} color='green.500'>Incoming <br />Clickouts: 0</Text>
+                                <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
+                                <Text ml={2} color='green.500'>Incoming <br />Clickouts: {totalIncomingClickouts || 0}</Text>
                             </>
                         }
-                        <Text ml={2} color='blue.500'>Outgoing <br />Discovers: 0</Text>
-                        <Text ml={2} color='green.500'>Outgoing <br />Clickouts: 0</Text>
+                        <Text ml={2} color='blue.500'>Outgoing <br />Discovers: {totalOutgoingDiscovers || 0}</Text>
+                        <Text ml={2} color='green.500'>Outgoing <br />Clickouts: {totalOutgoingClickouts || 0}</Text>
                     </Box>
 
                     {/* Create button for mobile */}

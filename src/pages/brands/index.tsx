@@ -44,12 +44,6 @@ const BrandsView = () => {
         );
     }, [search, data]);
 
-    const totalClickouts = useMemo(() => {
-        return data?.reduce((total: number, brand: any) => {
-            return total + (parseInt(brand?.clickouts) || 0);
-        }, 0);
-    }, [data]);
-
     const getData = async () => {
         const products = await getProducts();
 
@@ -69,7 +63,6 @@ const BrandsView = () => {
 
             const sortedData = sortData(mappedData, sortBy);
 
-            console.log(sortedData);
             setData(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
@@ -152,6 +145,12 @@ const BrandsView = () => {
             setIsDeleting(false);
         }
     }
+
+    const totalClickouts = useMemo(() => {
+        return data?.reduce((total: number, brand: any) => {
+            return total + (parseInt(brand?.clickouts) || 0);
+        }, 0);
+    }, [data]);
 
     return (
         <Content activePage="Brands">
