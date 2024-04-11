@@ -1,26 +1,44 @@
+import notify from "@/helpers/notify";
 import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 type LookProductsProps = {
     links: any;
+    productId: string;
     onSave: (links: any) => void;
 }
-const ProductLinks = ({ links, onSave }: LookProductsProps) => {
+const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
     const [editedLinks, setEditedLinks] = useState<any>(links)
 
     useEffect(() => {
-        setEditedLinks(links)
+        const sortedLinks = links.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+
+        setEditedLinks(sortedLinks);
     }, [links]);
 
-    const handleLinkChange = (e: any, index: number) => {
+    const handleInputChange = (e: any, index: number) => {
+        const { name, value } = e.target;
+
         const newLinks = [...editedLinks];
-        newLinks[index] = e.target.value;
+        newLinks[index][name] = value;
+
         setEditedLinks(newLinks);
     }
 
     const handleAddNew = () => {
-        setEditedLinks([...editedLinks, ''])
+        setEditedLinks([
+            ...editedLinks,
+            {
+                itemId: productId,
+                link: "",
+                linkType: "BACKUP",
+                linkClass: "NONE",
+                price: 0,
+                discountPrice: 0,
+                orderIndex: editedLinks.length,
+            }
+        ])
     }
 
     const handleRemove = (index: number) => {
@@ -30,6 +48,8 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
     }
 
     const handleMoveUp = (index: number) => {
+        if (index === 0) return;
+
         const newLinks = [...editedLinks];
         const [removed] = newLinks.splice(index, 1);
         newLinks.splice(index - 1, 0, removed);
@@ -37,10 +57,26 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
     }
 
     const handleMoveDown = (index: number) => {
+        if (index === editedLinks.length - 1) return;
+
         const newLinks = [...editedLinks];
         const [removed] = newLinks.splice(index, 1);
         newLinks.splice(index + 1, 0, removed);
         setEditedLinks(newLinks);
+    }
+
+    const handleSave = () => {
+        const hasMultipleAlphaLinks = editedLinks.filter((link: any) => link.linkType === 'ALPHA').length > 1;
+        if (hasMultipleAlphaLinks) return notify('A product can only have one Alpha link');
+
+        // Filter out empty links
+        const filteredLinks = editedLinks.filter((link: any) => link.link.trim() !== '');
+
+        // Reset order index
+        const newLinks = filteredLinks.map((link: any, index: number) => ({ ...link, orderIndex: index }));
+        setEditedLinks(newLinks);
+
+        onSave(newLinks);
     }
 
     return (
@@ -62,8 +98,10 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     px={6}
                                     size='sm'
                                     rounded='full'
-                                    value={link}
-                                    onChange={(e) => handleLinkChange(e, index)}
+                                    autoComplete="off"
+                                    name='link'
+                                    value={link?.link ?? ''}
+                                    onChange={(e) => handleInputChange(e, index)}
                                 />
                             </Td>
                             <Td>
@@ -73,11 +111,14 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     borderColor='gray.100'
                                     size='sm'
                                     rounded='full'
+                                    name='linkClass'
+                                    value={link?.linkClass ?? ''}
+                                    onChange={(e) => handleInputChange(e, index)}
                                 >
                                     <option value='GAAN'>GAAN</option>
-                                    <option value='creator-affiliate'>⭐ Creator Affiliate</option>
-                                    <option value='Basic'>Basic</option>
-                                    <option value='None'>None</option>
+                                    <option value='CREATOR-AFFILIATE'>⭐ Creator Affiliate</option>
+                                    <option value='BASIC'>Basic</option>
+                                    <option value='NONE'>None</option>
                                 </Select>
                             </Td>
                             <Td>
@@ -87,9 +128,12 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     borderColor='gray.100'
                                     size='sm'
                                     rounded='full'
+                                    name='linkType'
+                                    value={link?.linkType ?? ''}
+                                    onChange={(e) => handleInputChange(e, index)}
                                 >
-                                    <option value='alpha'>👑 Alpha</option>
-                                    <option value='backup'>Backup</option>
+                                    <option value='ALPHA'>👑 Alpha</option>
+                                    <option value='BACKUP'>Backup</option>
                                 </Select>
                             </Td>
                             <Td maxWidth='200px'>
@@ -103,6 +147,10 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     px={6}
                                     size='sm'
                                     rounded='full'
+                                    autoComplete="off"
+                                    name='price'
+                                    value={link?.price ?? ''}
+                                    onChange={(e) => handleInputChange(e, index)}
                                 />
                             </Td>
                             <Td maxWidth='200px'>
@@ -116,6 +164,10 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                                     px={6}
                                     size='sm'
                                     rounded='full'
+                                    autoComplete="off"
+                                    name='discountPrice'
+                                    value={link?.discountPrice ?? ''}
+                                    onChange={(e) => handleInputChange(e, index)}
                                 />
                             </Td>
                             <Td textAlign='right' whiteSpace='nowrap'>
@@ -171,7 +223,7 @@ const ProductLinks = ({ links, onSave }: LookProductsProps) => {
                     colorScheme='green'
                     size='sm'
                     leftIcon={<IconDeviceFloppy size={20} />}
-                    onClick={() => onSave(editedLinks)}
+                    onClick={handleSave}
                 >Save</Button>
             </Flex>
         </>

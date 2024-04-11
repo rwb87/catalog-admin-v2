@@ -116,6 +116,23 @@ const ProductsView = () => {
         }
     }
 
+    const handleSaveLinks = async (productId: string, links: any) => {
+        try {
+            const response = await fetch({
+                endpoint: `/items/${productId}/links`,
+                method: 'POST',
+                data: { links },
+            });
+
+            console.log(response);
+            if (response) notify('Links saved successfully', 3000);
+            else notify('An error occurred', 3000);
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+        }
+    }
+
     return (
         <Content activePage={pageName}>
 
@@ -344,6 +361,7 @@ const ProductsView = () => {
                 isLoading={isLoading}
                 onEdit={(data: any) => setEditingData(data)}
                 onDelete={(id: string) => setDeletingData(id)}
+                onSaveLinks={handleSaveLinks}
             />
 
             {/* Update Brand */}
@@ -352,15 +370,6 @@ const ProductsView = () => {
                 brands={brands}
                 onClose={() => setEditingData({})}
                 onComplete={() => getData()}
-                // onComplete={(response: any, isNew: boolean) => {
-                //     if(isNew) setData([editingData, ...data]);
-                //     else {
-                //         const index = data?.findIndex((u: any) => u.id === response.id);
-                //         const newData = [...data];
-                //         newData[index] = response;
-                //         setData(newData);
-                //     }
-                // }}
             />
 
             {/* Delete Dialog */}
@@ -380,8 +389,9 @@ type ProductsTableProps = {
     isLoading: boolean,
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
+    onSaveLinks: (productId: string, links: any) => void,
 }
-export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
+export const ProductsTable = ({ data, isLoading, onEdit, onDelete, onSaveLinks }: ProductsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
         limit: 50,
@@ -440,6 +450,7 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                                         item={item}
                                         onEdit={onEdit}
                                         onDelete={onDelete}
+                                        onSaveLinks={onSaveLinks}
                                     />)
                         }
                     </Tbody>
@@ -461,8 +472,9 @@ type TableRowProps = {
     item: any,
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
+    onSaveLinks: (productId: string, links: any) => void,
 }
-const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
     const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
 
     const handleOpenImage = (link: string) => {
@@ -608,7 +620,8 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 <Td colSpan={20}>
                     <ProductLinks
                         links={(item?.links ?? [item?.link]) || []}
-                        onSave={(links: any) => console.log(links)}
+                        productId={item?.id}
+                        onSave={(links: any) => onSaveLinks(item?.id, links)}
                     />
                 </Td>
             </Tr>

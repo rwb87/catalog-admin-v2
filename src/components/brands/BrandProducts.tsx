@@ -22,6 +22,8 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
     }
 
     const handleMoveUp = (index: number) => {
+        if(index === 0) return;
+
         const newLinks = [...editedProducts];
         const [removed] = newLinks.splice(index, 1);
         newLinks.splice(index - 1, 0, removed);
@@ -29,6 +31,8 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
     }
 
     const handleMoveDown = (index: number) => {
+        if(index === editedProducts.length - 1) return;
+
         const newLinks = [...editedProducts];
         const [removed] = newLinks.splice(index, 1);
         newLinks.splice(index + 1, 0, removed);
