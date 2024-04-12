@@ -124,7 +124,6 @@ const ProductsView = () => {
                 data: { links },
             });
 
-            console.log(response);
             if (response) notify('Links saved successfully', 3000);
             else notify('An error occurred', 3000);
         } catch (error: any) {
@@ -132,6 +131,10 @@ const ProductsView = () => {
             notify(message, 3000);
         }
     }
+
+    const totalClickouts = useMemo(() => {
+        return data.reduce((acc: number, item: any) => acc + (item?.clickouts || 0), 0);
+    }, [data]);
 
     return (
         <Content activePage={pageName}>
@@ -253,7 +256,7 @@ const ProductsView = () => {
                                 '2xl': '12px',
                             }}
                             whiteSpace='nowrap'
-                        >Clickouts: 0</Text>
+                        >Clickouts: {totalClickouts || 0}</Text>
                     </Flex>
                 </Flex>
 
@@ -621,7 +624,10 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                     <ProductLinks
                         links={(item?.links ?? [item?.link]) || []}
                         productId={item?.id}
-                        onSave={(links: any) => onSaveLinks(item?.id, links)}
+                        onSave={(links: any) => {
+                            setIsLinksExpanded(false);
+                            onSaveLinks(item?.id, links)
+                        }}
                     />
                 </Td>
             </Tr>
