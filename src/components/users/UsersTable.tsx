@@ -183,30 +183,32 @@ const UsersTable = (props: UsersTableProps) => {
                                                     <Td textAlign='center'>{user?.invitations?.length || 0}</Td>
                                                 </>
                                             }
-                                            <Td textAlign='center' whiteSpace='nowrap'>
-                                                {
-                                                    typeof onEdit === 'function' && <IconButton
-                                                        aria-label='Edit'
-                                                        variant='ghost'
-                                                        rounded='full'
-                                                        size='sm'
-                                                        icon={<IconEdit size={22} />}
-                                                        onClick={() => onEdit?.(user)}
-                                                    />
-                                                }
-                                                {
-                                                    (userType !== 'admin' && typeof onDelete === 'function') && <IconButton
-                                                        aria-label='Delete'
-                                                        variant='ghost'
-                                                        colorScheme='red'
-                                                        rounded='full'
-                                                        size='sm'
-                                                        ml={4}
-                                                        icon={<IconTrash size={22} />}
-                                                        onClick={() => onDelete?.(user)}
-                                                    />
-                                                }
-                                            </Td>
+                                            {
+                                                hasActions && <Td textAlign='center' whiteSpace='nowrap'>
+                                                    {
+                                                        typeof onEdit === 'function' && <IconButton
+                                                            aria-label='Edit'
+                                                            variant='ghost'
+                                                            rounded='full'
+                                                            size='sm'
+                                                            icon={<IconEdit size={22} />}
+                                                            onClick={() => onEdit?.(user)}
+                                                        />
+                                                    }
+                                                    {
+                                                        typeof onDelete === 'function' && <IconButton
+                                                            aria-label='Delete'
+                                                            variant='ghost'
+                                                            colorScheme='red'
+                                                            rounded='full'
+                                                            size='sm'
+                                                            ml={4}
+                                                            icon={<IconTrash size={22} />}
+                                                            onClick={() => onDelete?.(user)}
+                                                        />
+                                                    }
+                                                </Td>
+                                            }
                                         </Tr>
                                     ))
                         }

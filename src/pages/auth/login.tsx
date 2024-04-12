@@ -6,8 +6,14 @@ import { useUser } from "@/_store";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard } from "@/providers/AuthProvider";
 
+const ALLOWED_ROLES = [
+    'super_admin',
+    'admin',
+    'data_manager',
+];
+
 const Login = () => {
-    const {setToken, setUser, setUserPermissions} = useUser() as any;
+    const {setToken, setUser} = useUser() as any;
     const navigate = useNavigate();
 
     useAuthGuard('guest');
@@ -39,9 +45,14 @@ const Login = () => {
             });
 
             const { token, user, userPermissions } = response;
+
+            if(!ALLOWED_ROLES.includes(user?.type)) {
+                setIsProcessing(false);
+                return notify('You are not allowed to login', 3000);
+            }
+
             setToken(token);
-            setUser(user);
-            setUserPermissions(userPermissions);
+            setUser(user, userPermissions);
 
             // Redirect to dashboard
             setTimeout(() => {

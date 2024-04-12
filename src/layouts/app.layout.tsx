@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 import Lightcase from "@/components/Lightcase";
+import { ROLES } from "@/_config";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -175,7 +176,7 @@ type SidebarProps = {
 }
 const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
     const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
-    const { clearToken } = useUser() as any;
+    const { role, clearToken } = useUser() as any;
     const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
 
     useEffect(( ) => {
@@ -273,38 +274,40 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
 
                 {/* Switch */}
                 {
-                    isCollapsed
-                        ? <Box my={6} textAlign='center'>
-                            <Switch
-                                id='default-view'
-                                colorScheme="green"
-                                isChecked={!sidebarDefaultView}
-                                onChange={() => setSidebarDefaultView(!sidebarDefaultView)}
-                            />
-                        </Box>
-                        : <Flex my={6} px={4} alignItems='center' width='full'>
-                            <IconButton
-                                aria-label="Toggle Sidebar View"
-                                roundedLeft='full'
-                                variant='outline'
-                                width='full'
-                                opacity={sidebarDefaultView ? 1 : 0.4}
-                                backgroundColor={sidebarDefaultView ? 'transparent' : 'gray.100'}
-                                icon={<img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />}
-                                onClick={() => setSidebarDefaultView(true)}
-                            >
-                            </IconButton>
-                            <IconButton
-                                aria-label="Toggle Sidebar View"
-                                roundedRight='full'
-                                variant='outline'
-                                width='full'
-                                opacity={sidebarDefaultView ? 0.4 : 1}
-                                backgroundColor={sidebarDefaultView ? 'gray.100' : 'transparent'}
-                                icon={<img src="/icons/icon-data.svg" alt="Data" width={20} />}
-                                onClick={() => setSidebarDefaultView(false)}
-                            ></IconButton>
-                        </Flex>
+                    role !== ROLES.DATA_MANAGER
+                        ? isCollapsed
+                            ? <Box my={6} textAlign='center'>
+                                <Switch
+                                    id='default-view'
+                                    colorScheme="green"
+                                    isChecked={!sidebarDefaultView}
+                                    onChange={() => setSidebarDefaultView(!sidebarDefaultView)}
+                                />
+                            </Box>
+                            : <Flex my={6} px={4} alignItems='center' width='full'>
+                                <IconButton
+                                    aria-label="Toggle Sidebar View"
+                                    roundedLeft='full'
+                                    variant='outline'
+                                    width='full'
+                                    opacity={sidebarDefaultView ? 1 : 0.4}
+                                    backgroundColor={sidebarDefaultView ? 'transparent' : 'gray.100'}
+                                    icon={<img src="/icons/icon-shoppers.svg" alt="Shoppers" width={20} />}
+                                    onClick={() => setSidebarDefaultView(true)}
+                                >
+                                </IconButton>
+                                <IconButton
+                                    aria-label="Toggle Sidebar View"
+                                    roundedRight='full'
+                                    variant='outline'
+                                    width='full'
+                                    opacity={sidebarDefaultView ? 0.4 : 1}
+                                    backgroundColor={sidebarDefaultView ? 'gray.100' : 'transparent'}
+                                    icon={<img src="/icons/icon-data.svg" alt="Data" width={20} />}
+                                    onClick={() => setSidebarDefaultView(false)}
+                                ></IconButton>
+                            </Flex>
+                        : null
                 }
 
                 {/* Items */}

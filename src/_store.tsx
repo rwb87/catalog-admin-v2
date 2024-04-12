@@ -8,20 +8,21 @@ export const useUser = create(
         (set) => ({
             token: null,
             user: null,
-            userPermissions: null,
+            role: null,
+            permissions: null,
             setToken: (token: string) => set({
                 token: token,
             }),
             clearToken: () => set({
                 token: null,
                 user: null,
-                userPermissions: null,
+                role: null,
+                permissions: null,
             }),
-            setUser: (user: object) => set({
+            setUser: (user: any, permissions: any) => set({
                 user: user,
-            }),
-            setUserPermissions: (permissions: object) => set({
-                userPermissions: permissions,
+                role: user?.type,
+                permissions: permissions,
             }),
         }),
         {

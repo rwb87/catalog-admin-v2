@@ -9,11 +9,14 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
 import sortData from "@/helpers/sorting";
 import moment from "moment";
+import { useUser } from "@/_store";
+import { ROLES } from "@/_config";
 
 type UsersViewProps = {
     userType: 'admin' | 'creator' | 'shopper';
 }
 const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
+    const { role: userRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
     const [filteredUsers, setFilteredUsers] = useState<any>([]);
@@ -396,6 +399,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                 isLoading={isLoading}
                 userType={userType}
                 data={filteredUsers}
+                hasActions={(userType === 'admin' && userRole === ROLES.SUPER_ADMIN) || userType !== 'admin'}
                 onEdit={(user: any) => setEditingUser(user)}
                 onDelete={(user) => setDeletingUser(user)}
             />
@@ -421,7 +425,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             {/* Delete Dialog */}
             <Confirmation
                 isOpen={!!deletingUser?.id}
-                text={`Are you sure you want to delete ${deletingUser?.username}? You can't undo this action afterwards.`}
+                text={`Are you sure you want to delete <strong>${deletingUser?.username}?</strong> You can't undo this action afterwards.`}
                 isProcessing={isDeleting}
                 onConfirm={handleDelete}
                 onCancel={() => setDeletingUser({})}
