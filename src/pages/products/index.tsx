@@ -126,6 +126,8 @@ const ProductsView = () => {
 
             if (response) notify('Links saved successfully', 3000);
             else notify('An error occurred', 3000);
+
+            getData();
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -484,6 +486,13 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
     }
 
+    const alphaLink = item?.links?.find((link: any) => link?.linkType === 'ALPHA');
+    const productPrice = parseFloat(alphaLink?.price || item?.price || 0).toFixed(2);
+    const productDiscountPrice = parseFloat(alphaLink?.discountPrice || item?.dealPrice || 0).toFixed(2);
+    const productDiscountPercentage = parseFloat(productDiscountPrice) < parseFloat(productPrice)
+        ? ((alphaLink?.discountPrice || item?.dealPrice) ? ((parseFloat(productDiscountPrice) - parseFloat(productPrice)) / parseFloat(productPrice)) * 100 : 0).toFixed(0)
+        : '100';
+
     return (
         <>
             <Tr key={item?.id}>
@@ -512,7 +521,7 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                                 />
 
                                 {
-                                    item?.dealPrice && item?.dealPercent && item?.price !== item?.dealPrice
+                                    parseInt(productDiscountPercentage) !== 0
                                         ? <Tag
                                             position='absolute'
                                             top='0'
@@ -521,20 +530,20 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                                             color='white'
                                             rounded='md'
                                             size='sm'
-                                        >{parseInt(item?.dealPercent || 0)}%</Tag>
+                                        >{productDiscountPercentage}%</Tag>
                                         : null
                                 }
                             </Box>
                             : <>
                                 <Text>{item?.name || '-'}</Text>
                                 {
-                                    item?.dealPrice && item?.dealPercent && item?.price !== item?.dealPrice
+                                    parseInt(productDiscountPercentage) !== 0
                                         ? <Tag
                                             bgColor='black'
                                             color='white'
                                             rounded='md'
                                             size='sm'
-                                        >{parseInt(item?.dealPercent || 0)}%</Tag>
+                                        >{productDiscountPercentage}%</Tag>
                                         : null
                                 }
                             </>
@@ -576,20 +585,8 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                     }
                 </Td>
                 <Td textAlign='center'>
-                    {/* {
-                        item?.dealPrice
-                            ? <>
-                                <Text as='span' fontWeight='bold'>${parseFloat(item?.dealPrice).toFixed(2)}</Text>
-                                <br />
-                                <Text as='span' textDecoration='line-through' opacity={0.5}>${parseFloat(item?.price).toFixed(2)}</Text>
-                                <Tag size='sm' ml={2} colorScheme="teal">{parseInt(item?.dealPercent || 0)}%</Tag>
-                            </>
-                            : item?.price
-                                ? <Text as='span'>${parseFloat(item?.price).toFixed(2)}</Text>
-                                : '-'
-                    } */}
-                    <Text whiteSpace='nowrap'>Price: <strong>${parseFloat(item?.price || 0)?.toFixed(2)}</strong></Text>
-                    { item?.dealPrice ? <Text whiteSpace='nowrap'>Deal Price: <strong>${parseFloat(item?.dealPrice)?.toFixed(2)}</strong></Text> : null }
+                    <Text whiteSpace='nowrap'>Price: <strong>${productPrice}</strong></Text>
+                    { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='center' whiteSpace='nowrap'>
@@ -662,8 +659,8 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
         payload.append('link', editingData?.link);
         payload.append('brand', editingData?.brand ?? null);
         payload.append('brandId', editingData?.brand?.id ?? null);
-        payload.append('price', editingData?.price);
-        payload.append('dealPrice', editingData?.dealPrice);
+        payload.append('price', parseFloat(editingData?.price || 0).toFixed(2));
+        payload.append('dealPrice', parseFloat(editingData?.dealPrice || 0).toFixed(2));
 
         const dealPercent = parseFloat(editingData?.dealPrice) > 0 ? ((parseFloat(editingData?.dealPrice) - parseFloat(editingData?.price)) / parseFloat(editingData?.price)) * 100 : 0;
         payload.append('dealPercent', dealPercent?.toString());

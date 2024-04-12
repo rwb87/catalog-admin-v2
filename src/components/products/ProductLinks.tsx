@@ -18,10 +18,10 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
     }, [links]);
 
     const handleInputChange = (e: any, index: number) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
 
         const newLinks = [...editedLinks];
-        newLinks[index][name] = value;
+        newLinks[index][name] = type === 'number' ? parseFloat(value || 0) : value;
 
         setEditedLinks(newLinks);
     }
@@ -66,8 +66,13 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
     }
 
     const handleSave = () => {
-        const hasMultipleAlphaLinks = editedLinks.filter((link: any) => link.linkType === 'ALPHA').length > 1;
-        if (hasMultipleAlphaLinks) return notify('A product can only have one Alpha link');
+
+        // Check if there is an Alpha link
+        const hasAlphaLink = editedLinks.filter((link: any) => link.linkType === 'ALPHA').length;
+        if (!hasAlphaLink) return notify('A product must have an Alpha link');
+
+        // Check if there is more than one Alpha link
+        if (hasAlphaLink > 1) return notify('A product can only have one Alpha link');
 
         // Filter out empty links
         const filteredLinks = editedLinks.filter((link: any) => link.link.trim() !== '');
@@ -99,6 +104,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     size='sm'
                                     rounded='full'
                                     autoComplete="off"
+                                    required={true}
                                     name='link'
                                     value={link?.link ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
