@@ -245,7 +245,6 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                 alignItems='center'
                 justifyContent='space-between'
                 mt={4}
-                p={4}
                 pt={0}
                 rounded='lg'
             >
@@ -255,7 +254,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                     size='sm'
                     leftIcon={<IconPlus size={20} />}
                     onClick={handleAddNew}
-                >Add</Button>
+                >Add Link</Button>
 
                 <Button
                     variant='solid'
@@ -266,7 +265,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                     isDisabled={isProcessing}
                     loadingText='Saving...'
                     onClick={handleSave}
-                >Save</Button>
+                >Save Links</Button>
             </Flex>
         </>
     )

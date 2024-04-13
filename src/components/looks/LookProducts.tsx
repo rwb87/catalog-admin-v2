@@ -75,7 +75,7 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
                     size='sm'
                     leftIcon={<IconPlus size={20} />}
                     onClick={handleAddNew}
-                >Add</Button>
+                >Add Product</Button>
 
                 <Button
                     variant='solid'
@@ -86,7 +86,7 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
                     isDisabled={isProcessing}
                     loadingText='Saving...'
                     onClick={handleSave}
-                >Save</Button>
+                >Save Products</Button>
             </Flex>
         </>
     )
