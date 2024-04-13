@@ -38,6 +38,12 @@ const ProductsView = () => {
         setIsLoading(true);
 
         getData();
+
+        window?.addEventListener('refresh:data', getData);
+
+        return () => {
+            window?.removeEventListener('refresh:data', getData);
+        }
     }, [sortBy]);
 
     useEffect(() => {
@@ -113,24 +119,6 @@ const ProductsView = () => {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
             setIsDeleting(false);
-        }
-    }
-
-    const handleSaveLinks = async (productId: string, links: any) => {
-        try {
-            const response = await fetch({
-                endpoint: `/items/${productId}/links`,
-                method: 'POST',
-                data: { links },
-            });
-
-            if (response) notify('Links saved successfully', 3000);
-            else notify('An error occurred', 3000);
-
-            getData();
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
         }
     }
 
@@ -366,7 +354,6 @@ const ProductsView = () => {
                 isLoading={isLoading}
                 onEdit={(data: any) => setEditingData(data)}
                 onDelete={(id: string) => setDeletingData(id)}
-                onSaveLinks={handleSaveLinks}
             />
 
             {/* Update Brand */}
@@ -394,9 +381,8 @@ type ProductsTableProps = {
     isLoading: boolean,
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
-    onSaveLinks: (productId: string, links: any) => void,
 }
-export const ProductsTable = ({ data, isLoading, onEdit, onDelete, onSaveLinks }: ProductsTableProps) => {
+export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
     const pagination = {
         total: data?.length ?? 0,
         limit: 50,
@@ -455,7 +441,6 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete, onSaveLinks }
                                         item={item}
                                         onEdit={onEdit}
                                         onDelete={onDelete}
-                                        onSaveLinks={onSaveLinks}
                                     />)
                         }
                     </Tbody>
@@ -477,9 +462,8 @@ type TableRowProps = {
     item: any,
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
-    onSaveLinks: (productId: string, links: any) => void,
 }
-const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
+const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
     const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
 
     const handleOpenImage = (link: string) => {
@@ -571,18 +555,14 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                 <Td>{item?.name || '-'}</Td>
                 <Td>{item?.style || '-'}</Td>
                 <Td textAlign='center'>
-                    {
-                        item?.link
-                            ? <IconButton
-                                aria-label='View Links'
-                                variant='ghost'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconLink size={22} />}
-                                onClick={() => setIsLinksExpanded(!isLinksExpanded)}
-                            />
-                            : '-'
-                    }
+                    <IconButton
+                        aria-label='View Links'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconLink size={22} />}
+                        onClick={() => setIsLinksExpanded(!isLinksExpanded)}
+                    />
                 </Td>
                 <Td textAlign='center'>
                     <Text whiteSpace='nowrap'>Price: <strong>${productPrice}</strong></Text>
@@ -621,9 +601,9 @@ const TableRow = ({ item, onEdit, onDelete, onSaveLinks }: TableRowProps) => {
                     <ProductLinks
                         links={(item?.links ?? [item?.link]) || []}
                         productId={item?.id}
-                        onSave={(links: any) => {
+                        onSave={() => {
                             setIsLinksExpanded(false);
-                            onSaveLinks(item?.id, links)
+                            // window?.dispatchEvent(new CustomEvent('refresh:data'));
                         }}
                     />
                 </Td>

@@ -1,3 +1,4 @@
+import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
@@ -10,6 +11,7 @@ type LookProductsProps = {
 }
 const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
     const [editedLinks, setEditedLinks] = useState<any>(links)
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
         const sortedLinks = links.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
@@ -65,7 +67,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
         setEditedLinks(newLinks);
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
 
         // Check if there is an Alpha link
         const hasAlphaLink = editedLinks.filter((link: any) => link.linkType === 'ALPHA').length;
@@ -81,7 +83,29 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
         const newLinks = filteredLinks.map((link: any, index: number) => ({ ...link, orderIndex: index }));
         setEditedLinks(newLinks);
 
-        onSave(newLinks);
+        await handleSaveLinks(productId, newLinks);
+    }
+
+    const handleSaveLinks = async (productId: string, links: any) => {
+        setIsProcessing(true);
+
+        try {
+            const response = await fetch({
+                endpoint: `/items/${productId}/links`,
+                method: 'POST',
+                data: { links },
+            });
+
+            if (response) notify('Links saved successfully', 3000);
+            else notify('An error occurred', 3000);
+
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+        }
+
+        setIsProcessing(false);
+        onSave(links);
     }
 
     return (
@@ -117,6 +141,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     borderColor='gray.100'
                                     size='sm'
                                     rounded='full'
+                                    width={48}
                                     name='linkClass'
                                     value={link?.linkClass ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
@@ -134,6 +159,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     borderColor='gray.100'
                                     size='sm'
                                     rounded='full'
+                                    width={32}
                                     name='linkType'
                                     value={link?.linkType ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
@@ -215,7 +241,14 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
             </Table>
 
             {/* Actions */}
-            <Flex alignItems='center' justifyContent='space-between' mt={4}>
+            <Flex
+                alignItems='center'
+                justifyContent='space-between'
+                mt={4}
+                p={4}
+                pt={0}
+                rounded='lg'
+            >
                 <Button
                     variant='solid'
                     colorScheme='green'
@@ -229,6 +262,9 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                     colorScheme='green'
                     size='sm'
                     leftIcon={<IconDeviceFloppy size={20} />}
+                    isLoading={isProcessing}
+                    isDisabled={isProcessing}
+                    loadingText='Saving...'
                     onClick={handleSave}
                 >Save</Button>
             </Flex>

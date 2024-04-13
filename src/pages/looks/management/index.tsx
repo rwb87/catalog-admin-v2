@@ -42,7 +42,7 @@ const LooksManagementView = () => {
         setIsLoading(true);
 
         getData();
-    }, [pagination.page]);
+    }, [pagination.page, products]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -56,6 +56,8 @@ const LooksManagementView = () => {
     }, [search, data]);
 
     const getData = async () => {
+        if(!products?.length) return;
+
         const filter = {
             status: [
                 "in_data_management",
@@ -68,7 +70,18 @@ const LooksManagementView = () => {
                 method: 'GET',
             });
 
-            setData(response?.looks);
+            const looks = response?.looks?.map((look: any) => {
+                const tags = look?.tags?.map((tag: any) => {
+                    return tag.item = products?.find((product: any) => product?.id === tag?.itemId);
+                });
+
+                return {
+                    ...look,
+                    tags,
+                }
+            });
+
+            setData(looks);
             setPagination({
                 ...pagination,
                 total: response?.count || 0,
@@ -296,6 +309,7 @@ type TableRowProps = {
 const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
+
     const [images, setImages] = useState<any[]>([]);
 
     const adminMessages = useMemo(() => {
@@ -521,7 +535,9 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
             >
                 <LookProducts
                     products={item?.tags}
-                    onSave={(list: any) => console.log(list)}
+                    onSave={() => {
+                        setIsProductsExpanded(false);
+                    }}
                 />
             </Box>
         </Box>

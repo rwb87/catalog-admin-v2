@@ -44,7 +44,7 @@ const LooksView = () => {
         setIsLoading(true);
 
         getData();
-    }, [isLive, pagination.page, sortBy]);
+    }, [isLive, pagination.page, sortBy, products]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -58,6 +58,8 @@ const LooksView = () => {
     }, [search, data]);
 
     const getData = async () => {
+        if(!products?.length) return;
+
         const filter = isLive
             ? {
                 status: [
@@ -79,7 +81,18 @@ const LooksView = () => {
                 method: 'GET',
             });
 
-            setData(response?.looks);
+            const looks = response?.looks?.map((look: any) => {
+                const tags = look?.tags?.map((tag: any) => {
+                    return tag.item = products?.find((product: any) => product?.id === tag?.itemId);
+                });
+
+                return {
+                    ...look,
+                    tags,
+                }
+            });
+
+            setData(looks);
             setPagination({
                 ...pagination,
                 total: response?.count || 0,
@@ -303,7 +316,7 @@ const LooksView = () => {
 
                     {/* Send all look data to management */}
                     {
-                        !isLive && <Button
+                        (!isLive && data?.length > 0) && <Button
                             size='sm'
                             rounded='full'
                             backgroundColor='black'
@@ -495,6 +508,7 @@ type TableRowProps = {
 const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
+
     const [images, setImages] = useState<any[]>([]);
 
     const dateTime = useMemo(() => {
