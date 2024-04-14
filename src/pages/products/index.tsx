@@ -1,13 +1,14 @@
 import Confirmation from "@/components/Confirmation";
 import CustomDrawer from "@/components/Drawer";
 import Pagination from "@/components/Pagination";
+import SearchableInput from "@/components/SearchableInput";
 import ProductLinks from "@/components/products/ProductLinks";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconCamera, IconEdit, IconLink, IconLoader2, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -623,12 +624,6 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
 
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [showBrandOptions, setShowBrandOptions] = useState<boolean>(false);
-
-    const filteredBrands = useMemo(() => {
-        return brands?.filter((brand: any) => brand?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
-    }, [searchTerm, brands]);
 
     const handleUpdateData = async () => {
         setIsProcessing(true);
@@ -670,8 +665,6 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
 
     useEffect(() => {
         setEditingData(data);
-
-        setSearchTerm(data?.brand?.name || '');
     }, [data]);
 
     return (
@@ -757,55 +750,20 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
             </Grid>
 
             {/* Brand */}
-            <FormControl mt={4} id="brand">
+            <FormControl mt={4}>
                 <FormLabel>Product Brand</FormLabel>
-                <Box position='relative'>
-                    <Input
-                        type="text"
-                        autoComplete="off"
-                        value={searchTerm}
-                        onChange={(e) => {
-                            setSearchTerm(e.target.value)
-                            setShowBrandOptions(true);
-                        }}
-                        onFocus={() => setShowBrandOptions(true)}
-                        onBlur={() => setTimeout(() => setShowBrandOptions(false), 200)}
-                    />
-
-                    <Flex
-                        direction='column'
-                        position='absolute'
-                        top='100%'
-                        left='0'
-                        width='full'
-                        zIndex={1}
-                        bgColor='white'
-                        border='1px solid'
-                        borderColor='gray.100'
-                        rounded='md'
-                        display={showBrandOptions ? 'block' : 'none'}
-                        maxHeight='200px'
-                        overflowY='auto'
-                        shadow='md'
-                    >
-                        {filteredBrands?.map((brand: any) => <Button
-                            key={brand?.id}
-                            variant='ghost'
-                            size='sm'
-                            width='full'
-                            textAlign='left'
-                            justifyContent='flex-start'
-                            rounded='none'
-                            onClick={() => {
-                                setEditingData({
-                                    ...editingData,
-                                    brand: brand,
-                                });
-                                setSearchTerm(brand?.name);
-                            }}
-                        >{brand?.name}</Button>)}
-                    </Flex>
-                </Box>
+                <SearchableInput
+                    data={brands}
+                    property='name'
+                    defaultValue={editingData?.brand?.name}
+                    placeholder="Search brand..."
+                    onChange={(brand: any) => {
+                        setEditingData({
+                            ...editingData,
+                            brand: brand,
+                        });
+                    }}
+                />
             </FormControl>
 
             {/* Product Image */}
