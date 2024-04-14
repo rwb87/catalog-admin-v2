@@ -1,21 +1,37 @@
-import { Box, Button, Flex, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
+import CustomDrawer from "../Drawer";
+import SearchableInput from "../SearchableInput";
+import fetch from "@/helpers/fetch";
+import sortData from "@/helpers/sorting";
+import { useGlobalData } from "@/_store";
+import notify from "@/helpers/notify";
 
 type LookProductsProps = {
-    products: any;
+    look: any,
+    lookProducts: any;
+    allProducts: any;
     onSave: (products: any) => void;
 }
-const LookProducts = ({ products, onSave }: LookProductsProps) => {
-    const [editedProducts, setEditedProducts] = useState<any>(products);
+const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsProps) => {
+    const { brands: globalBrands } = useGlobalData() as any;
+
+    const [editedProducts, setEditedProducts] = useState<any>(lookProducts);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [isAddingProductToLook, setIsAddingProductToLook] = useState(false);
 
-    useEffect(() => {
-        setEditedProducts(products);
-    }, [products]);
+    const [selectedBrand, setSelectedBrand] = useState<any>(null);
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
-    const handleAddNew = () => {}
+    const filteredAvailableProducts = useMemo(() => {
+        const productsInSelectedBrand = selectedBrand ? allProducts.filter((product: any) => product.brandId === selectedBrand.id) : allProducts;
+
+        return productsInSelectedBrand.filter((product: any) => {
+            return !editedProducts.find((lookProduct: any) => lookProduct.id === product.id);
+        });
+    }, [allProducts, editedProducts, selectedBrand]);
 
     const handleRemove = (index: number) => {
         const newLinks = [...editedProducts];
@@ -41,13 +57,33 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
         setEditedProducts(newLinks);
     }
 
-    const handleOpenImage = (link: string) => {
-        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
-    }
-
     const handleSave = async () => {
         setIsProcessing(true);
-        onSave(editedProducts);
+
+        const payload = new FormData();
+
+        payload.append('updateReferences', 'true');
+
+        editedProducts.forEach((product: any) => {
+            payload.append('items', JSON.stringify(product));
+        });
+
+        try {
+            const response = await fetch({
+                endpoint: `/looks/${look?.id}`,
+                method: 'PUT',
+                data: payload,
+            });
+
+            if (response) {
+                onSave(editedProducts);
+                notify('Look saved successfully', 3000);
+            } else notify('An error occurred', 3000);
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+        }
+
         setIsProcessing(false);
     }
 
@@ -56,10 +92,9 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
             <Box>
                 {
                     editedProducts?.map((item: any, index: number) => <Product
-                        key={index}
+                        key={item?.id}
                         item={item}
                         index={index}
-                        handleOpenImage={handleOpenImage}
                         handleRemove={handleRemove}
                         handleMoveUp={handleMoveUp}
                         handleMoveDown={handleMoveDown}
@@ -67,14 +102,50 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
                 )}
             </Box>
 
+            {/* Search and Add product to Look Drawer */}
+            <CustomDrawer
+                isOpen={isAddingProductToLook}
+                title='Add new product to Look'
+                cancelText='Cancel'
+                submitText='Add'
+                isProcessing={false}
+                onSubmit={() => {
+                    setIsAddingProductToLook(false);
+                    setEditedProducts([...editedProducts, selectedProduct]);
+                }}
+                onClose={() => setIsAddingProductToLook(false)}
+            >
+                <Grid gap={4}>
+                    <SearchableInput
+                        data={globalBrands}
+                        property="name"
+                        defaultValue=''
+                        placeholder="Search brand..."
+                        onChange={(item: any) => setSelectedBrand(item)}
+                    />
+
+                    <SearchableInput
+                        data={filteredAvailableProducts}
+                        property="name"
+                        defaultValue=''
+                        placeholder="Search product..."
+                        onChange={(item: any) => setSelectedProduct(item)}
+                    />
+                </Grid>
+            </CustomDrawer>
+
             {/* Actions */}
-            <Flex alignItems='center' justifyContent='space-between' mt={4}>
+            <Flex
+                alignItems='center'
+                justifyContent='space-between'
+                mt={4}
+            >
                 <Button
                     variant='solid'
                     colorScheme='green'
                     size='sm'
                     leftIcon={<IconPlus size={20} />}
-                    onClick={handleAddNew}
+                    onClick={() => setIsAddingProductToLook(true)}
                 >Add Product</Button>
 
                 <Button
@@ -95,13 +166,16 @@ const LookProducts = ({ products, onSave }: LookProductsProps) => {
 type ProductProps = {
     index: number,
     item: any,
-    handleOpenImage: (link: string) => void,
     handleMoveUp: (index: number) => void,
     handleMoveDown: (index: number) => void,
     handleRemove: (index: number) => void,
 }
-const Product = ({ index, item, handleOpenImage, handleMoveUp, handleMoveDown, handleRemove }: ProductProps) => {
+const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: ProductProps) => {
     const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
+
+    const handleOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
 
     const alphaLink = item?.links?.find((link: any) => link?.linkType === 'ALPHA');
     const productPrice = parseFloat(alphaLink?.price || item?.price || 0).toFixed(2);
@@ -190,7 +264,7 @@ const Product = ({ index, item, handleOpenImage, handleMoveUp, handleMoveDown, h
                         </Td>
                         <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                         <Td textAlign='right' whiteSpace='nowrap'>
-                            <IconButton
+                            {/* <IconButton
                                 aria-label='Move Up'
                                 variant='ghost'
                                 colorScheme='blue'
@@ -209,7 +283,7 @@ const Product = ({ index, item, handleOpenImage, handleMoveUp, handleMoveDown, h
                                 ml={4}
                                 icon={<IconArrowDown size={22} />}
                                 onClick={() => handleMoveDown(index)}
-                            />
+                            /> */}
 
                             <IconButton
                                 aria-label='Delete'

@@ -49,19 +49,26 @@ const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 
                 shadow='md'
             >
                 {
-                    filteredItems?.map((item: any) => <Button
-                        key={item?.id}
-                        variant='ghost'
-                        size='sm'
-                        width='full'
-                        textAlign='left'
-                        justifyContent='flex-start'
-                        rounded='none'
-                        onClick={() => {
-                            onChange?.(item);
-                            setSearchTerm(item?.[property]);
-                        }}
-                    >{item?.[property]}</Button>)
+                    !filteredItems?.length
+                        ? <Button
+                            width='full'
+                            variant='ghost'
+                            isDisabled={true}
+                            fontStyle='italic'
+                        >No Results</Button>
+                        : filteredItems?.map((item: any) => <Button
+                            key={item?.id}
+                            variant='ghost'
+                            size='sm'
+                            width='full'
+                            textAlign='left'
+                            justifyContent='flex-start'
+                            rounded='none'
+                            onClick={() => {
+                                setSearchTerm(item?.[property]);
+                                onChange?.(item);
+                            }}
+                        >{item?.[property]}</Button>)
                 }
             </Flex>
         </Box>

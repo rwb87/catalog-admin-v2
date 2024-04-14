@@ -1,3 +1,4 @@
+import { useGlobalData } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
@@ -5,6 +6,7 @@ import LookProducts from "@/components/looks/LookProducts";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
+import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Flex, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
@@ -12,6 +14,8 @@ import { IconChevronDown, IconLoader2, IconPhoto, IconTrash, IconUnlink } from "
 import { useEffect, useMemo, useState } from "react";
 
 const LooksView = () => {
+    const { setBrands } = useGlobalData() as any;
+
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLive, setIsLive] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
@@ -38,6 +42,7 @@ const LooksView = () => {
 
     useEffect(() => {
         getProducts();
+        getBrands();
     }, []);
 
     useEffect(() => {
@@ -113,6 +118,22 @@ const LooksView = () => {
             });
 
             setProducts(response);
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+        }
+    }
+
+    const getBrands = async () => {
+        try {
+            const response = await fetch({
+                endpoint: `/brands`,
+                method: 'GET',
+            });
+
+            const sortedData = sortData(response, 'name.ASC');
+
+            setBrands(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -505,7 +526,7 @@ type TableRowProps = {
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isLive = true, products, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
 
@@ -715,8 +736,10 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
             >
                 <Td colSpan={20}>
                     <LookProducts
-                        products={item?.tags}
-                        onSave={(list: any) => console.log(list)}
+                        look={item}
+                        lookProducts={item?.tags}
+                        allProducts={products}
+                        onSave={(list: any) => setIsProductsExpanded(false)}
                     />
                 </Td>
             </Tr>

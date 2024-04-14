@@ -46,3 +46,18 @@ export const useUi = create(
         }
     )
 )
+
+export const useGlobalData = create(
+    persist(
+        (set) => ({
+            brands: null,
+            setBrands: (brands: any) => set({
+                brands: brands,
+            }),
+        }),
+        {
+            name: `${Config.APP_NAME?.toLowerCase()?.replaceAll(' ', '_')}.global`,
+            storage: createJSONStorage(() => sessionStorage),
+        }
+    )
+)
