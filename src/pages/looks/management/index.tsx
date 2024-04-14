@@ -61,7 +61,7 @@ const LooksManagementView = () => {
     }, [search, data]);
 
     const getData = async () => {
-        if(!products?.length) return;
+        if(!products?.length) return setIsLoading(false);
 
         const filter = {
             status: [

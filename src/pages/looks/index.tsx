@@ -63,7 +63,7 @@ const LooksView = () => {
     }, [search, data]);
 
     const getData = async () => {
-        if(!products?.length) return;
+        if(!products?.length) return setIsLoading(false);
 
         const filter = isLive
             ? {
