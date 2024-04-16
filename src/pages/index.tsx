@@ -1,5 +1,4 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
-import AppLayout from "@/layouts/app.layout";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,9 +10,7 @@ const Home = () => {
         navigate('/looks');
     }, []);
 
-    return (
-        <AppLayout></AppLayout>
-    )
+    return null;
 }
 
 export default Home;
