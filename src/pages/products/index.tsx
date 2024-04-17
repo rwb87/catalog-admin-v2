@@ -32,6 +32,8 @@ const ProductsView = () => {
     useAuthGuard('auth');
 
     useEffect(() => {
+        setIsLoading(true);
+
         getBrands();
     }, []);
 
@@ -98,8 +100,6 @@ const ProductsView = () => {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
-
-        setIsLoading(false);
     }
 
     const handleDelete = async () => {
