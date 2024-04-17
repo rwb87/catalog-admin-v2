@@ -39,6 +39,8 @@ const LooksManagementView = () => {
     useAuthGuard('auth');
 
     useEffect(() => {
+        setIsLoading(true);
+
         getProducts();
         getBrands();
     }, []);

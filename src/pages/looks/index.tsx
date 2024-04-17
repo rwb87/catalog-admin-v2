@@ -41,6 +41,8 @@ const LooksView = () => {
     useAuthGuard('auth');
 
     useEffect(() => {
+        setIsLoading(true);
+
         getProducts();
         getBrands();
     }, []);
