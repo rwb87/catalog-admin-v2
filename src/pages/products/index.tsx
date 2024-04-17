@@ -8,8 +8,8 @@ import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCamera, IconEdit, IconLink, IconLoader2, IconSearch, IconTrash } from "@tabler/icons-react";
+import { Box, Flex, FormControl, FormLabel, Grid, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconCamera, IconEdit, IconLink, IconLoader2, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -165,7 +165,44 @@ const ProductsView = () => {
                     }}
                     gap={2}
                 >
-                    <h1 className="page-heading">{pageName}</h1>
+                    <Flex
+                        display={{
+                            base: 'flex',
+                            lg: 'contents',
+                        }}
+                        width='full'
+                        direction='row'
+                        alignItems='center'
+                        justifyContent='space-between'
+                    >
+                        <h1 className="page-heading">{pageName}</h1>
+
+                        {/* Create button for Mobile */}
+                        <IconButton
+                            aria-label="Add new brand"
+                            variant='solid'
+                            rounded='full'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            display={{
+                                base: 'inline-flex',
+                                lg: 'none',
+                            }}
+                            size='sm'
+                            icon={<IconPlus size={20} />}
+                            onClick={() => setEditingData({
+                                id: Math.random().toString(36).substring(7),
+                                name: '',
+                                link: '',
+                                brand: null,
+                                brandId: null,
+                                price: 0,
+                                dealPrice: 0,
+                                pictureURL: '',
+                                isNew: true,
+                            })}
+                        />
+                    </Flex>
 
                     <Flex
                         width='full'
@@ -346,6 +383,34 @@ const ProductsView = () => {
                             onChange={(event) => setSearch(event.target.value)}
                         />
                     </InputGroup>
+
+                    {/* Create button for Desktop */}
+                    <Tooltip label='Add new product' placement="left">
+                        <IconButton
+                            aria-label="Add new product"
+                            variant='solid'
+                            rounded='full'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            display={{
+                                base: 'none',
+                                lg: 'inline-flex',
+                            }}
+                            size='sm'
+                            icon={<IconPlus size={20} />}
+                            onClick={() => setEditingData({
+                                id: Math.random().toString(36).substring(7),
+                                name: '',
+                                link: '',
+                                brand: null,
+                                brandId: null,
+                                price: 0,
+                                dealPrice: 0,
+                                pictureURL: '',
+                                isNew: true,
+                            })}
+                        />
+                    </Tooltip>
                 </Flex>
             </Flex>
 
@@ -357,7 +422,7 @@ const ProductsView = () => {
                 onDelete={(id: string) => setDeletingData(id)}
             />
 
-            {/* Update Brand */}
+            {/* Update Product */}
             <UpdateProductDrawer
                 data={editingData}
                 brands={brands}
@@ -670,7 +735,7 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
     return (
         <CustomDrawer
             isOpen={!!editingData?.id}
-            title={editingData?.isNew ? `Create Brand` : 'Update Brand'}
+            title={editingData?.isNew ? `Create Product` : 'Update Product'}
             isProcessing={isProcessing}
             onSubmit={handleUpdateData}
             onClose={onClose}
@@ -688,8 +753,8 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
                     <FormLabel>Product Name</FormLabel>
                     <Input
                         type="text"
-                        required
                         autoComplete="off"
+                        required={true}
                         value={editingData?.name || ''}
                         onChange={(e) => setEditingData({ ...editingData, name: e.target.value })}
                     />
@@ -700,6 +765,7 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
                     <Input
                         type="text"
                         autoComplete="off"
+                        required={true}
                         value={editingData?.link || ''}
                         onChange={(e) => setEditingData({ ...editingData, link: e.target?.value?.toLowerCase() })}
                     />

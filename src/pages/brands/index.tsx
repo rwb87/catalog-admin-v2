@@ -207,7 +207,7 @@ const BrandsView = () => {
 
                     {/* Create button for mobile */}
                     <IconButton
-                        aria-label="Add new user"
+                        aria-label="Add new brand"
                         variant='solid'
                         rounded='full'
                         borderWidth={2}
@@ -322,7 +322,7 @@ const BrandsView = () => {
                     {/* Create button for Desktop */}
                     <Tooltip label='Add new brand' placement="left">
                         <IconButton
-                            aria-label="Add new user"
+                            aria-label="Add new brand"
                             variant='solid'
                             rounded='full'
                             borderWidth={2}
