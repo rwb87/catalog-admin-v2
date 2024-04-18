@@ -1,19 +1,18 @@
-import { Button, Flex, IconButton, Image, Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash, IconWorldWww } from "@tabler/icons-react";
+import { IconButton, Image, Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 type BrandProductsProps = {
+    brand: any;
     products: any;
     onSave: (products: any) => void;
 }
-const BrandProducts = ({ products }: BrandProductsProps) => {
+const BrandProducts = ({ brand, products }: BrandProductsProps) => {
     const [editedProducts, setEditedProducts] = useState<any>(products);
 
     useEffect(() => {
         setEditedProducts(products);
     }, [products]);
-
-    const handleAddNew = () => {}
 
     const handleRemove = (index: number) => {
         const newLinks = [...editedProducts];
@@ -48,7 +47,7 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
             <Table>
                 <Tbody>
                     {
-                        editedProducts?.map((product: any, index: number) => <Tr key={index}>
+                        editedProducts?.map((product: any, index: number) => <Tr key={product?.id}>
                             <Td width='30px' textAlign='left'>
                                 <IconCornerDownRight size={20} />
                             </Td>
@@ -74,7 +73,7 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
                                         : '-'
                                 }
                             </Td>
-                            <Td width={40}>{product?.brand?.name || '-'}</Td>
+                            <Td width={40}>{brand?.name || '-'}</Td>
                             <Td>{product?.name || '-'}</Td>
                             <Td>{product?.style || '-'}</Td>
                             <Td textAlign='center'>
@@ -132,7 +131,7 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
             </Table>
 
             {/* Actions */}
-            <Flex alignItems='center' justifyContent='space-between' mt={4}>
+            {/* <Flex alignItems='center' justifyContent='space-between' mt={4}>
                 <Button
                     variant='solid'
                     colorScheme='green'
@@ -147,7 +146,7 @@ const BrandProducts = ({ products }: BrandProductsProps) => {
                     size='sm'
                     leftIcon={<IconDeviceFloppy size={20} />}
                 >Save</Button>
-            </Flex>
+            </Flex> */}
         </>
     )
 }

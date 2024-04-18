@@ -45,23 +45,14 @@ const BrandsView = () => {
     }, [search, data]);
 
     const getData = async () => {
-        const products = await getProducts();
+        await getProducts();
 
         try {
             const response = await fetch({
                 endpoint: `/brands`,
                 method: 'GET',
             });
-
-            // Map products to all brands
-            const mappedData = response?.map((brand: any) => {
-                return {
-                    ...brand,
-                    products: products?.filter((product: any) => product?.brandId === brand?.id),
-                }
-            });
-
-            const sortedData = sortData(mappedData, sortBy);
+            const sortedData = sortData(response, sortBy);
 
             setData(sortedData);
         } catch (error: any) {
@@ -308,7 +299,7 @@ const BrandsView = () => {
                             bgColor='white'
                             borderWidth={2}
                             borderColor='gray.100'
-                            pl={12}
+                            pl={10}
                             fontWeight='medium'
                             _focusVisible={{
                                 borderColor: 'gray.200 !important',
@@ -649,7 +640,8 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
             >
                 <Td colSpan={20}>
                     <BrandProducts
-                        products={item?.products}
+                        brand={item}
+                        products={item?.items}
                         onSave={(products: any) => console.log(products)}
                     />
                 </Td>
