@@ -364,8 +364,8 @@ const LooksView = () => {
             {/* Table */}
             <LooksTable
                 data={filteredData}
-                pagination={pagination}
                 products={products}
+                pagination={pagination}
                 onPaginate={(page: number) => {
                     setPagination({
                         ...pagination,
@@ -437,15 +437,15 @@ const LooksView = () => {
 
 type LooksTableProps = {
     data: any,
-    pagination: any,
     products: any,
+    pagination: any,
     onPaginate: (page: number) => void,
     isLoading: boolean,
     onSendLookToManagement: (item: any) => void,
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const LooksTable = ({ data, pagination, products, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
+const LooksTable = ({ data, products, pagination, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
     const isLive = data?.[0]?.status === 'live';
 
     const reconstructedData = data;

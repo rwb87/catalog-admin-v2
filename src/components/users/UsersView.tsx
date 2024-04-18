@@ -348,7 +348,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                             bgColor='white'
                             borderWidth={2}
                             borderColor='gray.100'
-                            pl={12}
+                            pl={10}
                             fontWeight='medium'
                             _focusVisible={{
                                 borderColor: 'gray.200 !important',

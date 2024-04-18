@@ -29,6 +29,13 @@ const ProductsView = () => {
     const isManagement = location.pathname.includes('management');
     const pageName = isManagement ? 'Products Management' : 'Products';
 
+    const [pagination, setPagination] = useState({
+        page: 1,
+        offset: 0,
+        limit: 50,
+        total: 0,
+    });
+
     useAuthGuard('auth');
 
     useEffect(() => {
@@ -47,7 +54,7 @@ const ProductsView = () => {
         return () => {
             window?.removeEventListener('refresh:data', getData);
         }
-    }, [sortBy]);
+    }, [sortBy, pagination.page]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -66,15 +73,19 @@ const ProductsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/items`,
+                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
             // Sort by createdAt
-            response?.map((item: any) => item.brand_name = item?.brand?.name || '');
-            const sortedData = sortData(response, sortBy);
+            response?.items?.map((item: any) => item.brand_name = item?.brand?.name || '');
+            const sortedData = sortData(response?.items, sortBy);
 
             setData(sortedData);
+            setPagination({
+                ...pagination,
+                total: response?.count || 0,
+            });
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -373,7 +384,7 @@ const ProductsView = () => {
                             bgColor='white'
                             borderWidth={2}
                             borderColor='gray.100'
-                            pl={12}
+                            pl={10}
                             fontWeight='medium'
                             _focusVisible={{
                                 borderColor: 'gray.200 !important',
@@ -418,6 +429,14 @@ const ProductsView = () => {
             <ProductsTable
                 data={filteredData}
                 isLoading={isLoading}
+                pagination={pagination}
+                onPaginate={(page: number) => {
+                    setPagination({
+                        ...pagination,
+                        page: page,
+                        offset: (page - 1) * pagination.limit,
+                    })
+                }}
                 onEdit={(data: any) => setEditingData(data)}
                 onDelete={(id: string) => setDeletingData(id)}
             />
@@ -445,22 +464,12 @@ const ProductsView = () => {
 type ProductsTableProps = {
     data: any,
     isLoading: boolean,
+    pagination: any,
+    onPaginate: (page: number) => void,
     onEdit: (id: string) => void,
     onDelete: (id: string) => void,
 }
-export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTableProps) => {
-    const pagination = {
-        total: data?.length ?? 0,
-        limit: 50,
-    }
-    const [page, setPage] = useState<number>(1);
-
-    useEffect(() => {
-        setPage(1);
-    }, [data.length]);
-
-    const reconstructedData = pagination.total > pagination.limit ? data.slice((page - 1) * pagination.limit, page * pagination.limit) : data;
-
+export const ProductsTable = ({ data, isLoading, pagination, onPaginate, onEdit, onDelete }: ProductsTableProps) => {
     return (
         <>
 
@@ -496,13 +505,13 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
                                         </Box>
                                     </Td>
                                 </Tr>
-                                : !reconstructedData?.length
+                                : !data?.length
                                     ? <Tr>
                                         <Td colSpan={20} textAlign='center'>
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : reconstructedData.map((item: any) => <TableRow
+                                    : data.map((item: any) => <TableRow
                                         key={item?.id}
                                         item={item}
                                         onEdit={onEdit}
@@ -517,8 +526,8 @@ export const ProductsTable = ({ data, isLoading, onEdit, onDelete }: ProductsTab
             <Pagination
                 total={pagination?.total || 0}
                 limit={pagination?.limit || 0}
-                page={page || 1}
-                setPage={setPage}
+                page={pagination?.page || 1}
+                setPage={onPaginate}
             />
         </>
     )
