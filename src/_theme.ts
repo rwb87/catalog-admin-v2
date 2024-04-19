@@ -112,6 +112,14 @@ const theme = extendTheme({
 					borderColor: `${themeColors.primary[400]} !important`,
 					boxShadow: `0 0 0 1px ${themeColors.primary[400]} !important`
 				},
+				_readOnly: {
+					bg: 'transparent !important',
+					_focusVisible: {
+						borderColor: 'transparent !important',
+						boxShadow: 'none !important',
+					},
+					cursor: 'auto',
+				}
 			},
 			select: {
 				color: textBlackColor,
@@ -125,6 +133,15 @@ const theme = extendTheme({
 					borderColor: `${themeColors.primary[400]} !important`,
 					boxShadow: `0 0 0 1px ${themeColors.primary[400]} !important`
 				},
+				_readOnly: {
+					bg: 'transparent !important',
+					_focusVisible: {
+						borderColor: 'transparent !important',
+						boxShadow: 'none !important',
+					},
+					cursor: 'auto',
+					pointerEvents: 'none',
+				}
 			},
 			th: {
 				fontSize: '14px !important',

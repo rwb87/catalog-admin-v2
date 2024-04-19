@@ -41,15 +41,8 @@ const LooksManagementView = () => {
     useEffect(() => {
         setIsLoading(true);
 
-        getProducts();
-        getBrands();
-    }, []);
-
-    useEffect(() => {
-        setIsLoading(true);
-
         getData();
-    }, [pagination.page, products]);
+    }, [pagination.page]);
 
     useEffect(() => {
         if(search?.toString()?.trim() === '') return setFilteredData(data);
@@ -63,8 +56,6 @@ const LooksManagementView = () => {
     }, [search, data]);
 
     const getData = async () => {
-        if(!products?.length) return setIsLoading(false);
-
         const filter = {
             status: [
                 "in_data_management",
@@ -77,18 +68,7 @@ const LooksManagementView = () => {
                 method: 'GET',
             });
 
-            const looks = response?.looks?.map((look: any) => {
-                const tags = look?.tags?.map((tag: any) => {
-                    return tag.item = products?.find((product: any) => product?.id === tag?.itemId);
-                });
-
-                return {
-                    ...look,
-                    tags,
-                }
-            });
-
-            setData(looks);
+            setData(response?.looks);
             setPagination({
                 ...pagination,
                 total: response?.count || 0,
@@ -97,6 +77,9 @@ const LooksManagementView = () => {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
+
+        await getProducts();
+        await getBrands();
 
         setIsLoading(false);
     };
@@ -108,7 +91,7 @@ const LooksManagementView = () => {
                 method: 'GET',
             });
 
-            setProducts(response);
+            setProducts(response?.items);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -558,7 +541,6 @@ const TableRow = ({ item, isLastItem, products, onSendLookFromManagement, onSend
             >
                 <LookProducts
                     look={item}
-                    lookProducts={item?.tags}
                     allProducts={products}
                     onSave={() => {
                         setIsProductsExpanded(false);

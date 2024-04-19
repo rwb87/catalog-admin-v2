@@ -1,35 +1,39 @@
 import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
+import { useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
 import SearchableInput from "../SearchableInput";
 import fetch from "@/helpers/fetch";
-import sortData from "@/helpers/sorting";
 import { useGlobalData } from "@/_store";
 import notify from "@/helpers/notify";
 
 type LookProductsProps = {
     look: any,
-    lookProducts: any;
     allProducts: any;
     onSave: (products: any) => void;
 }
-const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsProps) => {
+const LookProducts = ({ look, allProducts, onSave }: LookProductsProps) => {
     const { brands: globalBrands } = useGlobalData() as any;
 
-    const [editedProducts, setEditedProducts] = useState<any>(lookProducts);
+    const [editedProducts, setEditedProducts] = useState<any>();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isAddingProductToLook, setIsAddingProductToLook] = useState(false);
 
     const [selectedBrand, setSelectedBrand] = useState<any>(null);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
+    useEffect(() => {
+        const tags = JSON.parse(JSON.stringify(look?.tags ?? []))
+
+        setEditedProducts(tags?.map((tag: any) => tag?.item));
+    },  [look?.tags]);
+
     const filteredAvailableProducts = useMemo(() => {
-        const productsInSelectedBrand = selectedBrand ? allProducts.filter((product: any) => product.brandId === selectedBrand.id) : allProducts;
+        const productsInSelectedBrand = selectedBrand ? allProducts.filter((product: any) => product?.brandId === selectedBrand?.id) : allProducts;
 
         return productsInSelectedBrand.filter((product: any) => {
-            return !editedProducts.find((lookProduct: any) => lookProduct.id === product.id);
+            return !editedProducts?.some((editedProduct: any) => editedProduct?.id === product?.id);
         });
     }, [allProducts, editedProducts, selectedBrand]);
 
@@ -39,23 +43,23 @@ const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsP
         setEditedProducts(newLinks);
     }
 
-    const handleMoveUp = (index: number) => {
-        if(index === 0) return;
+    // const handleMoveUp = (index: number) => {
+    //     if(index === 0) return;
 
-        const newLinks = [...editedProducts];
-        const [removed] = newLinks.splice(index, 1);
-        newLinks.splice(index - 1, 0, removed);
-        setEditedProducts(newLinks);
-    }
+    //     const newLinks = [...editedProducts];
+    //     const [removed] = newLinks.splice(index, 1);
+    //     newLinks.splice(index - 1, 0, removed);
+    //     setEditedProducts(newLinks);
+    // }
 
-    const handleMoveDown = (index: number) => {
-        if(index === editedProducts.length - 1) return;
+    // const handleMoveDown = (index: number) => {
+    //     if(index === editedProducts.length - 1) return;
 
-        const newLinks = [...editedProducts];
-        const [removed] = newLinks.splice(index, 1);
-        newLinks.splice(index + 1, 0, removed);
-        setEditedProducts(newLinks);
-    }
+    //     const newLinks = [...editedProducts];
+    //     const [removed] = newLinks.splice(index, 1);
+    //     newLinks.splice(index + 1, 0, removed);
+    //     setEditedProducts(newLinks);
+    // }
 
     const handleSave = async () => {
         setIsProcessing(true);
@@ -64,8 +68,8 @@ const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsP
 
         payload.append('updateReferences', 'true');
 
-        editedProducts.forEach((product: any) => {
-            payload.append('items', JSON.stringify(product));
+        editedProducts?.forEach((product: any, index: number) => {
+            payload.append(`items[${index}]`, JSON.stringify(product));
         });
 
         try {
@@ -92,12 +96,12 @@ const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsP
             <Box>
                 {
                     editedProducts?.map((item: any, index: number) => <Product
-                        key={item?.id}
+                        key={item?.id || index}
                         item={item}
                         index={index}
+                        // handleMoveUp={handleMoveUp}
+                        // handleMoveDown={handleMoveDown}
                         handleRemove={handleRemove}
-                        handleMoveUp={handleMoveUp}
-                        handleMoveDown={handleMoveDown}
                     />
                 )}
             </Box>
@@ -166,12 +170,12 @@ const LookProducts = ({ look, lookProducts, allProducts, onSave }: LookProductsP
 type ProductProps = {
     index: number,
     item: any,
-    handleMoveUp: (index: number) => void,
-    handleMoveDown: (index: number) => void,
+    // handleMoveUp: (index: number) => void,
+    // handleMoveDown: (index: number) => void,
     handleRemove: (index: number) => void,
 }
-const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: ProductProps) => {
-    const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
+const Product = ({ index, item, handleRemove }: ProductProps) => {
+    const [links, setLinks] = useState<any[] | null>(null);
 
     const handleOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
@@ -255,7 +259,10 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                 rounded='full'
                                 size='sm'
                                 icon={<IconLink size={22} />}
-                                onClick={() => setIsLinksExpanded(!isLinksExpanded)}
+                                onClick={() => {
+                                    if(links === null) setLinks(item?.links || [item?.link] || []);
+                                    else setLinks(null);
+                                }}
                             />
                         </Td>
                         <Td textAlign='center'>
@@ -301,20 +308,21 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
             </Table>
 
             {/* Product Links */}
-            <Box
-                bgColor='gray.100'
-                display={isLinksExpanded ? 'block' : 'none'}
-                p={6}
-                width='full'
-            >
-                <ProductLinks
-                    links={item?.links ?? [item?.link] ?? []}
-                    productId={item?.id}
-                    onSave={() => {
-                        setIsLinksExpanded(false);
-                    }}
-                />
-            </Box>
+            {
+                links !== null
+                    ? <Box
+                        bgColor='gray.100'
+                        p={6}
+                        width='full'
+                    >
+                        <ProductLinks
+                            links={links}
+                            productId={item?.id}
+                            allowModify={false}
+                        />
+                    </Box>
+                    : null
+            }
         </>
     )
 }

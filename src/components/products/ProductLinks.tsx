@@ -3,18 +3,22 @@ import notify from "@/helpers/notify";
 import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { BiChevronDown } from "react-icons/bi";
 
 type LookProductsProps = {
     links: any;
     productId: string;
-    onSave: (links: any) => void;
+    allowModify?: boolean;
+    onSave?: (links: any) => void;
+    onCancel?: () => void;
 }
-const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
-    const [editedLinks, setEditedLinks] = useState<any>(links)
+const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }: LookProductsProps) => {
+    const [editedLinks, setEditedLinks] = useState<any>([])
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
-        const sortedLinks = links.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+        const newLinks = JSON.parse(JSON.stringify(links));
+        const sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
 
         setEditedLinks(sortedLinks);
     }, [links]);
@@ -83,17 +87,17 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
         const newLinks = filteredLinks.map((link: any, index: number) => ({ ...link, orderIndex: index }));
         setEditedLinks(newLinks);
 
-        await handleSaveLinks(productId, newLinks);
+        await handleSaveLinks();
     }
 
-    const handleSaveLinks = async (productId: string, links: any) => {
+    const handleSaveLinks = async () => {
         setIsProcessing(true);
 
         try {
             const response = await fetch({
                 endpoint: `/items/${productId}/links`,
                 method: 'POST',
-                data: { links },
+                data: { links: editedLinks },
             });
 
             if (response) notify('Links saved successfully', 3000);
@@ -105,7 +109,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
         }
 
         setIsProcessing(false);
-        onSave(links);
+        onSave?.(editedLinks);
     }
 
     return (
@@ -130,6 +134,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     autoComplete="off"
                                     required={true}
                                     name='link'
+                                    readOnly={!allowModify}
                                     value={link?.link ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 />
@@ -143,6 +148,8 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     rounded='full'
                                     width={48}
                                     name='linkClass'
+                                    isReadOnly={!allowModify}
+                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
                                     value={link?.linkClass ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 >
@@ -161,6 +168,8 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     rounded='full'
                                     width={32}
                                     name='linkType'
+                                    isReadOnly={!allowModify}
+                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
                                     value={link?.linkType ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 >
@@ -181,6 +190,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     rounded='full'
                                     autoComplete="off"
                                     name='price'
+                                    readOnly={!allowModify}
                                     value={link?.price ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 />
@@ -198,11 +208,16 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                                     rounded='full'
                                     autoComplete="off"
                                     name='discountPrice'
+                                    readOnly={!allowModify}
                                     value={link?.discountPrice ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 />
                             </Td>
-                            <Td textAlign='right' whiteSpace='nowrap'>
+                            <Td
+                                textAlign='right'
+                                whiteSpace='nowrap'
+                                display={allowModify ? 'table-cell' : 'none'}
+                            >
                                 <IconButton
                                     aria-label='Move Up'
                                     variant='ghost'
@@ -247,6 +262,7 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                 mt={4}
                 pt={0}
                 rounded='lg'
+                display={allowModify ? 'flex' : 'none'}
             >
                 <Button
                     variant='solid'
@@ -256,16 +272,32 @@ const ProductLinks = ({ links, productId, onSave }: LookProductsProps) => {
                     onClick={handleAddNew}
                 >Add Link</Button>
 
-                <Button
-                    variant='solid'
-                    colorScheme='green'
-                    size='sm'
-                    leftIcon={<IconDeviceFloppy size={20} />}
-                    isLoading={isProcessing}
-                    isDisabled={isProcessing}
-                    loadingText='Saving...'
-                    onClick={handleSave}
-                >Save Links</Button>
+                <Flex
+                    alignItems='center'
+                    gap={4}
+                >
+                    <Button
+                        variant='ghost'
+                        colorScheme='gray'
+                        size='sm'
+                        isDisabled={isProcessing}
+                        onClick={() => {
+                            setEditedLinks([]);
+                            onCancel?.();
+                        }}
+                    >Cancel</Button>
+
+                    <Button
+                        variant='solid'
+                        colorScheme='green'
+                        size='sm'
+                        leftIcon={<IconDeviceFloppy size={20} />}
+                        isLoading={isProcessing}
+                        isDisabled={isProcessing}
+                        loadingText='Saving...'
+                        onClick={handleSave}
+                    >Save Links</Button>
+                </Flex>
             </Flex>
         </>
     )

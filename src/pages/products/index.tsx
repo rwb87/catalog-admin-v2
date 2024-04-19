@@ -78,7 +78,6 @@ const ProductsView = () => {
             });
 
             // Sort by createdAt
-            response?.items?.map((item: any) => item.brand_name = item?.brand?.name || '');
             const sortedData = sortData(response?.items, sortBy);
 
             setData(sortedData);
@@ -539,7 +538,7 @@ type TableRowProps = {
     onDelete: (id: string) => void,
 }
 const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
-    const [isLinksExpanded, setIsLinksExpanded] = useState<boolean>(false);
+    const [links, setLinks] = useState<any[] | null>(null);
 
     const handleOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
@@ -554,7 +553,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
 
     return (
         <>
-            <Tr key={item?.id}>
+            <Tr>
                 <Td>
                     {
                         item?.pictureURL
@@ -636,7 +635,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                         rounded='full'
                         size='sm'
                         icon={<IconLink size={22} />}
-                        onClick={() => setIsLinksExpanded(!isLinksExpanded)}
+                        onClick={() => setLinks(item?.links || [item?.link] || [])}
                     />
                 </Td>
                 <Td textAlign='center'>
@@ -668,21 +667,23 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
             </Tr>
 
             {/* Product Links */}
-            <Tr
-                display={isLinksExpanded ? 'table-row' : 'none'}
-                bgColor='gray.50'
-            >
-                <Td colSpan={20}>
-                    <ProductLinks
-                        links={(item?.links ?? [item?.link]) || []}
-                        productId={item?.id}
-                        onSave={() => {
-                            setIsLinksExpanded(false);
-                            // window?.dispatchEvent(new CustomEvent('refresh:data'));
-                        }}
-                    />
-                </Td>
-            </Tr>
+            {
+                links !== null
+                    ? <Tr bgColor='gray.50'>
+                        <Td colSpan={20}>
+                            <ProductLinks
+                                links={links || []}
+                                productId={item?.id}
+                                onSave={(links: any) => {
+                                    setLinks(null);
+                                    item.links = links;
+                                }}
+                                onCancel={() => setLinks(null)}
+                            />
+                        </Td>
+                    </Tr>
+                : null
+            }
         </>
     )
 }

@@ -538,10 +538,10 @@ type TableRowProps = {
     onDelete: (item: any) => void,
 }
 const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
-    const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
+    const [products, setProducts] = useState<any[] | null>(null);
 
     const handleExpandProducts = () => {
-        setIsProductsExpanded(!isProductsExpanded);
+        setProducts(products !== null ? null : item?.products);
     }
 
     const handleOpenImage = (link: string) => {
@@ -559,7 +559,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                 src={item?.pictureURL}
                                 width={28}
                                 height='auto'
-                                objectFit='cover'
+                                objectFit='contain'
                                 alt={item?.name}
                                 rounded='md'
                                 cursor='pointer'
@@ -584,7 +584,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             : '-'
                     }
                 </Td>
-                <Td textAlign='center'>{item?.products?.length || 0}</Td>
+                <Td textAlign='center'>{item?.items?.length || 0}</Td>
                 <Td textAlign='center'>{item?.partnership || 'None'}</Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='center' whiteSpace='nowrap'>
@@ -625,7 +625,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             size={22}
                             style={{
                                 transition: 'transform 0.15s',
-                                transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
+                                transform: products !== null ? 'rotate(180deg)' : 'rotate(0deg)'
                             }}
                         />}
                         onClick={handleExpandProducts}
@@ -634,18 +634,19 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
             </Tr>
 
             {/* Products */}
-            <Tr
-                display={isProductsExpanded ? 'table-row' : 'none'}
-                bgColor='gray.50'
-            >
-                <Td colSpan={20}>
-                    <BrandProducts
-                        brand={item}
-                        products={item?.items}
-                        onSave={(products: any) => console.log(products)}
-                    />
-                </Td>
-            </Tr>
+            {
+                products !== null
+                    ? <Tr bgColor='gray.50'>
+                        <Td colSpan={20}>
+                            <BrandProducts
+                                brand={item}
+                                products={item?.items}
+                                onSave={(products: any) => console.log(products)}
+                            />
+                        </Td>
+                    </Tr>
+                    : null
+            }
         </>
     )
 }
