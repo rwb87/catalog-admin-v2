@@ -145,7 +145,13 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                 onSubmit={() => {
                     setIsAddingProductToLook(false);
                     if(selectedProduct) {
-                        setEditedProducts([...editedProducts, selectedProduct]);
+                        setEditedProducts([
+                            ...editedProducts,
+                            {
+                                ...selectedProduct,
+                                brand: selectedBrand,
+                            }
+                        ]);
                         setSelectedBrand(null);
                         setSelectedProduct(null);
                     }
