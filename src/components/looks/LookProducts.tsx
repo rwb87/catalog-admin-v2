@@ -5,17 +5,13 @@ import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
 import SearchableInput from "../SearchableInput";
 import fetch from "@/helpers/fetch";
-import { useGlobalData } from "@/_store";
 import notify from "@/helpers/notify";
 
 type LookProductsProps = {
     look: any,
-    allProducts: any;
     onSave: (products: any) => void;
 }
-const LookProducts = ({ look, allProducts, onSave }: LookProductsProps) => {
-    const { brands: globalBrands } = useGlobalData() as any;
-
+const LookProducts = ({ look, onSave }: LookProductsProps) => {
     const [editedProducts, setEditedProducts] = useState<any>();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isAddingProductToLook, setIsAddingProductToLook] = useState(false);
@@ -23,19 +19,52 @@ const LookProducts = ({ look, allProducts, onSave }: LookProductsProps) => {
     const [selectedBrand, setSelectedBrand] = useState<any>(null);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
+    const [isSearchingBrands, setIsSearchingBrands] = useState<boolean>(false);
+    const [brandSearchTerm, setBrandSearchTerm] = useState<string>('');
+    const [brands, setBrands] = useState<any[]>([]);
+
+    useEffect(() => {
+        const debounce = setTimeout(() => getBrands(), 500);
+        return () => clearTimeout(debounce);
+    }, [brandSearchTerm]);
+
     useEffect(() => {
         const tags = JSON.parse(JSON.stringify(look?.tags ?? []))
 
         setEditedProducts(tags?.map((tag: any) => tag?.item));
     },  [look?.tags]);
 
+    const getBrands = async () => {
+        setIsSearchingBrands(true);
+        if (brandSearchTerm?.trim() === '' || brandSearchTerm?.trim()?.length < 3) {
+            setBrands([]);
+            setIsSearchingBrands(false);
+            return;
+        }
+
+        try {
+            const response = await fetch({
+                endpoint: `/brands?search=${brandSearchTerm}`,
+                method: 'GET',
+            });
+
+            setBrands(response);
+        } catch (error: any) {
+            setBrands([]);
+        }
+
+        setIsSearchingBrands(false);
+    }
+
     const filteredAvailableProducts = useMemo(() => {
-        const productsInSelectedBrand = selectedBrand ? allProducts.filter((product: any) => product?.brandId === selectedBrand?.id) : allProducts;
+        if(selectedBrand === null) return [];
+
+        const productsInSelectedBrand = selectedBrand ? selectedBrand?.items?.filter((product: any) => product?.brandId === selectedBrand?.id) : selectedBrand?.items || [];
 
         return productsInSelectedBrand.filter((product: any) => {
             return !editedProducts?.some((editedProduct: any) => editedProduct?.id === product?.id);
         });
-    }, [allProducts, editedProducts, selectedBrand]);
+    }, [selectedBrand, editedProducts]);
 
     const handleRemove = (index: number) => {
         const newLinks = [...editedProducts];
@@ -115,16 +144,26 @@ const LookProducts = ({ look, allProducts, onSave }: LookProductsProps) => {
                 isProcessing={false}
                 onSubmit={() => {
                     setIsAddingProductToLook(false);
-                    setEditedProducts([...editedProducts, selectedProduct]);
+                    if(selectedProduct) {
+                        setEditedProducts([...editedProducts, selectedProduct]);
+                        setSelectedBrand(null);
+                        setSelectedProduct(null);
+                    }
                 }}
-                onClose={() => setIsAddingProductToLook(false)}
+                onClose={() => {
+                    setIsAddingProductToLook(false)
+                    setSelectedBrand(null);
+                    setSelectedProduct(null);
+                }}
             >
                 <Grid gap={4}>
                     <SearchableInput
-                        data={globalBrands}
+                        data={brands}
                         property="name"
                         defaultValue=''
                         placeholder="Search brand..."
+                        isLoading={isSearchingBrands}
+                        onDynamicSearch={(searchTerm: string) => setBrandSearchTerm(searchTerm)}
                         onChange={(item: any) => setSelectedBrand(item)}
                     />
 

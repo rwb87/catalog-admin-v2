@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { IconLoader2 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 
 type SearchableInputProps = {
@@ -6,9 +7,11 @@ type SearchableInputProps = {
     property: string;
     defaultValue?: any;
     placeholder?: string;
+    isLoading?: boolean;
+    onDynamicSearch?: (searchTerm: string) => void;
     onChange: (item: any) => void;
 }
-const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 'Search...', onChange }: SearchableInputProps) => {
+const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 'Search...', isLoading = false, onDynamicSearch, onChange }: SearchableInputProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState(defaultValue || '');
 
@@ -25,12 +28,26 @@ const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 
                 placeholder={placeholder}
                 value={searchTerm}
                 onChange={(e) => {
+                    onDynamicSearch?.(e.target.value);
                     setSearchTerm(e.target.value)
                     setIsOpen(true);
                 }}
-                onFocus={() => setIsOpen(true)}
+                onFocus={() => {
+                    onDynamicSearch?.(searchTerm);
+                    setIsOpen(true)
+                }}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)}
             />
+
+            <Box
+                display={isLoading ? 'block' : 'none'}
+                pointerEvents='none'
+                position='absolute'
+                right={2}
+                top={2.5}
+            >
+                <IconLoader2 size={18} className="animate-spin" />
+            </Box>
 
             <Flex
                 direction='column'

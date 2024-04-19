@@ -1,4 +1,3 @@
-import { useGlobalData } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
@@ -14,12 +13,9 @@ import { IconChevronDown, IconLoader2, IconPhoto, IconTrash, IconUnlink } from "
 import { useEffect, useMemo, useState } from "react";
 
 const LooksView = () => {
-    const { setBrands } = useGlobalData() as any;
-
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isLive, setIsLive] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [products, setProducts] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
@@ -89,41 +85,41 @@ const LooksView = () => {
             notify(message, 3000);
         }
 
-        await getProducts();
-        await getBrands();
+        // await getProducts();
+        // await getBrands();
 
         setIsLoading(false);
     };
 
-    const getProducts = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/items`,
-                method: 'GET',
-            });
+    // const getProducts = async () => {
+    //     try {
+    //         const response = await fetch({
+    //             endpoint: `/items`,
+    //             method: 'GET',
+    //         });
 
-            setProducts(response?.items);
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
-    }
+    //         setProducts(response?.items);
+    //     } catch (error: any) {
+    //         const message = error?.response?.data?.message || error?.message;
+    //         notify(message, 3000);
+    //     }
+    // }
 
-    const getBrands = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/brands`,
-                method: 'GET',
-            });
+    // const getBrands = async () => {
+    //     try {
+    //         const response = await fetch({
+    //             endpoint: `/brands`,
+    //             method: 'GET',
+    //         });
 
-            const sortedData = sortData(response, 'name.ASC');
+    //         const sortedData = sortData(response, 'name.ASC');
 
-            setBrands(sortedData);
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
-    }
+    //         setBrands(sortedData);
+    //     } catch (error: any) {
+    //         const message = error?.response?.data?.message || error?.message;
+    //         notify(message, 3000);
+    //     }
+    // }
 
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);
@@ -347,7 +343,6 @@ const LooksView = () => {
             {/* Table */}
             <LooksTable
                 data={filteredData}
-                products={products}
                 pagination={pagination}
                 onPaginate={(page: number) => {
                     setPagination({
@@ -420,7 +415,6 @@ const LooksView = () => {
 
 type LooksTableProps = {
     data: any,
-    products: any,
     pagination: any,
     onPaginate: (page: number) => void,
     isLoading: boolean,
@@ -428,7 +422,7 @@ type LooksTableProps = {
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const LooksTable = ({ data, products, pagination, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
+const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
     const isLive = data?.[0]?.status === 'live';
 
     const reconstructedData = data;
@@ -482,7 +476,6 @@ const LooksTable = ({ data, products, pagination, onPaginate, isLoading, onSendL
                                         key={item?.id}
                                         item={item}
                                         isLive={isLive}
-                                        products={products}
                                         onSendLookToManagement={onSendLookToManagement}
                                         onUpdate={onUpdate}
                                         onDelete={onDelete}
@@ -506,12 +499,11 @@ const LooksTable = ({ data, products, pagination, onPaginate, isLoading, onSendL
 type TableRowProps = {
     item: any,
     isLive: boolean,
-    products: any,
     onSendLookToManagement: (item: any) => void,
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, isLive = true, products, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
 
@@ -722,7 +714,6 @@ const TableRow = ({ item, isLive = true, products, onSendLookToManagement, onUpd
                 <Td colSpan={20}>
                     <LookProducts
                         look={item}
-                        allProducts={products}
                         onSave={(list: any) => setIsProductsExpanded(false)}
                     />
                 </Td>

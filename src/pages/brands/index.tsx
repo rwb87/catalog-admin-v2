@@ -258,8 +258,8 @@ const BrandsView = () => {
                             <option value='name:desc'>Z - A</option>
                         </optgroup>
                         <optgroup label="# of Products">
-                            <option value='products.length:desc'>Most Products</option>
-                            <option value='products.length:asc'>Least Products</option>
+                            <option value='items.length:desc'>Most Products</option>
+                            <option value='items.length:asc'>Least Products</option>
                         </optgroup>
                         <optgroup label="Creation Date">
                             <option value='createdAt:desc'>Newest First</option>

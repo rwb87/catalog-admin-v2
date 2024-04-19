@@ -14,8 +14,6 @@ import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash, IconUn
 import { useEffect, useMemo, useState } from "react";
 
 const LooksManagementView = () => {
-    const { setBrands } = useGlobalData() as any;
-
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
     const [products, setProducts] = useState<any>([]);
@@ -78,41 +76,8 @@ const LooksManagementView = () => {
             notify(message, 3000);
         }
 
-        await getProducts();
-        await getBrands();
-
         setIsLoading(false);
     };
-
-    const getProducts = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/items`,
-                method: 'GET',
-            });
-
-            setProducts(response?.items);
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
-    }
-
-    const getBrands = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/brands`,
-                method: 'GET',
-            });
-
-            const sortedData = sortData(response, 'name.ASC');
-
-            setBrands(sortedData);
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
-    }
 
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);
@@ -185,7 +150,6 @@ const LooksManagementView = () => {
             <LooksManagementTable
                 data={filteredData}
                 pagination={pagination}
-                products={products}
                 onPaginate={(page: number) => {
                     setPagination({
                         ...pagination,
@@ -249,7 +213,6 @@ const LooksManagementView = () => {
 type LooksManagementTableProps = {
     data: any,
     pagination: any,
-    products: any,
     onPaginate: (page: number) => void,
     isLoading: boolean,
     onSendLookFromManagement: (item: any) => void,
@@ -257,7 +220,7 @@ type LooksManagementTableProps = {
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoading, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: LooksManagementTableProps) => {
+const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: LooksManagementTableProps) => {
     return (
         <>
             <Flex
@@ -283,7 +246,6 @@ const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoadin
                                 key={item?.id}
                                 item={item}
                                 isLastItem={index === data.length - 1}
-                                products={products}
                                 onSendLookFromManagement={onSendLookFromManagement}
                                 onSendToLive={onSendToLive}
                                 onUpdate={onUpdate}
@@ -306,13 +268,12 @@ const LooksManagementTable = ({ data, pagination, products, onPaginate, isLoadin
 type TableRowProps = {
     item: any,
     isLastItem: boolean,
-    products: any,
     onSendLookFromManagement: (item: any) => void,
     onSendToLive: (item: any) => void,
     onUpdate: (data: any, id: string) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, isLastItem, products, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
 
@@ -541,7 +502,6 @@ const TableRow = ({ item, isLastItem, products, onSendLookFromManagement, onSend
             >
                 <LookProducts
                     look={item}
-                    allProducts={products}
                     onSave={() => {
                         setIsProductsExpanded(false);
                     }}

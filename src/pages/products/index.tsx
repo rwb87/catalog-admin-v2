@@ -16,8 +16,6 @@ import { useLocation } from "react-router-dom";
 const ProductsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [brands, setBrands] = useState<any[]>([]);
-    const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
@@ -41,12 +39,6 @@ const ProductsView = () => {
     useEffect(() => {
         setIsLoading(true);
 
-        getBrands();
-    }, []);
-
-    useEffect(() => {
-        setIsLoading(true);
-
         getData();
 
         window?.addEventListener('refresh:data', getData);
@@ -57,23 +49,14 @@ const ProductsView = () => {
     }, [sortBy, pagination.page]);
 
     useEffect(() => {
-        if(search?.toString()?.trim() === '') return setFilteredData(data);
-
-        setFilteredData(
-            data?.filter((item: any) => {
-                return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.brand?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.link?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.price?.toString().includes(search?.toLowerCase()) ||
-                    item?.dealPrice?.toString().includes(search?.toLowerCase());
-            })
-        );
-    }, [search, data]);
+        const debounce = setTimeout(() => getData(), 500);
+        return () => clearTimeout(debounce);
+    }, [search]);
 
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${search}`,
                 method: 'GET',
             });
 
@@ -91,25 +74,6 @@ const ProductsView = () => {
         }
 
         setIsLoading(false);
-    }
-
-    const getBrands = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/brands`,
-                method: 'GET',
-            });
-
-            // Sort by createdAt
-            response.sort((a: any, b: any) => {
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
-
-            setBrands(response);
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
     }
 
     const handleDelete = async () => {
@@ -426,7 +390,7 @@ const ProductsView = () => {
 
             {/* Table */}
             <ProductsTable
-                data={filteredData}
+                data={data}
                 isLoading={isLoading}
                 pagination={pagination}
                 onPaginate={(page: number) => {
@@ -443,7 +407,6 @@ const ProductsView = () => {
             {/* Update Product */}
             <UpdateProductDrawer
                 data={editingData}
-                brands={brands}
                 onClose={() => setEditingData({})}
                 onComplete={() => getData()}
             />
@@ -690,15 +653,45 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
 
 type UpdateProductDrawerProps = {
     data: any;
-    brands: any;
     onComplete: (data: any, isNew: boolean) => void;
     onClose: () => void;
 }
-const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProductDrawerProps) => {
+const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerProps) => {
     const productImageRef = useRef<any>(null);
 
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+    const [isSearchingBrands, setIsSearchingBrands] = useState<boolean>(false);
+    const [brandSearchTerm, setBrandSearchTerm] = useState<string>('');
+    const [brands, setBrands] = useState<any[]>([]);
+
+    useEffect(() => {
+        const debounce = setTimeout(() => getBrands(), 500);
+        return () => clearTimeout(debounce);
+    }, [brandSearchTerm]);
+
+    const getBrands = async () => {
+        setIsSearchingBrands(true);
+        if (brandSearchTerm?.trim() === '') {
+            setBrands([]);
+            setIsSearchingBrands(false);
+            return;
+        }
+
+        try {
+            const response = await fetch({
+                endpoint: `/brands?search=${brandSearchTerm}`,
+                method: 'GET',
+            });
+
+            setBrands(response);
+        } catch (error: any) {
+            setBrands([]);
+        }
+
+        setIsSearchingBrands(false);
+    }
 
     const handleUpdateData = async () => {
         setIsProcessing(true);
@@ -833,6 +826,8 @@ const UpdateProductDrawer = ({ data, brands, onComplete, onClose }: UpdateProduc
                     property='name'
                     defaultValue={editingData?.brand?.name}
                     placeholder="Search brand..."
+                    isLoading={isSearchingBrands}
+                    onDynamicSearch={(term: any) => setBrandSearchTerm(term)}
                     onChange={(brand: any) => {
                         setEditingData({
                             ...editingData,
