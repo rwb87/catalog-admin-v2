@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
@@ -29,9 +29,10 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
     }, [brandSearchTerm]);
 
     useEffect(() => {
-        const tags = JSON.parse(JSON.stringify(look?.tags ?? []))
+        const tags = JSON.parse(JSON.stringify(look?.tags ?? []));
+        const sortedTags = tags?.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
 
-        setEditedProducts(tags?.map((tag: any) => tag?.item));
+        setEditedProducts(sortedTags?.map((tag: any) => tag?.item));
     },  [look?.tags]);
 
     const getBrands = async () => {
@@ -72,32 +73,41 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         setEditedProducts(newLinks);
     }
 
-    // const handleMoveUp = (index: number) => {
-    //     if(index === 0) return;
+    const handleMoveUp = (index: number) => {
+        if(index === 0) return;
 
-    //     const newLinks = [...editedProducts];
-    //     const [removed] = newLinks.splice(index, 1);
-    //     newLinks.splice(index - 1, 0, removed);
-    //     setEditedProducts(newLinks);
-    // }
+        const newLinks = [...editedProducts];
+        const [removed] = newLinks.splice(index, 1);
+        newLinks.splice(index - 1, 0, removed);
+        setEditedProducts(newLinks);
+    }
 
-    // const handleMoveDown = (index: number) => {
-    //     if(index === editedProducts.length - 1) return;
+    const handleMoveDown = (index: number) => {
+        if(index === editedProducts.length - 1) return;
 
-    //     const newLinks = [...editedProducts];
-    //     const [removed] = newLinks.splice(index, 1);
-    //     newLinks.splice(index + 1, 0, removed);
-    //     setEditedProducts(newLinks);
-    // }
+        const newLinks = [...editedProducts];
+        const [removed] = newLinks.splice(index, 1);
+        newLinks.splice(index + 1, 0, removed);
+        setEditedProducts(newLinks);
+    }
 
     const handleSave = async () => {
+
+        // Reset order index
+        const newProducts = editedProducts.map((link: any, index: number) => ({ ...link, orderIndex: index }));
+        setEditedProducts(newProducts);
+
+        handleSaveProducts(newProducts);
+    }
+
+    const handleSaveProducts = async (products: any[]) => {
         setIsProcessing(true);
 
         const payload = new FormData();
 
         payload.append('updateReferences', 'true');
 
-        editedProducts?.forEach((product: any, index: number) => {
+        products?.forEach((product: any, index: number) => {
             payload.append(`items[${index}]`, JSON.stringify(product));
         });
 
@@ -128,8 +138,8 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                         key={item?.id || index}
                         item={item}
                         index={index}
-                        // handleMoveUp={handleMoveUp}
-                        // handleMoveDown={handleMoveDown}
+                        handleMoveUp={handleMoveUp}
+                        handleMoveDown={handleMoveDown}
                         handleRemove={handleRemove}
                     />
                 )}
@@ -215,11 +225,11 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
 type ProductProps = {
     index: number,
     item: any,
-    // handleMoveUp: (index: number) => void,
-    // handleMoveDown: (index: number) => void,
+    handleMoveUp: (index: number) => void,
+    handleMoveDown: (index: number) => void,
     handleRemove: (index: number) => void,
 }
-const Product = ({ index, item, handleRemove }: ProductProps) => {
+const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
     const handleOpenImage = (link: string) => {
@@ -316,7 +326,7 @@ const Product = ({ index, item, handleRemove }: ProductProps) => {
                         </Td>
                         <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                         <Td textAlign='right' whiteSpace='nowrap'>
-                            {/* <IconButton
+                            <IconButton
                                 aria-label='Move Up'
                                 variant='ghost'
                                 colorScheme='blue'
@@ -335,7 +345,7 @@ const Product = ({ index, item, handleRemove }: ProductProps) => {
                                 ml={4}
                                 icon={<IconArrowDown size={22} />}
                                 onClick={() => handleMoveDown(index)}
-                            /> */}
+                            />
 
                             <IconButton
                                 aria-label='Delete'
