@@ -17,7 +17,7 @@ const ProductsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
+    const [sortBy, setSortBy] = useState<string>('createdAt,desc');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -56,7 +56,7 @@ const ProductsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${search}`,
+                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${search}&order=${sortBy}`,
                 method: 'GET',
             });
 
@@ -296,25 +296,21 @@ const ProductsView = () => {
                         value={sortBy}
                         onChange={(event) => setSortBy(event.target.value)}
                     >
-                        <optgroup label="Brand Name">
-                            <option value='brand_name:asc'>A - Z</option>
-                            <option value='brand_name:desc'>Z - A</option>
-                        </optgroup>
                         <optgroup label="Product Name">
-                            <option value='name:asc'>A - Z</option>
-                            <option value='name:desc'>Z - A</option>
+                            <option value='name,asc'>A - Z</option>
+                            <option value='name,desc'>Z - A</option>
                         </optgroup>
                         <optgroup label="Price">
-                            <option value='price:asc'>Low - High</option>
-                            <option value='price:desc'>High - Low</option>
+                            <option value='price,asc'>Low - High</option>
+                            <option value='price,desc'>High - Low</option>
                         </optgroup>
                         <optgroup label="Deal Price">
-                            <option value='dealPrice:asc'>Low - High</option>
-                            <option value='dealPrice:desc'>High - Low</option>
+                            <option value='dealPrice,asc'>Low - High</option>
+                            <option value='dealPrice,desc'>High - Low</option>
                         </optgroup>
                         <optgroup label="Creation Date">
-                            <option value='createdAt:desc'>Newest First</option>
-                            <option value='createdAt:asc'>Oldest First</option>
+                            <option value='createdAt,desc'>Newest First</option>
+                            <option value='createdAt,asc'>Oldest First</option>
                         </optgroup>
                     </Select>
 
