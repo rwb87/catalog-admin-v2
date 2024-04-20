@@ -87,17 +87,17 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         const newLinks = filteredLinks.map((link: any, index: number) => ({ ...link, orderIndex: index }));
         setEditedLinks(newLinks);
 
-        await handleSaveLinks();
+        await handleSaveLinks(newLinks);
     }
 
-    const handleSaveLinks = async () => {
+    const handleSaveLinks = async (links: any[]) => {
         setIsProcessing(true);
 
         try {
             const response = await fetch({
                 endpoint: `/items/${productId}/links`,
                 method: 'POST',
-                data: { links: editedLinks },
+                data: { links: links },
             });
 
             if (response) notify('Links saved successfully', 3000);
@@ -109,7 +109,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         }
 
         setIsProcessing(false);
-        onSave?.(editedLinks);
+        onSave?.(links);
     }
 
     return (

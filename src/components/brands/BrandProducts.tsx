@@ -182,7 +182,11 @@ const Product = ({ product, brand, handleOnOpenImage }: ProductProps) => {
                             <ProductLinks
                                 links={links}
                                 productId={product?.id}
-                                allowModify={false}
+                                onCancel={() => setLinks(null)}
+                                onSave={(links: any) => {
+                                    product.links = links;
+                                    setLinks(null);
+                                }}
                             />
                         </Td>
                     </Tr>

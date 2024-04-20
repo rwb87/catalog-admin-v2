@@ -1,4 +1,3 @@
-import { useGlobalData } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
@@ -6,7 +5,6 @@ import LookProducts from "@/components/looks/LookProducts";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
-import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
@@ -16,7 +14,6 @@ import { useEffect, useMemo, useState } from "react";
 const LooksManagementView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [products, setProducts] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
 

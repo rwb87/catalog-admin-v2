@@ -598,7 +598,10 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                         rounded='full'
                         size='sm'
                         icon={<IconLink size={22} />}
-                        onClick={() => setLinks(item?.links || [item?.link] || [])}
+                        onClick={() => {
+                            if(links === null) setLinks(item?.links || [item?.link] || []);
+                            else setLinks(null);
+                        }}
                     />
                 </Td>
                 <Td textAlign='center'>

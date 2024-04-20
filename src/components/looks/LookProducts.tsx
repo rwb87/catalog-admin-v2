@@ -363,7 +363,11 @@ const Product = ({ index, item, handleRemove }: ProductProps) => {
                         <ProductLinks
                             links={links}
                             productId={item?.id}
-                            allowModify={false}
+                            onCancel={() => setLinks(null)}
+                            onSave={(links: any) => {
+                                item.links = links;
+                                setLinks(null);
+                            }}
                         />
                     </Box>
                     : null
