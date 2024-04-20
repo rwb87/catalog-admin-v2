@@ -12,8 +12,7 @@ type AppLayoutProps = {
     children: ReactElement | ReactElement[],
 }
 const AppLayout = ({ children }: AppLayoutProps) => {
-    const [activePage, setActivePage] = useState<string>('Administrators');
-    const location = useLocation();
+    const [activePage, setActivePage] = useState<string>('');
 
     const sidebarItems = useMemo(() => ([
         {
@@ -73,13 +72,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     ]), []);
 
     useEffect(() => {
-        const onActivePageChange = (event: any) => {
-            if(!event?.detail?.activePage) return;
+        const getActivePage = (event: any) => {
+            if(!event?.detail?.activePage) return null;
 
             setActivePage(event?.detail?.activePage);
         }
 
-        window?.addEventListener('set:active-page', onActivePageChange);
+        return window?.addEventListener('set:active-page', getActivePage);
     }, []);
 
     return (
@@ -97,14 +96,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     md: 'contents',
                 }}
             >
-                {
-                    sidebarItems?.find((item: any) => location?.pathname === item?.link)
-                        ? <Sidebar
-                            sidebarItems={sidebarItems}
-                            activePage={activePage}
-                        />
-                        : null
-                }
+                <Sidebar
+                    sidebarItems={sidebarItems}
+                    activePage={activePage}
+                />
             </Box>
 
             {/* Topbar for Mobile */}
@@ -246,6 +241,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
 
     return (
         <Flex
+            display={activePage?.trim() === '' ? 'none' : 'flex'}
             direction='column'
             gap={4}
             justifyContent='space-between'
