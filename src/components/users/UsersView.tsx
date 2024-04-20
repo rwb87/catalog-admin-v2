@@ -7,8 +7,6 @@ import UsersTable from "@/components/users/UsersTable";
 import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
-import sortData from "@/helpers/sorting";
-import moment from "moment";
 import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 
@@ -19,14 +17,20 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     const { role: userRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
-    const [filteredUsers, setFilteredUsers] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
+    const [sortBy, setSortBy] = useState<string>('createdAt,desc');
     const [filterShoppersByCreatedAt, setFilterShoppersByCreatedAt] = useState<string>('');
 
     const [editingUser, setEditingUser] = useState<any>({});
     const [deletingUser, setDeletingUser] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+    const [pagination, setPagination] = useState({
+        page: 1,
+        offset: 0,
+        limit: 50,
+        total: 0,
+    });
 
     useAuthGuard('auth');
 
@@ -34,56 +38,24 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
         setIsLoading(true);
 
         getUsers();
-    }, [sortBy, filterShoppersByCreatedAt]);
+    }, [sortBy, pagination?.offset, filterShoppersByCreatedAt]);
 
     useEffect(() => {
-        if(search?.toString()?.trim() === '') return setFilteredUsers(users);
-
-        setFilteredUsers(
-            users.filter((user: any) => {
-                return user?.name.toLowerCase().includes(search.toLowerCase()) ||
-                    user?.lastName.toLowerCase().includes(search.toLowerCase()) ||
-                    `${user?.name?.toLowerCase() ?? ''} ${user?.lastName?.toLowerCase() ?? ''}`.includes(search.toLowerCase()) ||
-                    user?.username.toLowerCase().includes(search.toLowerCase()) ||
-                    user?.email.toLowerCase().includes(search.toLowerCase());
-            })
-        );
-    }, [search, users]);
+        const debounce = setTimeout(() => getUsers(), 500);
+        return () => clearTimeout(debounce);
+    }, [search]);
 
     const getUsers = async () => {
         try {
             const response = await fetch({
-                endpoint: `/users?type=${userType}`,
+                endpoint: `/users?type=${userType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${search}&order=${sortBy}`,
                 method: 'GET',
             });
-
-            const sortedData = sortData(response, sortBy);
-
-            // Filter by created date
-            if(filterShoppersByCreatedAt === '') setUsers(sortedData);
-            else {
-                let filteredData = [];
-                const dateNow = moment(new Date()).format('YYYY-MM-DD');
-
-                switch(filterShoppersByCreatedAt) {
-                    case 'today':
-                        filteredData = sortedData.filter((user: any) => moment(new Date(user.createdAt)).format('YYYY-MM-DD') === dateNow);
-                        break;
-                    case 'yesterday':
-                        filteredData = sortedData.filter((user: any) => moment(new Date(user.createdAt)).format('YYYY-MM-DD') === moment(new Date()).subtract(1, 'days').format('YYYY-MM-DD'));
-                        break;
-                    case 'this week':
-                        filteredData = sortedData.filter((user: any) => moment(new Date(user?.createdAt)).isBetween(moment(new Date()).startOf('week'), moment(new Date()).endOf('week')));
-                        break;
-                    case 'this month':
-                        filteredData = sortedData.filter((user: any) => moment(new Date(user?.createdAt)).isBetween(moment(new Date()).startOf('month'), moment(new Date()).endOf('month')));
-                        break;
-                    default:
-                        filteredData = sortedData;
-                }
-
-                setUsers(filteredData);
-            }
+            setUsers(response?.users);
+            setPagination({
+                ...pagination,
+                total: response?.count,
+            })
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -281,38 +253,38 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         onChange={(event: any) => setSortBy(event.target.value)}
                     >
                         <optgroup label="Username">
-                            <option value='username:asc'>A - Z</option>
-                            <option value='username:desc'>Z - A</option>
+                            <option value='username,asc'>A - Z</option>
+                            <option value='username,desc'>Z - A</option>
                         </optgroup>
                         <optgroup label="Email">
-                            <option value='email:asc'>A - Z</option>
-                            <option value='email:desc'>Z - A</option>
+                            <option value='email,asc'>A - Z</option>
+                            <option value='email,desc'>Z - A</option>
                         </optgroup>
-                        {
+                        {/* {
                             userType === 'shopper' && <optgroup label="Invitation Count">
-                                <option value='invitations.length:asc'>Low - High</option>
-                                <option value='invitations.length:desc'>High - Low</option>
+                                <option value='invitations.length,asc'>Low - High</option>
+                                <option value='invitations.length,desc'>High - Low</option>
                             </optgroup>
                         }
                         {
                             userType === 'creator' && <>
                                 <optgroup label="Looks Count">
-                                    <option value='looksCount:asc'>Low - High</option>
-                                    <option value='looksCount:desc'>High - Low</option>
+                                    <option value='looksCount,asc'>Low - High</option>
+                                    <option value='looksCount,desc'>High - Low</option>
                                 </optgroup>
                                 <optgroup label="Earning Amount">
-                                    <option value='currentEarnings:asc'>$0 - $9+</option>
-                                    <option value='currentEarnings:desc'>+$9 - $0</option>
+                                    <option value='currentEarnings,asc'>$0 - $9+</option>
+                                    <option value='currentEarnings,desc'>+$9 - $0</option>
                                 </optgroup>
                                 <optgroup label="Pending Amount">
-                                    <option value='currentPending:asc'>$0 - $9+</option>
-                                    <option value='currentPending:desc'>+$9 - $0</option>
+                                    <option value='currentPending,asc'>$0 - $9+</option>
+                                    <option value='currentPending,desc'>+$9 - $0</option>
                                 </optgroup>
                             </>
-                        }
+                        } */}
                         <optgroup label="Creation Date">
-                            <option value='createdAt:desc'>Newest First</option>
-                            <option value='createdAt:asc'>Oldest First</option>
+                            <option value='createdAt,desc'>Newest First</option>
+                            <option value='createdAt,asc'>Oldest First</option>
                         </optgroup>
                     </Select>
 
@@ -398,7 +370,13 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
             <UsersTable
                 isLoading={isLoading}
                 userType={userType}
-                data={filteredUsers}
+                data={users}
+                pagination={pagination}
+                onPaginate={(pageNumber: number) => setPagination({
+                    ...pagination,
+                    page: pageNumber,
+                    offset: (pageNumber - 1) * pagination.limit,
+                })}
                 hasActions={(userType === 'admin' && userRole === ROLES.SUPER_ADMIN) || userType !== 'admin'}
                 onEdit={(user: any) => setEditingUser(user)}
                 onDelete={(user) => setDeletingUser(user)}

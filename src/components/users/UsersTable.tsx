@@ -1,13 +1,14 @@
 import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { IconEdit, IconLoader2, IconMail, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
 import Pagination from "@/components/Pagination";
 
 type UsersTableProps = {
     isLoading?: boolean;
     userType: 'admin' | 'creator' | 'shopper';
     data?: any;
+    pagination: any;
+    onPaginate: (page: number) => void;
     hasActions?: boolean;
     onEdit?: (user: any) => void;
     onDelete?: (user: any) => void;
@@ -17,22 +18,12 @@ const UsersTable = (props: UsersTableProps) => {
         isLoading = false,
         userType = 'admin',
         data = [],
+        pagination,
+        onPaginate,
         hasActions = true,
         onEdit,
         onDelete,
     } = props;
-
-    const pagination = {
-        total: data?.length ?? 0,
-        limit: 50,
-    }
-    const [page, setPage] = useState<number>(1);
-
-    useEffect(() => {
-        setPage(1);
-    }, [data.length]);
-
-    const reconstructedData = pagination.total > pagination.limit ? data.slice((page - 1) * pagination.limit, page * pagination.limit) : data;
 
     return (
         <>
@@ -95,13 +86,13 @@ const UsersTable = (props: UsersTableProps) => {
                                         </Box>
                                     </Td>
                                 </Tr>
-                                : !reconstructedData?.length
+                                : !data?.length
                                     ? <Tr>
                                         <Td colSpan={20} textAlign='center'>
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : reconstructedData.map((user: any) => (
+                                    : data.map((user: any) => (
                                         <Tr key={user?.id}>
                                             <Td>
                                                 <Flex alignItems='center'>
@@ -220,8 +211,8 @@ const UsersTable = (props: UsersTableProps) => {
             <Pagination
                 total={pagination?.total || 0}
                 limit={pagination?.limit || 0}
-                page={page || 1}
-                setPage={setPage}
+                page={pagination?.page || 1}
+                setPage={onPaginate}
             />
         </>
     )
