@@ -173,6 +173,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
     const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
     const { role, clearToken } = useUser() as any;
     const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
+    const location = useLocation();
 
     useEffect(( ) => {
         const activeSidebarItem = sidebarItems.find((item) => item.label === activePage);
@@ -239,7 +240,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
         )
     }
 
-    const isSidebarVisible = sidebarItems.some((item) => item.label === activePage);
+    const isSidebarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname));
 
     return (
         <Flex
