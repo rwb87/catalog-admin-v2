@@ -239,9 +239,11 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
         )
     }
 
+    const isSidebarVisible = sidebarItems.some((item) => item.label === activePage);
+
     return (
         <Flex
-            display={activePage?.trim() === '' ? 'none' : 'flex'}
+            display={isSidebarVisible ? 'flex' : 'none'}
             direction='column'
             gap={4}
             justifyContent='space-between'

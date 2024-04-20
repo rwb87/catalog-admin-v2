@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useLayoutEffect } from 'react';
 import { useUser } from '@/_store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROLES } from '@/_config';
@@ -10,7 +10,7 @@ const useAuthGuard = (middleware:string) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(token === undefined) return;
 
         setTimeout(() => {
