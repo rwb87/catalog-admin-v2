@@ -14,7 +14,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 const BrandsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
@@ -29,17 +28,6 @@ const BrandsView = () => {
 
         getData();
     }, [sortBy]);
-
-    useEffect(() => {
-        if(search?.toString()?.trim() === '') return setFilteredData(data);
-
-        setFilteredData(
-            data?.filter((item: any) => {
-                return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.link?.toLowerCase().includes(search?.toLowerCase());
-            })
-        );
-    }, [search, data]);
 
     const getData = async () => {
         await getProducts();
@@ -59,6 +47,15 @@ const BrandsView = () => {
 
         setIsLoading(false);
     }
+
+    const filteredData = useMemo(() => {
+        if(search?.toString()?.trim() === '') return data || [];
+
+        return data?.filter((item: any) => {
+            return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+                item?.link?.toLowerCase().includes(search?.toLowerCase());
+        }) || [];
+    }, [search, data]);
 
     const getProducts = async () => {
         try {
