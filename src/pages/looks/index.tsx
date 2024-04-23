@@ -658,31 +658,29 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                     />
 
                     {/* Expand Products */}
-                    {
-                        isLive && <IconButton
-                            aria-label='Expand'
-                            variant='ghost'
-                            rounded='full'
-                            size='sm'
-                            backgroundColor='black'
-                            color='white'
-                            ml={4}
-                            _hover={{
-                                backgroundColor: 'blackAlpha.700',
+                    <IconButton
+                        aria-label='Expand'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        backgroundColor='black'
+                        color='white'
+                        ml={4}
+                        _hover={{
+                            backgroundColor: 'blackAlpha.700',
+                        }}
+                        _focusVisible={{
+                            backgroundColor: 'blackAlpha.800',
+                        }}
+                        icon={<IconChevronDown
+                            size={22}
+                            style={{
+                                transition: 'transform 0.15s',
+                                transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
                             }}
-                            _focusVisible={{
-                                backgroundColor: 'blackAlpha.800',
-                            }}
-                            icon={<IconChevronDown
-                                size={22}
-                                style={{
-                                    transition: 'transform 0.15s',
-                                    transform: isProductsExpanded ? 'rotate(180deg)' : 'rotate(0deg)'
-                                }}
-                            />}
-                            onClick={handleExpandProducts}
-                        />
-                    }
+                        />}
+                        onClick={handleExpandProducts}
+                    />
                 </Td>
             </Tr>
 
