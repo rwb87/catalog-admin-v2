@@ -310,6 +310,7 @@ const BrandsView = () => {
                     setIsLoading(true);
                     await getData();
                 }}
+                onClose={() => setEditingData({})}
             />
 
             {/* Delete Dialog */}
@@ -527,8 +528,9 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
 type UpdateBrandDrawerProps = {
     brand: any,
     onSave: (data: any) => void,
+    onClose?: () => void,
 }
-const UpdateBrandDrawer = ({ brand, onSave }: UpdateBrandDrawerProps) => {
+const UpdateBrandDrawer = ({ brand, onSave, onClose }: UpdateBrandDrawerProps) => {
     const brandImageRef = useRef<any>(null);
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -562,6 +564,7 @@ const UpdateBrandDrawer = ({ brand, onSave }: UpdateBrandDrawerProps) => {
                 onSave?.(editingData?.isNew ? { ...response, isNew: true } : editingData);
 
                 setEditingData({});
+                onClose?.();
             } else notify('An error occurred', 3000);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
@@ -577,7 +580,7 @@ const UpdateBrandDrawer = ({ brand, onSave }: UpdateBrandDrawerProps) => {
             title={editingData?.isNew ? `Create Brand` : 'Update Brand'}
             isProcessing={isProcessing}
             onSubmit={handleUpdateData}
-            onClose={() => setEditingData({})}
+            onClose={onClose}
         >
             <Grid
                 mt={4}
