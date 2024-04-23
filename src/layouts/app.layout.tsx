@@ -273,13 +273,29 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                             onClick={() => toggleSidebar(isCollapsed)}
                         />
                     </Tooltip>
-
-                    {/* Logo */}
-                    <Heading
-                        fontSize="5xl"
-                        fontWeight="semi-bold"
-                    >S</Heading>
                 </Box>
+
+                {/* Logo */}
+                {
+                    isCollapsed
+                        ? <Heading
+                            fontSize="4xl"
+                            fontWeight="bold"
+                            textAlign='center'
+                        >C</Heading>
+                        : <Box textAlign='center'>
+                            <img
+                                src="/logo.webp"
+                                alt="Logo"
+                                width={100}
+                                loading="eager"
+                                style={{
+                                    marginInline: 'auto',
+                                    pointerEvents: 'none',
+                                }}
+                            />
+                        </Box>
+                }
 
                 {/* Switch */}
                 {
