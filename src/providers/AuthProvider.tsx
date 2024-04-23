@@ -1,7 +1,8 @@
-import React, { ReactNode, useLayoutEffect } from 'react';
+import React, { ReactNode, useEffect, useLayoutEffect } from 'react';
 import { useUser } from '@/_store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ROLES } from '@/_config';
+import fetch from '@/helpers/fetch';
 
 const AuthContext = React.createContext(null);
 
@@ -24,7 +25,20 @@ const useAuthGuard = (middleware:string) => {
 }
 
 const AuthProvider = ({ children }: {children: ReactNode}) => {
-    const { user }: any = useUser();
+    const { user, token, clearToken }: any = useUser();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(!token) return;
+
+        fetch({
+            endpoint: `/users/me`,
+            method: 'GET',
+        }).catch(() => {
+            clearToken();
+            navigate('/login');
+        });
+    }, [token, navigate]);
 
     return(
         <AuthContext.Provider value={user}>

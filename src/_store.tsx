@@ -27,7 +27,7 @@ export const useUser = create(
         }),
         {
             name: `${Config.APP_NAME?.toLowerCase()?.replaceAll(' ', '_')}.auth`,
-            storage: createJSONStorage(() => sessionStorage),
+            storage: createJSONStorage(() => localStorage),
         }
     )
 )
