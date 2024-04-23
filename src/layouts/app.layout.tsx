@@ -109,7 +109,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     md: 'none',
                 }}
             >
-                <Topbar
+                <TopBar
                     activePage={activePage}
                     sidebarItems={sidebarItems}
                 />
@@ -182,6 +182,10 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
     }, [sidebarItems, activePage]);
 
     const SidebarItem = ({ icon, label, link, isActive = false, onClick }: { icon: ReactElement | string, label: string, link: string, isActive?: boolean, onClick?: () => void }) => {
+        const modifiedLabel = role === ROLES.DATA_MANAGER
+            ? label?.replaceAll('Management', '')?.trim()
+            : label;
+
         return (
             <Link
                 to={link}
@@ -194,7 +198,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                 }}
             >
                 <Tooltip
-                    label={label}
+                    label={modifiedLabel}
                     placement="right"
                     isDisabled={!isCollapsed}
                 >
@@ -206,7 +210,6 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                         justifyContent={isCollapsed ? 'center' : 'flex-start'}
                         textAlign='left'
                         fontWeight='medium'
-                        // py='1.5rem'
                         colorScheme='gray'
                         opacity={isActive ? 1 : 0.3}
                         borderLeftWidth={4}
@@ -231,7 +234,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                                     }}
                                     isTruncated={true}
                                     lineHeight={1.5}
-                                >{label}</Text>
+                                >{modifiedLabel}</Text>
                                 : null
                         }
                     </Button>
@@ -376,7 +379,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
     )
 }
 
-const Topbar = ({ sidebarItems, activePage }: SidebarProps) => {
+const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
     const { clearToken } = useUser() as any;
