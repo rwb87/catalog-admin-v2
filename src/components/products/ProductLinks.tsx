@@ -18,7 +18,11 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
 
     useEffect(() => {
         const newLinks = JSON.parse(JSON.stringify(links));
-        const sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+        let sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+
+        // Make alpha link always first
+        sortedLinks = sortedLinks.filter((link: any) => link.linkType !== 'ALPHA');
+        sortedLinks.unshift(newLinks.find((link: any) => link.linkType === 'ALPHA'));
 
         setEditedLinks(sortedLinks);
     }, [links]);
