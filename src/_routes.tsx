@@ -14,6 +14,7 @@ import LooksManagementView from '@/pages/looks/management';
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
 import CreatorsView from '@/pages/creators';
+import DataManagersView from './pages/data-managers';
 import ProductsView from './pages/products';
 import BrandsView from '@/pages/brands';
 import EarningsView from '@/pages/earnings';
@@ -35,6 +36,8 @@ export default function Routes() {
                     <Route path="/administrators" element={<AdminsView />} />
                     <Route path="/shoppers" element={<ShoppersView />} />
                     <Route path="/creators" element={<CreatorsView />} />
+                    <Route path="/data-managers" element={<DataManagersView />} />
+
                     <Route path="/looks" element={<LooksView />} />
                     <Route path="/looks/management" element={<LooksManagementView />} />
                     <Route path="/brands" element={<BrandsView />} />

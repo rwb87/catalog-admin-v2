@@ -5,7 +5,7 @@ import Pagination from "@/components/Pagination";
 
 type UsersTableProps = {
     isLoading?: boolean;
-    userType: 'admin' | 'creator' | 'shopper';
+    userType: 'admin' | 'creator' | 'shopper' | 'data-manager';
     data?: any;
     pagination: any;
     onPaginate: (page: number) => void;

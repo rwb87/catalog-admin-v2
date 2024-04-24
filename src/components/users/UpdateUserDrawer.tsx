@@ -216,6 +216,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                             <option value="admin">Admin</option>
                             <option value="shopper">Shopper</option>
                             <option value="creator">Creator</option>
+                            <option value="data_manager">Data Manager</option>
                         </Select>
                     </FormControl>
 

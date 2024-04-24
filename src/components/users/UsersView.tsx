@@ -11,7 +11,7 @@ import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 
 type UsersViewProps = {
-    userType: 'admin' | 'creator' | 'shopper';
+    userType: 'admin' | 'creator' | 'shopper' | 'data-manager';
 }
 const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     const { role: userRole } = useUser() as any;
@@ -46,9 +46,25 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     }, [search]);
 
     const getUsers = async () => {
+        let usersType = 'admin';
+        switch (userType) {
+            case 'creator':
+                usersType = 'creator';
+                break;
+            case 'shopper':
+                usersType = 'shopper';
+                break;
+            case 'data-manager':
+                usersType = 'data_manager';
+                break;
+            default:
+                usersType = 'admin';
+                break;
+        }
+
         try {
             const response = await fetch({
-                endpoint: `/users?type=${userType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${search}&order=${sortBy}`,
+                endpoint: `/users?type=${usersType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${search}&order=${sortBy}`,
                 method: 'GET',
             });
             setUsers(response?.users);
