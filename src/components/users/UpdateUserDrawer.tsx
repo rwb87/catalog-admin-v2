@@ -229,7 +229,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                         >
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="other">Other</option>
+                            <option value="all">All</option>
                         </Select>
                     </FormControl>
                 </Grid>
