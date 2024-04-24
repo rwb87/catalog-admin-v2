@@ -227,8 +227,8 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                             value={editingUser?.gender}
                             onChange={(e) => setEditingUser({ ...editingUser, gender: e.target.value })}
                         >
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="men">Men</option>
+                            <option value="women">Women</option>
                             <option value="all">All</option>
                         </Select>
                     </FormControl>
