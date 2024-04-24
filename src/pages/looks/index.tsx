@@ -5,10 +5,9 @@ import LookProducts from "@/components/looks/LookProducts";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
-import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Button, Flex, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Heading, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconPhoto, IconTrash, IconUnlink } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -91,36 +90,6 @@ const LooksView = () => {
         setIsLoading(false);
     };
 
-    // const getProducts = async () => {
-    //     try {
-    //         const response = await fetch({
-    //             endpoint: `/items`,
-    //             method: 'GET',
-    //         });
-
-    //         setProducts(response?.items);
-    //     } catch (error: any) {
-    //         const message = error?.response?.data?.message || error?.message;
-    //         notify(message, 3000);
-    //     }
-    // }
-
-    // const getBrands = async () => {
-    //     try {
-    //         const response = await fetch({
-    //             endpoint: `/brands`,
-    //             method: 'GET',
-    //         });
-
-    //         const sortedData = sortData(response, 'name.ASC');
-
-    //         setBrands(sortedData);
-    //     } catch (error: any) {
-    //         const message = error?.response?.data?.message || error?.message;
-    //         notify(message, 3000);
-    //     }
-    // }
-
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);
 
@@ -154,9 +123,8 @@ const LooksView = () => {
 
         setIsProcessing(true);
 
-        // Create message
-        if(messageValue !== '') {
-            try {
+        try {
+            if(messageValue !== '') {
                 await fetch({
                     endpoint: `/looks/${sendingLookDataToManagement?.id}/messages`,
                     method: 'POST',
@@ -164,15 +132,15 @@ const LooksView = () => {
                         message: messageValue,
                     },
                 });
-
-                handleUpdateData({
-                    status: 'in_data_management',
-                    enabled: false,
-                    carouselEnabled: false,
-                }, sendingLookDataToManagement?.id)
-            } catch (error: any) {
-                notify('Look sent to management but message could not be sent', 7000);
             }
+
+            handleUpdateData({
+                status: 'in_data_management',
+                enabled: false,
+                carouselEnabled: false,
+            }, sendingLookDataToManagement?.id)
+        } catch (error: any) {
+            notify('Look sent to management but message could not be sent', 5000);
         }
     }
 
@@ -183,26 +151,20 @@ const LooksView = () => {
         setIsProcessing(true);
 
         // Create message
-        if(messageValue !== '') {
-            try {
-                filteredData.forEach(async (item: any) => {
-                    await fetch({
-                        endpoint: `/looks/${item?.id}/messages`,
-                        method: 'POST',
-                        data: {
-                            message: messageValue,
-                        },
-                    });
+        try {
+            await fetch({
+                endpoint: `/looks/send-all-to-management`,
+                method: 'POST',
+                data: {
+                    message: messageValue,
+                },
+            });
 
-                    handleUpdateData({
-                        status: 'in_data_management',
-                        enabled: false,
-                        carouselEnabled: false,
-                    }, item?.id);
-                });
-            } catch (error: any) {
-                notify('All submitted looks sent to management but message could not be sent', 7000);
-            }
+            notify('All submitted looks sent to management', 3000);
+            setSendingAllLookDataToManagement(false);
+            getData();
+        } catch (error: any) {
+            notify('All submitted looks sent to management but message could not be sent', 5000);
         }
     }
 
@@ -392,15 +354,19 @@ const LooksView = () => {
             <Confirmation
                 isOpen={sendingAllLookDataToManagement}
                 title="Send all look data to management"
-                html={<Input
-                    type="text"
-                    placeholder="Message for management (optional)"
-                    rounded='md'
-                    size='sm'
-                    width='full'
-                    name='management-message-for-all'
-                    autoComplete='off'
-                />}
+                html={<>
+                    <Heading as='h3' size='sm' fontWeight='semibold' mb={4}>Are you sure you want to send all the submitted looks to management?</Heading>
+
+                    <Input
+                        type="text"
+                        placeholder="Message for management (optional)"
+                        rounded='md'
+                        size='sm'
+                        width='full'
+                        name='management-message-for-all'
+                        autoComplete='off'
+                    />
+                </>}
                 isProcessing={isProcessing}
                 cancelText="Cancel"
                 confirmText="Send"
