@@ -1,15 +1,17 @@
 import { IconButton, Image, Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconCornerDownRight, IconLink } from "@tabler/icons-react";
+import { IconCornerDownRight, IconEdit, IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
+import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 
 type BrandProductsProps = {
     brand: any;
     products: any;
     onSave: (products: any) => void;
 }
-const BrandProducts = ({ brand, products }: BrandProductsProps) => {
+const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
     const [editedProducts, setEditedProducts] = useState<any>([]);
+    const [editingData, setEditingData] = useState<any>({});
 
     useEffect(() => {
         const newProducts = JSON.parse(JSON.stringify(products));
@@ -54,10 +56,29 @@ const BrandProducts = ({ brand, products }: BrandProductsProps) => {
                             product={product}
                             brand={brand}
                             handleOnOpenImage={handleOnOpenImage}
+                            onEdit={(data: any) => setEditingData(data)}
                         />
                     )}
                 </Tbody>
             </Table>
+
+            {/* Update Product */}
+            <UpdateProductDrawer
+                data={{
+                    ...editingData,
+                    brand: brand,
+                    brandId: brand?.id,
+                }}
+                onClose={() => setEditingData({})}
+                onComplete={(product: any) => {
+                    const newProducts = [...editedProducts];
+                    const index = newProducts.findIndex((p: any) => p?.id === product?.id);
+                    newProducts[index] = product;
+                    setEditedProducts(newProducts);
+                    onSave?.(newProducts);
+                    setEditingData({})
+                }}
+            />
 
             {/* Actions */}
             {/* <Flex alignItems='center' justifyContent='space-between' mt={4}>
@@ -84,8 +105,9 @@ type ProductProps = {
     product: any;
     brand: any;
     handleOnOpenImage: (link: string) => void;
+    onEdit?: (product: any) => void;
 }
-const Product = ({ product, brand, handleOnOpenImage }: ProductProps) => {
+const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
     return (
@@ -140,6 +162,15 @@ const Product = ({ product, brand, handleOnOpenImage }: ProductProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{product?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
+                    <IconButton
+                        aria-label="Edit"
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconEdit size={22} />}
+                        onClick={() => onEdit?.(product)}
+                    />
+
                     {/* <IconButton
                         aria-label='Move Up'
                         variant='ghost'

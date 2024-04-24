@@ -27,6 +27,10 @@ const BrandsView = () => {
         setIsLoading(true);
 
         getData();
+
+        window?.addEventListener('refresh:data', getData);
+
+        return () => window?.removeEventListener('refresh:data', getData);
     }, [sortBy]);
 
     const getData = async () => {
@@ -512,7 +516,10 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             <BrandProducts
                                 brand={item}
                                 products={item?.items}
-                                onSave={(products: any) => console.log(products)}
+                                onSave={(products: any) => {
+                                    setProducts(products);
+                                    window?.dispatchEvent(new CustomEvent('refresh:data'));
+                                }}
                             />
                         </Td>
                     </Tr>
