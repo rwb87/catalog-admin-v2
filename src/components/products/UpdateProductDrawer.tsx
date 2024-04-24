@@ -1,6 +1,6 @@
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
 import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input } from "@chakra-ui/react";
 import SearchableInput from "@/components/SearchableInput";
@@ -22,6 +22,7 @@ const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerP
     const [brands, setBrands] = useState<any[]>([]);
 
     useEffect(() => {
+        setIsSearchingBrands(true);
         const debounce = setTimeout(() => getBrands(), 500);
         return () => clearTimeout(debounce);
     }, [brandSearchTerm]);
@@ -30,17 +31,14 @@ const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerP
         setEditingData(data);
     }, [data]);
 
-    const getBrands = async () => {
-        setIsSearchingBrands(true);
-        if (brandSearchTerm?.trim() === '') {
-            setBrands([]);
-            setIsSearchingBrands(false);
-            return;
-        }
-
+    const getBrands = useCallback(async () => {
         try {
+            const endpoint = brandSearchTerm?.toString()?.trim() === ''
+                ? '/brands?limit=200'
+                : `/brands?search=${brandSearchTerm}`;
+
             const response = await fetch({
-                endpoint: `/brands?search=${brandSearchTerm}`,
+                endpoint: endpoint,
                 method: 'GET',
             });
 
@@ -50,7 +48,7 @@ const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerP
         }
 
         setIsSearchingBrands(false);
-    }
+    }, [brandSearchTerm]);
 
     const handleUpdateData = async () => {
         setIsProcessing(true);

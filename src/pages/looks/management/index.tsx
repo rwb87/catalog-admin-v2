@@ -1,3 +1,4 @@
+import { useGlobalVolatileStorage } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
@@ -12,6 +13,7 @@ import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash, IconUn
 import { useEffect, useMemo, useState } from "react";
 
 const LooksManagementView = () => {
+    const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
@@ -32,6 +34,10 @@ const LooksManagementView = () => {
     });
 
     useAuthGuard('auth');
+
+    useEffect(() => {
+        getBrands();
+    }, []);
 
     useEffect(() => {
         setIsLoading(true);
@@ -75,6 +81,19 @@ const LooksManagementView = () => {
 
         setIsLoading(false);
     };
+
+    const getBrands = async () => {
+        try {
+            const response = await fetch({
+                endpoint: '/brands?limit=200',
+                method: 'GET',
+            });
+
+            setGlobalBrands(response);
+        } catch (error: any) {
+            setGlobalBrands([]);
+        }
+    }
 
     const handleUpdateData = async (data: any, id?: string) => {
         setIsProcessing(true);

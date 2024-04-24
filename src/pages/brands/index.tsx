@@ -34,8 +34,6 @@ const BrandsView = () => {
     }, [sortBy]);
 
     const getData = async () => {
-        await getProducts();
-
         try {
             const response = await fetch({
                 endpoint: `/brands`,
@@ -60,19 +58,6 @@ const BrandsView = () => {
                 item?.link?.toLowerCase().includes(search?.toLowerCase());
         }) || [];
     }, [search, data]);
-
-    const getProducts = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/items`,
-                method: 'GET',
-            });
-
-            return response;
-        } catch (error: any) {
-            return [];
-        }
-    }
 
     const handleDelete = async () => {
         setIsDeleting(true);

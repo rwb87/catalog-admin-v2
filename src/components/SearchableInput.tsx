@@ -66,26 +66,34 @@ const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 
                 shadow='md'
             >
                 {
-                    !filteredItems?.length
-                        ? <Button
+                    !isLoading
+                        ? !filteredItems?.length
+                            ? <Button
+                                width='full'
+                                variant='ghost'
+                                isDisabled={true}
+                                fontStyle='italic'
+                            >No Results</Button>
+                            : filteredItems?.map((item: any) => <Button
+                                key={item?.id}
+                                variant='ghost'
+                                size='sm'
+                                width='full'
+                                textAlign='left'
+                                justifyContent='flex-start'
+                                rounded='none'
+                                onClick={() => {
+                                    setSearchTerm(item?.[property]);
+                                    onChange?.(item);
+                                }}
+                            >{item?.[property]}</Button>)
+                        : <Button
                             width='full'
                             variant='ghost'
                             isDisabled={true}
                             fontStyle='italic'
-                        >No Results</Button>
-                        : filteredItems?.map((item: any) => <Button
-                            key={item?.id}
-                            variant='ghost'
-                            size='sm'
-                            width='full'
-                            textAlign='left'
-                            justifyContent='flex-start'
-                            rounded='none'
-                            onClick={() => {
-                                setSearchTerm(item?.[property]);
-                                onChange?.(item);
-                            }}
-                        >{item?.[property]}</Button>)
+                            fontWeight='normal'
+                        >Loading...</Button>
                 }
             </Flex>
         </Box>

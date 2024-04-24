@@ -1,17 +1,19 @@
 import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
 import SearchableInput from "../SearchableInput";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import { useGlobalVolatileStorage } from "@/_store";
 
 type LookProductsProps = {
     look: any,
     onSave: (products: any) => void;
 }
 const LookProducts = ({ look, onSave }: LookProductsProps) => {
+    const { brands: globalBrands } = useGlobalVolatileStorage() as any;
     const [editedProducts, setEditedProducts] = useState<any>();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isAddingProductToLook, setIsAddingProductToLook] = useState(false);
@@ -24,6 +26,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
     const [brands, setBrands] = useState<any[]>([]);
 
     useEffect(() => {
+        setIsSearchingBrands(true);
         const debounce = setTimeout(() => getBrands(), 500);
         return () => clearTimeout(debounce);
     }, [brandSearchTerm]);
@@ -35,12 +38,10 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         setEditedProducts(sortedTags?.map((tag: any) => tag?.item));
     },  [look?.tags]);
 
-    const getBrands = async () => {
-        setIsSearchingBrands(true);
-        if (brandSearchTerm?.trim() === '' || brandSearchTerm?.trim()?.length < 3) {
-            setBrands([]);
-            setIsSearchingBrands(false);
-            return;
+    const getBrands = useCallback(async () => {
+        if(brandSearchTerm?.trim() === '') {
+            setBrands(globalBrands);
+            return setIsSearchingBrands(false);
         }
 
         try {
@@ -55,7 +56,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         }
 
         setIsSearchingBrands(false);
-    }
+    }, [brandSearchTerm]);
 
     const filteredAvailableProducts = useMemo(() => {
         if(selectedBrand === null) return [];
