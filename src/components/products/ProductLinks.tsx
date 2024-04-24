@@ -1,6 +1,6 @@
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Tr } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
@@ -115,6 +115,18 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
     return (
         <>
             <Table>
+                <Thead>
+                    <Tr>
+                        <Th width='30px'></Th>
+                        <Th>Link</Th>
+                        <Th>Class</Th>
+                        <Th>Type</Th>
+                        <Th>Price</Th>
+                        <Th>Discount Price</Th>
+                        <Th></Th>
+                    </Tr>
+                </Thead>
+
                 <Tbody>
                     {
                         editedLinks?.map((link: any, index: number) => <Tr key={index}>
