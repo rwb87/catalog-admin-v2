@@ -3,6 +3,7 @@ import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
 import LookProducts from "@/components/looks/LookProducts";
+import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
@@ -37,6 +38,10 @@ const LooksManagementView = () => {
 
     useEffect(() => {
         getBrands();
+
+        window?.addEventListener('refresh:data', getData);
+
+        return () => window?.removeEventListener('refresh:data', getData);
     }, []);
 
     useEffect(() => {
@@ -237,6 +242,24 @@ type LooksManagementTableProps = {
     onDelete: (item: any) => void,
 }
 const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendLookFromManagement, onSendToLive, onUpdate, onDelete }: LooksManagementTableProps) => {
+    const [editingData, setEditingData] = useState<any>({});
+    const [brand, setBrand] = useState<any>({});
+
+    useEffect(() => {
+        const openProductToModify = (event: any) => {
+            const { product = null, brand = null } = event.detail;
+
+            if(!product || !brand) return;
+
+            setEditingData(product);
+            setBrand(brand);
+        }
+
+        window?.addEventListener('action:edit-product', openProductToModify);
+
+        return () => window?.removeEventListener('action:edit-product', openProductToModify);
+    }, []);
+
     return (
         <>
             <Flex
@@ -269,6 +292,21 @@ const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendL
                             />)
                 }
             </Flex>
+
+            {/* Update Product */}
+            <UpdateProductDrawer
+                data={{
+                    ...editingData,
+                    brand: brand,
+                    brandId: brand?.id,
+                }}
+                onClose={() => setEditingData({})}
+                onComplete={() => {
+                    window?.dispatchEvent(new CustomEvent('refresh:data'));
+                    setEditingData({});
+                    setBrand({});
+                }}
+            />
 
             {/* Pagination */}
             <Pagination

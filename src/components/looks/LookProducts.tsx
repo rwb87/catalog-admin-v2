@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
@@ -347,6 +347,16 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                 ml={4}
                                 icon={<IconArrowDown size={22} />}
                                 onClick={() => handleMoveDown(index)}
+                            />
+
+                            <IconButton
+                                aria-label="Edit"
+                                variant='ghost'
+                                rounded='full'
+                                ml={4}
+                                size='sm'
+                                icon={<IconEdit size={22} />}
+                                onClick={() => window?.dispatchEvent(new CustomEvent('action:edit-product', { detail: { product: item, brand: item?.brand } }))}
                             />
 
                             <IconButton

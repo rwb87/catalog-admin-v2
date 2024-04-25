@@ -3,6 +3,7 @@ import Confirmation from "@/components/Confirmation";
 import DragDropResetPosition from "@/components/DragDropResetPositions";
 import Pagination from "@/components/Pagination";
 import LookProducts from "@/components/looks/LookProducts";
+import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
@@ -39,6 +40,10 @@ const LooksView = () => {
 
     useEffect(() => {
         getBrands();
+
+        window?.addEventListener('refresh:data', getData);
+
+        return () => window?.removeEventListener('refresh:data', getData);
     }, []);
 
     useEffect(() => {
@@ -409,8 +414,23 @@ type LooksTableProps = {
 }
 const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManagement, onUpdate, onDelete }: LooksTableProps) => {
     const isLive = data?.[0]?.status === 'live';
+    const [editingData, setEditingData] = useState<any>({});
+    const [brand, setBrand] = useState<any>({});
 
-    const reconstructedData = data;
+    useEffect(() => {
+        const openProductToModify = (event: any) => {
+            const { product = null, brand = null } = event.detail;
+
+            if(!product || !brand) return;
+
+            setEditingData(product);
+            setBrand(brand);
+        }
+
+        window?.addEventListener('action:edit-product', openProductToModify);
+
+        return () => window?.removeEventListener('action:edit-product', openProductToModify);
+    }, []);
 
     return (
         <>
@@ -451,13 +471,13 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManag
                                         </Box>
                                     </Td>
                                 </Tr>
-                                : !reconstructedData?.length
+                                : !data?.length
                                     ? <Tr>
                                         <Td colSpan={20} textAlign='center'>
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : reconstructedData.map((item: any) => <TableRow
+                                    : data.map((item: any) => <TableRow
                                         key={item?.id}
                                         item={item}
                                         isLive={isLive}
@@ -469,6 +489,21 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManag
                     </Tbody>
                 </Table>
             </Box>
+
+            {/* Update Product */}
+            <UpdateProductDrawer
+                data={{
+                    ...editingData,
+                    brand: brand,
+                    brandId: brand?.id,
+                }}
+                onClose={() => setEditingData({})}
+                onComplete={() => {
+                    window?.dispatchEvent(new CustomEvent('refresh:data'));
+                    setEditingData({});
+                    setBrand({});
+                }}
+            />
 
             {/* Pagination */}
             <Pagination
