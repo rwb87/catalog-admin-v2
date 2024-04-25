@@ -2,10 +2,12 @@ import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
 import { IconEdit, IconLoader2, IconMail, IconTrash } from "@tabler/icons-react";
 import Pagination from "@/components/Pagination";
+import moment from "moment";
+import { ROLES } from "@/_config";
 
 type UsersTableProps = {
     isLoading?: boolean;
-    userType: 'admin' | 'creator' | 'shopper' | 'data-manager';
+    userType: ROLES;
     data?: any;
     pagination: any;
     onPaginate: (page: number) => void;
@@ -16,7 +18,7 @@ type UsersTableProps = {
 const UsersTable = (props: UsersTableProps) => {
     const {
         isLoading = false,
-        userType = 'admin',
+        userType = ROLES.ADMIN,
         data = [],
         pagination,
         onPaginate,
@@ -34,37 +36,42 @@ const UsersTable = (props: UsersTableProps) => {
                 >
                     <Thead>
                         <Tr>
-                            <Th textTransform='capitalize'>{userType}</Th>
-                            { userType !== 'admin' && <Th>SSO</Th> }
+                            <Th textTransform='capitalize'>{userType?.replace('_', ' ')}</Th>
+                            { userType !== ROLES.ADMIN && <Th>SSO</Th> }
                             <Th>Email</Th>
                             <Th>Created At</Th>
-                            <Th>Gender</Th>
+                            <Th>Shopping</Th>
                             {
-                                userType !== 'admin' && <>
+                                userType !== ROLES.ADMIN && <>
                                     <Th>Location</Th>
                                     <Th textAlign='center'>Height</Th>
                                 </>
                             }
                             {
-                                userType === 'creator' && <>
+                                (userType === ROLES.CREATOR || userType === ROLES.SHOPPER || userType === ROLES.DATA_MANAGER) && <>
+                                    <Th>Age</Th>
+                                </>
+                            }
+                            {
+                                userType === ROLES.CREATOR && <>
                                     <Th textAlign='center'>Looks</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Incoming <br /> Clickouts</Th>
                                 </>
                             }
                             {
-                                userType !== 'admin' && <>
+                                userType !== ROLES.ADMIN && <>
                                     <Th textAlign='center' color='blue.500'>Outgoing <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Outgoing <br /> Clickouts</Th>
                                 </>
                             }
                             {
-                                userType === 'creator' && <>
+                                userType === ROLES.CREATOR && <>
                                     <Th textAlign='center'>Earnings</Th>
                                 </>
                             }
                             {
-                                userType === 'shopper' && <>
+                                userType === ROLES.SHOPPER && <>
                                     <Th textAlign='center'>Invited</Th>
                                 </>
                             }
@@ -106,7 +113,7 @@ const UsersTable = (props: UsersTableProps) => {
                                                 </Flex>
                                             </Td>
                                             {
-                                                userType !== 'admin' && <Td>
+                                                userType !== ROLES.ADMIN && <Td>
                                                     <IconButton
                                                         aria-label='SSO'
                                                         variant='ghost'
@@ -120,7 +127,7 @@ const UsersTable = (props: UsersTableProps) => {
                                             <Td>
                                                 {
                                                     user?.email
-                                                        ? userType !== 'admin'
+                                                        ? userType !== ROLES.ADMIN
                                                             ? <IconButton
                                                                 aria-label='Email'
                                                                 variant='ghost'
@@ -136,26 +143,31 @@ const UsersTable = (props: UsersTableProps) => {
                                             <Td minWidth='160px' maxWidth='160px'>{formatDateTime(user?.createdAt, true)}</Td>
                                             <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                             {
-                                                userType !== 'admin' && <>
+                                                userType !== ROLES.ADMIN && <>
                                                     <Td textTransform='capitalize'>{user?.location || '-'}</Td>
                                                     <Td textAlign='center'>{user?.heightFeet + '.' + user?.heightInch + 'ft' || '-'}</Td>
                                                 </>
                                             }
                                             {
-                                                userType === 'creator' && <>
+                                                (userType === ROLES.CREATOR || userType === ROLES.SHOPPER || userType === ROLES.DATA_MANAGER) && <>
+                                                    <Td>{moment().diff(user?.birthDate, 'years') || '-'} years</Td>
+                                                </>
+                                            }
+                                            {
+                                                userType === ROLES.CREATOR && <>
                                                     <Td textAlign='center'>{user?.looksCount || 0}</Td>
                                                     <Td textAlign='center' color='blue.500'>{user?.incomingDiscovers || 0}</Td>
                                                     <Td textAlign='center' color='green.500'>{user?.incomingClickouts || 0}</Td>
                                                 </>
                                             }
                                             {
-                                                userType !== 'admin' && <>
+                                                userType !== ROLES.ADMIN && <>
                                                     <Td textAlign='center' color='blue.500'>{user?.outgoingDiscovers || 0}</Td>
                                                     <Td textAlign='center' color='green.500'>{user?.outgoingClickouts || 0}</Td>
                                                 </>
                                             }
                                             {
-                                                userType === 'creator' && <>
+                                                userType === ROLES.CREATOR && <>
                                                     <Td textAlign='center'>
                                                         <Text
                                                             borderWidth={2}
@@ -170,7 +182,7 @@ const UsersTable = (props: UsersTableProps) => {
                                                 </>
                                             }
                                             {
-                                                userType === 'shopper' && <>
+                                                userType === ROLES.SHOPPER && <>
                                                     <Td textAlign='center'>{user?.invitations?.length || 0}</Td>
                                                 </>
                                             }

@@ -9,3 +9,4 @@ export const ROLES = {
     SHOPPER: 'shopper',
     DATA_MANAGER: 'data_manager',
 }
+export type ROLES = typeof ROLES[keyof typeof ROLES];

@@ -12,9 +12,9 @@ import { ROLES } from "@/_config";
 import { encodeAmpersand } from "@/helpers/utils";
 
 type UsersViewProps = {
-    userType: 'admin' | 'creator' | 'shopper' | 'data-manager';
+    userType: ROLES;
 }
-const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
+const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
     const { role: userRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
@@ -47,25 +47,9 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
     }, [search]);
 
     const getUsers = async () => {
-        let usersType = 'admin';
-        switch (userType) {
-            case 'creator':
-                usersType = 'creator';
-                break;
-            case 'shopper':
-                usersType = 'shopper';
-                break;
-            case 'data-manager':
-                usersType = 'data_manager';
-                break;
-            default:
-                usersType = 'admin';
-                break;
-        }
-
         try {
             const response = await fetch({
-                endpoint: `/users?type=${usersType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
+                endpoint: `/users?type=${userType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
                 method: 'GET',
             });
             setUsers(response?.users);
@@ -123,6 +107,16 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
         }, 0);
     }, [users]);
 
+    const pageHeading = useMemo(() => {
+        if (userType === ROLES.SUPER_ADMIN) return 'Super Administrators';
+        if (userType === ROLES.ADMIN) return 'Administrators';
+        if (userType === ROLES.CREATOR) return 'Creators';
+        if (userType === ROLES.SHOPPER) return 'Shoppers';
+        if (userType === ROLES.DATA_MANAGER) return 'Data Managers';
+
+        return 'Shoppers';
+    }, [userType]);
+
     return (
         <>
 
@@ -158,12 +152,12 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     }}
                     gap={2}
                 >
-                    <h1 className="page-heading">{userType === 'admin'? 'Administrators' : userType === 'creator'? 'Creators' : 'Shoppers'}</h1>
+                    <h1 className="page-heading">{pageHeading}</h1>
 
                     <Box
                         display={{
                             base: 'none',
-                            lg: userType !== 'admin' ? 'contents' : 'none'
+                            lg: userType !== ROLES.ADMIN ? 'contents' : 'none'
                         }}
                         fontWeight='bold'
                         fontSize={{
@@ -173,7 +167,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                         whiteSpace='break-spaces'
                     >
                         {
-                            userType === 'creator' && <>
+                            userType === ROLES.CREATOR && <>
                                 <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
                                 <Text ml={2} color='green.500'>Incoming <br />Clickouts: {totalIncomingClickouts || 0}</Text>
                             </>
@@ -231,7 +225,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
 
                     {/* Created At */}
                     <Select
-                        display={userType !== 'admin' ? 'block' : 'none'}
+                        display={userType !== ROLES.ADMIN ? 'block' : 'none'}
                         variant='outline'
                         width={{
                             base: 'full',
@@ -278,13 +272,13 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                             <option value='email,desc'>Z - A</option>
                         </optgroup>
                         {/* {
-                            userType === 'shopper' && <optgroup label="Invitation Count">
+                            userType === ROLES.SHOPPER && <optgroup label="Invitation Count">
                                 <option value='invitations.length,asc'>Low - High</option>
                                 <option value='invitations.length,desc'>High - Low</option>
                             </optgroup>
                         }
                         {
-                            userType === 'creator' && <>
+                            userType === ROLES.CREATOR && <>
                                 <optgroup label="Looks Count">
                                     <option value='looksCount,asc'>Low - High</option>
                                     <option value='looksCount,desc'>High - Low</option>
@@ -394,7 +388,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
                     page: pageNumber,
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
-                hasActions={(userType === 'admin' && userRole === ROLES.SUPER_ADMIN) || userType !== 'admin'}
+                hasActions={(userType === ROLES.ADMIN && userRole === ROLES.SUPER_ADMIN) || userType !== ROLES.ADMIN}
                 onEdit={(user: any) => setEditingUser(user)}
                 onDelete={(user) => setDeletingUser(user)}
             />

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
@@ -248,6 +248,20 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
     return (
         <>
             <Table>
+                <Thead display={index === 0 ? 'table-header-group' : 'none'}>
+                    <Tr>
+                        <Th width='30px' textAlign='left'>#</Th>
+                        <Th>Image</Th>
+                        <Th>Brand</Th>
+                        <Th>Name</Th>
+                        <Th>Style</Th>
+                        <Th textAlign='center'>Links</Th>
+                        <Th textAlign='center'>Price</Th>
+                        <Th textAlign='center'>Clickouts</Th>
+                        <Th textAlign='right'>Actions</Th>
+                    </Tr>
+                </Thead>
+
                 <Tbody>
                     <Tr>
                         <Td width='30px' textAlign='left'>

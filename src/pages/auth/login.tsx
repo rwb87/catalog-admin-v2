@@ -5,11 +5,12 @@ import notify from "@/helpers/notify";
 import { useUser } from "@/_store";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard } from "@/providers/AuthProvider";
+import { ROLES } from "@/_config";
 
 const ALLOWED_ROLES = [
-    'super_admin',
-    'admin',
-    'data_manager',
+    ROLES.SUPER_ADMIN,
+    ROLES.ADMIN,
+    ROLES.DATA_MANAGER,
 ];
 
 const Login = () => {

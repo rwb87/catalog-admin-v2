@@ -642,7 +642,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                 <Td textAlign='center' whiteSpace='nowrap'>
                     {/* Send to Management button */}
                     {
-                        !isLive && <Tooltip label="Send look to management" placement="bottom">
+                        <Tooltip label="Send look to management" placement="bottom">
                             <IconButton
                                 aria-label="Edit"
                                 variant='ghost'
@@ -732,7 +732,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                 <Td colSpan={20}>
                     <LookProducts
                         look={item}
-                        onSave={(list: any) => setIsProductsExpanded(false)}
+                        onSave={() => setIsProductsExpanded(false)}
                     />
                 </Td>
             </Tr>

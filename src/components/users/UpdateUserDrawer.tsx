@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import moment from "moment";
 
 type UpdateUserDrawerProps = {
     user: any;
@@ -19,7 +20,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
     const creatorBannerRef = useRef<any>(null);
 
     useEffect(() => {
-        setEditingUser(user);
+        setEditingUser(JSON.parse(JSON.stringify(user)));
     }, [user]);
 
     const handleUpdateUser = async () => {
@@ -30,10 +31,11 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         // Common Fields
         payload.append('name', editingUser?.name);
         payload.append('lastName', editingUser?.lastName);
-        payload.append('email', editingUser?.email?.toLowerCase());
-        payload.append('username', editingUser?.username);
+        if(user?.email !== editingUser?.email) payload.append('email', editingUser?.email?.toLowerCase());
+        if(user?.username !== editingUser?.username) payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);
+        payload.append('birthDate', editingUser?.birthDate);
 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
@@ -221,9 +223,9 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     </FormControl>
 
                     <FormControl id="gender">
-                        <FormLabel>Gender</FormLabel>
+                        <FormLabel>Shopping</FormLabel>
                         <Select
-                            placeholder='Select Gender'
+                            placeholder='Select Shopping'
                             value={editingUser?.gender}
                             onChange={(e) => setEditingUser({ ...editingUser, gender: e.target.value })}
                         >
@@ -233,6 +235,18 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                         </Select>
                     </FormControl>
                 </Grid>
+
+                {/* Date or Birth */}
+                <FormControl mt={4} id="dob">
+                    <FormLabel>Date of Birth</FormLabel>
+                    <Input
+                        type="date"
+                        required
+                        autoComplete="dob"
+                        value={moment(editingUser?.birthDate).format('YYYY-MM-DD')}
+                        onChange={(e) => setEditingUser({ ...editingUser, birthDate: e.target.value })}
+                    />
+                </FormControl>
 
                 {/* Password */}
                 <FormControl mt={4} id="password">
