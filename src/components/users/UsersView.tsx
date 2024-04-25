@@ -9,6 +9,7 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import Confirmation from "@/components/Confirmation";
 import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
+import { encodeAmpersand } from "@/helpers/utils";
 
 type UsersViewProps = {
     userType: 'admin' | 'creator' | 'shopper' | 'data-manager';
@@ -64,7 +65,7 @@ const UsersView = ({ userType = 'admin' }: UsersViewProps) => {
 
         try {
             const response = await fetch({
-                endpoint: `/users?type=${usersType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${search}&order=${sortBy}`,
+                endpoint: `/users?type=${usersType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
                 method: 'GET',
             });
             setUsers(response?.users);

@@ -5,6 +5,7 @@ import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
+import { encodeAmpersand } from "@/helpers/utils";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
@@ -55,7 +56,7 @@ const ProductsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${search}&order=${sortBy}`,
+                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${encodeAmpersand(search)}&order=${sortBy}`,
                 method: 'GET',
             });
 

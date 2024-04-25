@@ -5,6 +5,7 @@ import CustomDrawer from "@/components/Drawer";
 import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input } from "@chakra-ui/react";
 import SearchableInput from "@/components/SearchableInput";
 import { IconCamera } from "@tabler/icons-react";
+import { encodeAmpersand } from "@/helpers/utils";
 
 type UpdateProductDrawerProps = {
     data: any;
@@ -35,7 +36,7 @@ const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerP
         try {
             const endpoint = brandSearchTerm?.toString()?.trim() === ''
                 ? '/brands?limit=200'
-                : `/brands?search=${brandSearchTerm}`;
+                : `/brands?search=${encodeAmpersand(brandSearchTerm)}`;
 
             const response = await fetch({
                 endpoint: endpoint,

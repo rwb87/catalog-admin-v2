@@ -7,6 +7,7 @@ import SearchableInput from "../SearchableInput";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useGlobalVolatileStorage } from "@/_store";
+import { encodeAmpersand } from "@/helpers/utils";
 
 type LookProductsProps = {
     look: any,
@@ -46,7 +47,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
 
         try {
             const response = await fetch({
-                endpoint: `/brands?search=${brandSearchTerm}`,
+                endpoint: `/brands?search=${encodeAmpersand(brandSearchTerm)}`,
                 method: 'GET',
             });
 
