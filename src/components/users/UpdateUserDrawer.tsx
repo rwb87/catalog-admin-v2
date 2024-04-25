@@ -5,6 +5,7 @@ import CustomDrawer from "@/components/Drawer";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import moment from "moment";
+import { ROLES } from "@/_config";
 
 type UpdateUserDrawerProps = {
     user: any;
@@ -40,7 +41,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
         if (profilePhotoRef.current.files[0]) payload.append('picture', profilePhotoRef.current.files[0]);
-        // if (user?.type === 'creator' && creatorBannerRef.current.files[0]) payload.append('creatorBanner', creatorBannerRef.current.files[0]);
+        // if (user?.type === ROLES.CREATOR && creatorBannerRef.current.files[0]) payload.append('creatorBanner', creatorBannerRef.current.files[0]);
 
         if (editingUser?.password) payload.append('password', editingUser?.password);
 
@@ -215,10 +216,21 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                             value={editingUser?.type}
                             onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })}
                         >
-                            <option value="admin">Admin</option>
-                            <option value="shopper">Shopper</option>
-                            <option value="creator">Creator</option>
-                            <option value="data_manager">Data Manager</option>
+                            {
+                                user?.type === ROLES.ADMIN
+                                    ? <>
+                                        <option value={ROLES.SUPER_ADMIN}>Super Admin</option>
+                                        <option value={ROLES.ADMIN}>Admin</option>
+                                        <option value={ROLES.DATA_MANAGER}>Data Manager</option>
+                                    </>
+                                    : <>
+                                        <option value={ROLES.SUPER_ADMIN}>Super Admin</option>
+                                        <option value={ROLES.ADMIN}>Admin</option>
+                                        <option value={ROLES.SHOPPER}>Shopper</option>
+                                        <option value={ROLES.CREATOR}>Creator</option>
+                                        <option value={ROLES.DATA_MANAGER}>Data Manager</option>
+                                    </>
+                            }
                         </Select>
                     </FormControl>
 
@@ -262,7 +274,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
 
                 {/* Creator Banner */}
                 {
-                    editingUser?.type === 'creator' && <FormControl mt={4} id="creatorBanner" display='none'>
+                    editingUser?.type === ROLES.CREATOR && <FormControl mt={4} id="creatorBanner" display='none'>
                         <FormLabel>Creator Banner</FormLabel>
 
                         <Box position='relative'>
@@ -332,7 +344,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     accept="image/*"
                     ref={creatorBannerRef}
                     hidden
-                    disabled={editingUser?.type !== 'creator'}
+                    disabled={editingUser?.type !== ROLES.CREATOR}
                     onChange={(e: any) => {
                         const photo = e.target.files[0];
 
