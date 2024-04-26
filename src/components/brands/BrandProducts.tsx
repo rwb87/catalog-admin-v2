@@ -1,4 +1,4 @@
-import { IconButton, Image, Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconCornerDownRight, IconEdit, IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
@@ -49,6 +49,19 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
     return (
         <>
             <Table>
+                <Thead>
+                    <Tr>
+                        <Th>#</Th>
+                        <Th>Image</Th>
+                        <Th>Brand</Th>
+                        <Th>Name</Th>
+                        <Th>Style</Th>
+                        <Th textAlign='center'>Links</Th>
+                        <Th textAlign='center'>Price</Th>
+                        <Th textAlign='center'>Clickouts</Th>
+                        <Th textAlign='right'>Actions</Th>
+                    </Tr>
+                </Thead>
                 <Tbody>
                     {
                         editedProducts?.map((product: any) => <Product
