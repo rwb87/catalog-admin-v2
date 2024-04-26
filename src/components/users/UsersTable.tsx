@@ -40,9 +40,14 @@ const UsersTable = (props: UsersTableProps) => {
                             { userType !== ROLES.ADMIN && <Th>SSO</Th> }
                             <Th>Email</Th>
                             <Th>Created At</Th>
-                            <Th>Shopping</Th>
                             {
-                                userType !== ROLES.ADMIN && <>
+                                (userType === ROLES.SUPER_ADMIN || userType === ROLES.ADMIN) && <>
+                                    <Th>Role</Th>
+                                </>
+                            }
+                            {
+                                (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                                    <Th>Shopping</Th>
                                     <Th>Location</Th>
                                     <Th textAlign='center'>Height</Th>
                                 </>
@@ -141,9 +146,14 @@ const UsersTable = (props: UsersTableProps) => {
                                                 }
                                             </Td>
                                             <Td minWidth='160px' maxWidth='160px'>{formatDateTime(user?.createdAt, true)}</Td>
-                                            <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                             {
-                                                userType !== ROLES.ADMIN && <>
+                                                (userType === ROLES.SUPER_ADMIN || userType === ROLES.ADMIN) && <>
+                                                    <Td textTransform='capitalize'>{user?.type?.replace('_', ' ') || '-'}</Td>
+                                                </>
+                                            }
+                                            {
+                                                (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                                                    <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                                     <Td textTransform='capitalize'>{user?.location || '-'}</Td>
                                                     <Td textAlign='center'>{user?.heightFeet + '.' + user?.heightInch + 'ft' || '-'}</Td>
                                                 </>

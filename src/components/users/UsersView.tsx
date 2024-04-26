@@ -21,6 +21,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt,desc');
     const [filterShoppersByCreatedAt, setFilterShoppersByCreatedAt] = useState<string>('');
+    const [adminUserType, setAdminUserType] = useState<string>(ROLES.SUPER_ADMIN);
 
     const [editingUser, setEditingUser] = useState<any>({});
     const [deletingUser, setDeletingUser] = useState<any>({});
@@ -39,7 +40,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
         setIsLoading(true);
 
         getUsers();
-    }, [sortBy, pagination?.offset, filterShoppersByCreatedAt]);
+    }, [sortBy, pagination?.offset, filterShoppersByCreatedAt, adminUserType]);
 
     useEffect(() => {
         const debounce = setTimeout(() => getUsers(), 500);
@@ -47,9 +48,11 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
     }, [search]);
 
     const getUsers = async () => {
+        const fetchUserType = [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DATA_MANAGER].includes(userType) ? adminUserType : userType;
+
         try {
             const response = await fetch({
-                endpoint: `/users?type=${userType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
+                endpoint: `/users?type=${fetchUserType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
                 method: 'GET',
             });
             setUsers(response?.users);
@@ -223,9 +226,42 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                     }}
                 >
 
+                    {/* Filter Admin types */}
+                    {
+                        (userType === ROLES.SUPER_ADMIN || userType === ROLES.ADMIN || userType === ROLES.DATA_MANAGER) && <Box
+                            display={{
+                                base: 'none',
+                                lg: 'block',
+                            }}
+                            fontWeight='bold'
+                            fontSize={{
+                                base: '10px',
+                                '2xl': '12px',
+                            }}
+                            whiteSpace='break-spaces'
+                        >
+                            <Select
+                                variant='outline'
+                                width='200px'
+                                size='sm'
+                                rounded='full'
+                                bgColor='white'
+                                borderWidth={2}
+                                borderColor='gray.100'
+                                fontWeight='medium'
+                                value={adminUserType}
+                                onChange={(event: any) => setAdminUserType(event.target.value)}
+                            >
+                                <option value={ROLES.SUPER_ADMIN}>Super Admins</option>
+                                <option value={ROLES.ADMIN}>Admins</option>
+                                <option value={ROLES.DATA_MANAGER}>Data Managers</option>
+                            </Select>
+                        </Box>
+                    }
+
                     {/* Created At */}
                     <Select
-                        display={userType !== ROLES.ADMIN ? 'block' : 'none'}
+                        display={userType === ROLES.CREATOR ? 'block' : 'none'}
                         variant='outline'
                         width={{
                             base: 'full',

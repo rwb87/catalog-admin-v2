@@ -65,6 +65,8 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         setIsProcessing(false);
     }
 
+    const isCategoryAdmin = [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.DATA_MANAGER].includes(user?.type);
+
     return (
         <CustomDrawer
             isOpen={!!editingUser?.id}
@@ -205,7 +207,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     mt={4}
                     templateColumns={{
                         base: '1fr',
-                        md: 'repeat(2, 1fr)',
+                        md: `repeat(${isCategoryAdmin ? 1 : 2}, 1fr)`,
                     }}
                     gap={4}
                 >
@@ -234,7 +236,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                         </Select>
                     </FormControl>
 
-                    <FormControl id="gender">
+                    <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
                         <FormLabel>Shopping</FormLabel>
                         <Select
                             placeholder='Select Shopping'
@@ -249,7 +251,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                 </Grid>
 
                 {/* Date or Birth */}
-                <FormControl mt={4} id="dob">
+                <FormControl mt={4} id="dob" display={isCategoryAdmin ? 'none' : 'block'}>
                     <FormLabel>Date of Birth</FormLabel>
                     <Input
                         type="date"

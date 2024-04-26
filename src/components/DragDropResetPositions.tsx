@@ -105,8 +105,6 @@ const DragDropResetPosition = ({ lookId, images, onSave, onCancel }: DragDropRes
             image.orderIndex = index;
         });
 
-        console.log('newList', newList);
-
         onSave(newList);
     }
 
