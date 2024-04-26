@@ -1,6 +1,6 @@
 import { useGlobalVolatileStorage } from "@/_store";
 import Confirmation from "@/components/Confirmation";
-import DragDropResetPosition from "@/components/DragDropResetPositions";
+import LookPhotos from "@/components/looks/LookPhotos";
 import Pagination from "@/components/Pagination";
 import LookProducts from "@/components/looks/LookProducts";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
@@ -10,7 +10,7 @@ import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
-import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash, IconUnlink } from "@tabler/icons-react";
+import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 
 const LooksManagementView = () => {
@@ -407,7 +407,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                                 }}
                             />
 
-                            {item?.photos?.length > 1 && <Box position='absolute' right={1} top={1} pointerEvents='none'><IconPhoto color="white" /></Box>}
+                            {item?.photos?.filter((item: any) => item?.deletedAt === null)?.length > 1 && <Box position='absolute' right={1} top={1} pointerEvents='none'><IconPhoto color="white" /></Box>}
                         </Box>
                     }
 
@@ -550,7 +550,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                 display={isImagesExpanded ? 'block' : 'none'}
                 p={4}
             >
-                <DragDropResetPosition
+                <LookPhotos
                     lookId={item?.id}
                     images={images}
                     onSave={(list: any) => {

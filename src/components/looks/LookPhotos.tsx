@@ -11,13 +11,13 @@ const initialDnDState = {
     updatedOrder: []
 }
 
-type DragDropResetPositionProps = {
+type LookPhotosProps = {
     lookId: number;
     images: any;
     onSave: (images: any) => void;
     onCancel: () => void;
 }
-const DragDropResetPosition = ({ lookId, images, onSave, onCancel }: DragDropResetPositionProps) => {
+const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
     const imagesInputRef = useRef<HTMLInputElement>(null);
 
     const [dragAndDrop, setDragAndDrop] = useState<any>(initialDnDState);
@@ -285,4 +285,4 @@ const DragDropResetPosition = ({ lookId, images, onSave, onCancel }: DragDropRes
     )
 };
 
-export default DragDropResetPosition;
+export default LookPhotos;
