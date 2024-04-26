@@ -357,6 +357,19 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
         setIsProductsExpanded(!isProductsExpanded);
     }
 
+    const thumbnailImage = useMemo(() => {
+        if(item?.thumbnailImage) return item?.thumbnailImage;
+
+        // Sort the images with orderIndex
+        if(item?.photos?.length) {
+            const sortedImages = item?.photos.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+            return sortedImages?.find((image: any) => image.link)?.link || '/images/cover-placeholder.webp';
+        }
+
+        // Return a placeholder image
+        return '/images/cover-placeholder.webp';
+    }, [item?.thumbnailImage, item?.photos]);
+
     return (
         <Box minWidth='1024px'>
             <Flex
@@ -373,27 +386,29 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                 <Flex gap={10} alignItems='center'>
                     {/* Images */}
                     {
-                        item?.thumbnailImage
-                            ? <Box
-                                width={20}
-                                height={28}
-                                position='relative'
-                            >
-                                <Image
-                                    src={item?.thumbnailImage}
-                                    width='full'
-                                    height='full'
-                                    objectFit='cover'
-                                    alt={item?.name}
-                                    cursor='pointer'
-                                    rounded='md'
-                                    loading="lazy"
-                                    onClick={handleExpandImages}
-                                />
+                        <Box
+                            width={20}
+                            height={28}
+                            position='relative'
+                        >
+                            <Image
+                                src={thumbnailImage}
+                                width='full'
+                                height='full'
+                                objectFit='cover'
+                                alt={item?.name}
+                                rounded='md'
+                                cursor='pointer'
+                                loading="lazy"
+                                onClick={handleExpandImages}
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
+                            />
 
-                                {item?.photos?.length > 1 && <Box position='absolute' right={1} top={1} pointerEvents='none'><IconPhoto color="white" /></Box>}
-                            </Box>
-                            : <IconUnlink size={26} />
+                            {item?.photos?.length > 1 && <Box position='absolute' right={1} top={1} pointerEvents='none'><IconPhoto color="white" /></Box>}
+                        </Box>
                     }
 
                     {/* Creator */}
@@ -536,10 +551,12 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                 p={4}
             >
                 <DragDropResetPosition
+                    lookId={item?.id}
                     images={images}
                     onSave={(list: any) => {
                         onUpdate({ photos: list }, item?.id);
                         setIsImagesExpanded(false);
+                        setImages([]);
                     }}
                     onCancel={() => {
                         setIsImagesExpanded(false)

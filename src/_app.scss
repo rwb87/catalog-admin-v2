@@ -88,6 +88,13 @@ select {
     }
 }
 
+input[type=file] {
+    cursor: pointer;
+    &::-webkit-file-upload-button {
+        cursor: pointer;
+    }
+}
+
 .page-heading {
     font-size: 1.5rem !important;
     font-weight: 300 !important;
