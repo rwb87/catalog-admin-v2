@@ -36,7 +36,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         if(user?.username !== editingUser?.username) payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);
-        payload.append('birthDate', editingUser?.birthDate);
+        payload.append('birthDate', editingUser?.birthDate !== null || editingUser?.birthDate?.trim() !== '' ? moment(editingUser?.birthDate).format('YYYY-MM-DD') : null);
 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);

@@ -155,7 +155,7 @@ const UsersTable = (props: UsersTableProps) => {
                                                 (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                                                     <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                                                     <Td textTransform='capitalize'>{user?.location || '-'}</Td>
-                                                    <Td textAlign='center'>{user?.heightFeet + '.' + user?.heightInch + 'ft' || '-'}</Td>
+                                                    <Td textAlign='center'>{ (typeof user?.heightFeet !== 'undefined' && user?.heightFeet !== null && user?.heightFeet !== '') ? user?.heightFeet + '.' + user?.heightInch + 'ft' : '-'}</Td>
                                                 </>
                                             }
                                             {
@@ -187,7 +187,7 @@ const UsersTable = (props: UsersTableProps) => {
                                                             px={2}
                                                             shadow='md'
                                                             bgColor='white'
-                                                        >${parseFloat(user?.currentEarnings).toFixed(2) || 0}</Text>
+                                                        >${parseFloat(user?.currentEarnings || 0).toFixed(2) || 0}</Text>
                                                     </Td>
                                                 </>
                                             }

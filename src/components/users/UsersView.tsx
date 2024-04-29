@@ -203,6 +203,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                             coverURL: '',
                             pictureURL: '',
                             creatorBannerURL: '',
+                            birthDate: null,
                             isNew: true,
                         })}
                     />
@@ -406,6 +407,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                                 coverURL: '',
                                 pictureURL: '',
                                 creatorBannerURL: '',
+                                birthDate: null,
                                 isNew: true,
                             })}
                         />
