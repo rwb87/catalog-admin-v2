@@ -17,6 +17,8 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
+        if(!links?.length) return setEditedLinks([]);
+
         const newLinks = JSON.parse(JSON.stringify(links));
         let sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
 
