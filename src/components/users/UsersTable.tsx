@@ -5,6 +5,25 @@ import Pagination from "@/components/Pagination";
 import moment from "moment";
 import { ROLES } from "@/_config";
 
+const SSO_PROVIDERS = {
+    apple: {
+        name: 'Apple',
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/833px-Apple_logo_black.svg.png',
+    },
+    google: {
+        name: 'Google',
+        icon: 'https://www.freepnglogos.com/uploads/google-logo-png/google-logo-icon-png-transparent-background-osteopathy-16.png',
+    },
+    facebook: {
+        name: 'Facebook',
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.png',
+    },
+    twitter: {
+        name: 'Twitter',
+        icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png',
+    },
+}
+
 type UsersTableProps = {
     isLoading?: boolean;
     userType: ROLES;
@@ -119,14 +138,11 @@ const UsersTable = (props: UsersTableProps) => {
                                             </Td>
                                             {
                                                 userType !== ROLES.ADMIN && <Td>
-                                                    <IconButton
-                                                        aria-label='SSO'
-                                                        variant='ghost'
-                                                        rounded='full'
-                                                        size='sm'
-                                                        icon={<img src="/icons/icon-cloud-meter.svg" alt="SSO" style={{ width: '22px' }} />}
-                                                        onClick={() => window.open(`mailto:${user?.ssoEmail}`)}
-                                                    />
+                                                    {
+                                                        user?.provider
+                                                            ? <img src={SSO_PROVIDERS?.[user?.provider]?.icon} alt="SSO" style={{ width: '22px' }} />
+                                                            : '-'
+                                                    }
                                                 </Td>
                                             }
                                             <Td>
@@ -160,7 +176,7 @@ const UsersTable = (props: UsersTableProps) => {
                                             }
                                             {
                                                 (userType === ROLES.CREATOR || userType === ROLES.SHOPPER || userType === ROLES.DATA_MANAGER) && <>
-                                                    <Td>{moment().diff(user?.birthDate, 'years') || '-'} years</Td>
+                                                    <Td>{user?.birthDate ? moment().diff(user?.birthDate, 'years') + ' years' : '-'}</Td>
                                                 </>
                                             }
                                             {
