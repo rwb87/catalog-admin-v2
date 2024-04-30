@@ -189,6 +189,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                             for(let i = 0; i < files.length; i++) {
                                 newList?.push({
                                     link: URL.createObjectURL(files[i]),
+                                    croppedLink: URL.createObjectURL(files[i]),
+                                    originalLink: URL.createObjectURL(files[i]),
                                     orderIndex: newList.length,
                                     isUpload: true
                                 });

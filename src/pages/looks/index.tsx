@@ -132,7 +132,8 @@ const LooksView = () => {
             setEditingData({});
             setSendingLookDataToManagement({});
             setSendingAllLookDataToManagement(false);
-            getData();
+
+            setTimeout(() => getData(), 2000);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
