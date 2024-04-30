@@ -601,7 +601,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     />
                 </Td>
                 <Td textAlign='center'>
-                    <Text whiteSpace='nowrap'>Price: <strong>${productPrice}</strong></Text>
+                    <Text whiteSpace='nowrap'>{parseFloat(productDiscountPrice) > 0 ? 'Price:' : '' } <strong>${productPrice}</strong></Text>
                     { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
