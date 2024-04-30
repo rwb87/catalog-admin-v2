@@ -222,7 +222,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 onClick={() => handleOnOpenImage(image?.link)}
                             >
                                 <Image
-                                    src={image?.link}
+                                    src={image?.croppedLink}
                                     alt={`Image ${index}`}
                                     height='full'
                                     width='full'
