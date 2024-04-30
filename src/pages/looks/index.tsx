@@ -618,7 +618,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         <Td textAlign='center'>
                             <Switch
                                 colorScheme='blue'
-                                size='md'
+                                size='lg'
                                 defaultChecked={item?.enabled}
                                 onChange={() => onUpdate({
                                     enabled: !item?.enabled,
@@ -628,7 +628,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         <Td textAlign='center'>
                             <Switch
                                 colorScheme='blue'
-                                size='md'
+                                size='lg'
                                 defaultChecked={item?.carouselEnabled}
                                 onChange={() => onUpdate({
                                     carouselEnabled: !item?.carouselEnabled,
