@@ -12,6 +12,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -309,6 +310,9 @@ const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendL
                 }}
             />
 
+            {/* Look Creator Change */}
+            <ChangeCreatorDrawer />
+
             {/* Pagination */}
             <Pagination
                 total={pagination?.total || 0}
@@ -356,6 +360,14 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
         setIsImagesExpanded(false);
 
         setIsProductsExpanded(!isProductsExpanded);
+    }
+
+    const handleOpenChangeCreatorDrawer = (item: any) => {
+        window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
+            detail: {
+                look: item,
+            }
+        }));
     }
 
     const thumbnailImage = useMemo(() => {
@@ -414,12 +426,24 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
 
                     {/* Creator */}
                     <Flex alignItems='center' gap={2}>
-                        <Avatar
-                            size='sm'
-                            name={item?.user?.username || '-'}
-                            src={item?.user?.pictureURL}
-                        />
-                        <Text>{item?.user?.username || '-'}</Text>
+                        <Button
+                            variant='ghost'
+                            rounded='full'
+                            gap={2}
+                            pl={1}
+                            pt={1}
+                            pb={1}
+                            height='auto'
+                            fontWeight='normal'
+                            onClick={() => handleOpenChangeCreatorDrawer(item)}
+                        >
+                            <Avatar
+                                size='sm'
+                                name={item?.user?.username || '-'}
+                                src={item?.user?.pictureURL}
+                            />
+                            <Text>{item?.user?.username || '-'}</Text>
+                        </Button>
                     </Flex>
                 </Flex>
 

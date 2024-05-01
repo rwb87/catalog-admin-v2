@@ -33,6 +33,7 @@ type UsersTableProps = {
     hasActions?: boolean;
     onEdit?: (user: any) => void;
     onDelete?: (user: any) => void;
+    onClickLooksCount?: (user: any) => void;
 }
 const UsersTable = (props: UsersTableProps) => {
     const {
@@ -44,6 +45,7 @@ const UsersTable = (props: UsersTableProps) => {
         hasActions = true,
         onEdit,
         onDelete,
+        // onClickLooksCount,
     } = props;
 
     return (
@@ -181,7 +183,18 @@ const UsersTable = (props: UsersTableProps) => {
                                             }
                                             {
                                                 userType === ROLES.CREATOR && <>
-                                                    <Td textAlign='center'>{user?.looksCount || 0}</Td>
+                                                    <Td textAlign='center'>
+                                                        {/* <IconButton
+                                                            aria-label='Looks'
+                                                            variant='solid'
+                                                            rounded='full'
+                                                            size='sm'
+                                                            icon={<Text>{user?.looksCount || 0}</Text>}
+                                                            px={2}
+                                                            onClick={() => onClickLooksCount?.(user)}
+                                                        /> */}
+                                                        <Text>{user?.looksCount || 0}</Text>
+                                                    </Td>
                                                     <Td textAlign='center' color='blue.500'>{user?.incomingDiscovers || 0}</Td>
                                                     <Td textAlign='center' color='green.500'>{user?.incomingClickouts || 0}</Td>
                                                 </>

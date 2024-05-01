@@ -12,6 +12,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Avatar, Box, Button, Flex, Heading, IconButton, Image, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 
 const LooksView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -506,6 +507,9 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManag
                 }}
             />
 
+            {/* Look Creator Change */}
+            <ChangeCreatorDrawer />
+
             {/* Pagination */}
             <Pagination
                 total={pagination?.total || 0}
@@ -559,6 +563,14 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
         setIsProductsExpanded(!isProductsExpanded);
     }
 
+    const handleOpenChangeCreatorDrawer = (item: any) => {
+        window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
+            detail: {
+                look: item,
+            }
+        }));
+    }
+
     const thumbnailImage = useMemo(() => {
         if(item?.thumbnailImage) return item?.thumbnailImage;
 
@@ -602,15 +614,25 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         </Box>
                     }
                 </Td>
-                <Td textAlign='center'>
-                    <Flex alignItems='center' gap={2}>
+                <Td>
+                    <Button
+                        variant='ghost'
+                        rounded='full'
+                        gap={2}
+                        pl={1}
+                        pt={1}
+                        pb={1}
+                        height='auto'
+                        fontWeight='normal'
+                        onClick={() => handleOpenChangeCreatorDrawer(item)}
+                    >
                         <Avatar
                             size='sm'
                             name={item?.user?.username || '-'}
                             src={item?.user?.pictureURL}
                         />
                         <Text>{item?.user?.username || '-'}</Text>
-                    </Flex>
+                    </Button>
                 </Td>
                 <Td textAlign='center' minWidth='150px' dangerouslySetInnerHTML={{ __html: dateTime }} />
                 {

@@ -429,6 +429,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                 hasActions={(userType === ROLES.ADMIN && userRole === ROLES.SUPER_ADMIN) || userType !== ROLES.ADMIN}
                 onEdit={(user: any) => setEditingUser(user)}
                 onDelete={(user) => setDeletingUser(user)}
+                onClickLooksCount={(user: any) => console.log('Changing Look Creator', user)}
             />
 
             {/* Update User */}
