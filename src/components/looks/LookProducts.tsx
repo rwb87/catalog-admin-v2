@@ -337,7 +337,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                             />
                         </Td>
                         <Td textAlign='center'>
-                            <Text whiteSpace='nowrap'>Price: <strong>${productPrice}</strong></Text>
+                            <Text whiteSpace='nowrap'><strong>${productPrice}</strong></Text>
                             { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                         </Td>
                         <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>

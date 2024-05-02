@@ -170,7 +170,7 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                     }
                 </Td>
                 <Td textAlign='center'>
-                    <Text>Price: <strong>${parseFloat(product?.price || 0)?.toFixed(2)}</strong></Text>
+                    <Text><strong>${parseFloat(product?.price || 0)?.toFixed(2)}</strong></Text>
                     { product?.dealPrice ? <Text>Deal Price: <strong>${parseFloat(product?.dealPrice)?.toFixed(2)}</strong></Text> : null }
                 </Td>
                 <Td textAlign='center' color='green.500'>{product?.clickouts || 0}</Td>

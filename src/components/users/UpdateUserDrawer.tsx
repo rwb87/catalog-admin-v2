@@ -219,23 +219,20 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     <FormControl id="role">
                         <FormLabel>Role <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
-                            placeholder='Select role'
+                            placeholder='Select role...'
                             value={editingUser?.type}
                             onChange={(e) => setEditingUser({ ...editingUser, type: e.target.value })}
                         >
                             {
-                                user?.type === ROLES.ADMIN
+                                user?.type === ROLES.ADMIN || user?.type === ROLES.SUPER_ADMIN || user?.type === ROLES.DATA_MANAGER
                                     ? <>
                                         <option value={ROLES.SUPER_ADMIN}>Super Admin</option>
                                         <option value={ROLES.ADMIN}>Admin</option>
                                         <option value={ROLES.DATA_MANAGER}>Data Manager</option>
                                     </>
                                     : <>
-                                        <option value={ROLES.SUPER_ADMIN}>Super Admin</option>
-                                        <option value={ROLES.ADMIN}>Admin</option>
                                         <option value={ROLES.SHOPPER}>Shopper</option>
                                         <option value={ROLES.CREATOR}>Creator</option>
-                                        <option value={ROLES.DATA_MANAGER}>Data Manager</option>
                                     </>
                             }
                         </Select>
@@ -244,7 +241,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
                         <FormLabel>Shopping <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
-                            placeholder='Select Shopping'
+                            placeholder='Select Shopping...'
                             value={editingUser?.gender}
                             onChange={(e) => setEditingUser({ ...editingUser, gender: e.target.value })}
                         >
