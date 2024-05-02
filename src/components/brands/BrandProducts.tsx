@@ -1,8 +1,11 @@
 import { IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCornerDownRight, IconEdit, IconLink } from "@tabler/icons-react";
+import { IconCornerDownRight, IconEdit, IconLink, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import ProductLinks from "../products/ProductLinks";
+import ProductLinks from "@/components/products/ProductLinks";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
+import Confirmation from "@/components/Confirmation";
+import notify from "@/helpers/notify";
+import fetch from "@/helpers/fetch";
 
 type BrandProductsProps = {
     brand: any;
@@ -12,35 +15,43 @@ type BrandProductsProps = {
 const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
     const [editedProducts, setEditedProducts] = useState<any>([]);
     const [editingData, setEditingData] = useState<any>({});
+    const [deletingProduct, setDeletingProduct] = useState<any>({});
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const newProducts = JSON.parse(JSON.stringify(products));
         setEditedProducts(newProducts);
     }, [products]);
 
-    // const handleRemove = (index: number) => {
-    //     const newLinks = [...editedProducts];
-    //     newLinks.splice(index, 1);
-    //     setEditedProducts(newLinks);
-    // }
+    const handleRemove = (product: any) => {
+        setDeletingProduct(product);
+    }
 
-    // const handleMoveUp = (index: number) => {
-    //     if(index === 0) return;
+    const handleRemoveConfirm = async () => {
+        setIsDeleting(true);
 
-    //     const newLinks = [...editedProducts];
-    //     const [removed] = newLinks.splice(index, 1);
-    //     newLinks.splice(index - 1, 0, removed);
-    //     setEditedProducts(newLinks);
-    // }
+        try {
+            const response = await fetch({
+                endpoint: `/items/${deletingProduct?.id}`,
+                method: 'PUT',
+                data: {
+                    brandId: null,
+                }
+            });
 
-    // const handleMoveDown = (index: number) => {
-    //     if(index === editedProducts.length - 1) return;
+            if(response) {
+                const newProducts = editedProducts.filter((p: any) => p?.id !== deletingProduct?.id);
+                setEditedProducts(newProducts);
+                onSave?.(newProducts);
+            } else {
+                notify('Failed to remove product from brand');
+            }
+        } catch (error) {
+            notify('Failed to remove product from brand');
+        }
 
-    //     const newLinks = [...editedProducts];
-    //     const [removed] = newLinks.splice(index, 1);
-    //     newLinks.splice(index + 1, 0, removed);
-    //     setEditedProducts(newLinks);
-    // }
+        setIsDeleting(false);
+    }
 
     const handleOnOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
@@ -70,6 +81,7 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                             brand={brand}
                             handleOnOpenImage={handleOnOpenImage}
                             onEdit={(data: any) => setEditingData(data)}
+                            onRemove={handleRemove}
                         />
                     )}
                 </Tbody>
@@ -91,6 +103,16 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                     onSave?.(newProducts);
                     setEditingData({})
                 }}
+            />
+
+            {/* Remove Product Prompt */}
+            <Confirmation
+                isOpen={!!deletingProduct?.id}
+                text={`Are you sure you want to remove <strong>${deletingProduct?.name}</strong> from this the brand <strong>${brand?.name}</strong>?`}
+                isProcessing={isDeleting}
+                confirmText="Yes, Remove from brand"
+                onConfirm={() => handleRemoveConfirm()}
+                onCancel={() => setDeletingProduct({})}
             />
 
             {/* Actions */}
@@ -119,6 +141,7 @@ type ProductProps = {
     brand: any;
     handleOnOpenImage: (link: string) => void;
     onEdit?: (product: any) => void;
+    onRemove?: (product: any) => void;
 }
 const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
@@ -213,7 +236,7 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                         size='sm'
                         ml={4}
                         icon={<IconTrash size={22} />}
-                        onClick={() => handleRemove(index)}
+                        onClick={() => onRemove(product)}
                     /> */}
                 </Td>
             </Tr>
