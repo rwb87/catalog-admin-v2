@@ -48,7 +48,7 @@ const BrandsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/brands`,
+                endpoint: `/brands?all=true`,
                 method: 'GET',
             });
             const sortedData = sortData(response, sortBy);
