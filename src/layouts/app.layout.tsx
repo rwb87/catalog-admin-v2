@@ -404,8 +404,11 @@ const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
         }
     }, [location]);
 
+    const isTopbarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname));
+
     return (
         <Flex
+            display={isTopbarVisible ? 'flex' : 'none'}
             direction='column'
             position='fixed'
             zIndex={100}

@@ -79,17 +79,21 @@ const Login = () => {
                 mx="auto"
                 minHeight='100dvh'
                 color='white'
+                p={3}
             >
                 <form onSubmit={handleSubmit} style={{ display: 'contents'}}>
 
                     {/* Logo */}
                     <Box mb={6}>
                         <img
-                            src="/favicon.ico"
+                            src="/logo.webp"
                             alt="logo"
-                            width={100}
+                            width={200}
                             height={100}
                             loading="lazy"
+                            style={{
+                                filter: `invert(1)`
+                            }}
                         />
                     </Box>
 

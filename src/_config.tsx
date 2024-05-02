@@ -1,5 +1,5 @@
 export const Config = {
-    APP_NAME: "StyleUp Admin",
+    APP_NAME: "Catalog",
 }
 
 export const ROLES = {

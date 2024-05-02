@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: styleup-admin
+    container_name: catalog-admin
     restart: always
     working_dir: /app
     volumes:
