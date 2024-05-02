@@ -36,6 +36,21 @@ const ProductsView = () => {
 
     useAuthGuard('auth');
 
+    // Reset the whole page when the URL changes
+    useEffect(() => {
+        setIsLoading(true);
+        setData([]);
+        setSearch('');
+        setSortBy('createdAt,desc');
+        setPagination({
+            page: 1,
+            offset: 0,
+            limit: 50,
+            total: 0,
+        });
+        getData();
+    }, [location]);
+
     useEffect(() => {
         setIsLoading(true);
 

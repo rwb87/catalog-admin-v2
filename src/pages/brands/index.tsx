@@ -20,8 +20,20 @@ const BrandsView = () => {
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const isManagement = location.pathname.includes('management');
+    const pageName = isManagement ? 'Brands Management' : 'Brands';
 
     useAuthGuard('auth');
+
+    // Reset the whole page when the URL changes
+    useEffect(() => {
+        setIsLoading(true);
+        setSearch('');
+        setSortBy('createdAt:desc');
+        setEditingData({});
+        setDeletingData({});
+        getData();
+    }, [location.pathname]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -87,7 +99,7 @@ const BrandsView = () => {
     }, [data]);
 
     return (
-        <Content activePage="Brands">
+        <Content activePage={pageName}>
 
             {/* Search and Options */}
             <Flex
@@ -122,7 +134,7 @@ const BrandsView = () => {
                     }}
                     gap={2}
                 >
-                    <h1 className="page-heading">Brands</h1>
+                    <h1 className="page-heading">{pageName}</h1>
 
                     <Box
                         display={{

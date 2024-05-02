@@ -9,16 +9,20 @@ import FourOhFour from '@/pages/404';
 import Login from '@/pages/auth/login';
 
 // App Pages
-import LooksView from '@/pages/looks';
-import LooksManagementView from '@/pages/looks/management';
+import AppLayout from './layouts/app.layout';
+
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
 import CreatorsView from '@/pages/creators';
-import DataManagersView from './pages/data-managers';
+
+import LooksView from '@/pages/looks';
+import LooksManagementView from '@/pages/looks/management';
+
 import ProductsView from './pages/products';
+
 import BrandsView from '@/pages/brands';
+
 import EarningsView from '@/pages/earnings';
-import AppLayout from './layouts/app.layout';
 
 export default function Routes() {
     return(
@@ -36,13 +40,16 @@ export default function Routes() {
                     <Route path="/administrators" element={<AdminsView />} />
                     <Route path="/shoppers" element={<ShoppersView />} />
                     <Route path="/creators" element={<CreatorsView />} />
-                    <Route path="/data-managers" element={<DataManagersView />} />
 
                     <Route path="/looks" element={<LooksView />} />
                     <Route path="/looks/management" element={<LooksManagementView />} />
+
                     <Route path="/brands" element={<BrandsView />} />
+                    <Route path="/brands/management" element={<BrandsView />} />
+
                     <Route path="/products" element={<ProductsView />} />
                     <Route path="/products/management" element={<ProductsView />} />
+
                     <Route path="/earnings" element={<EarningsView />} />
 
                     {/* Error Pages */}
