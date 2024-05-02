@@ -101,7 +101,7 @@ const UsersTable = (props: UsersTableProps) => {
                                     <Th textAlign='center'>Invited</Th>
                                 </>
                             }
-                            { hasActions && <Th textAlign='center'>Actions</Th> }
+                            { hasActions && <Th textAlign='right'>Actions</Th> }
                         </Tr>
                     </Thead>
 
@@ -226,7 +226,7 @@ const UsersTable = (props: UsersTableProps) => {
                                                 </>
                                             }
                                             {
-                                                hasActions && <Td textAlign='center' whiteSpace='nowrap'>
+                                                hasActions && <Td textAlign='right' whiteSpace='nowrap'>
                                                     {
                                                         typeof onEdit === 'function' && <IconButton
                                                             aria-label='Edit'

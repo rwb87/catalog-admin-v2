@@ -446,7 +446,7 @@ export const ProductsTable = ({ data, isLoading, pagination, onPaginate, onEdit,
                             <Th textAlign='center'>Links</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
-                            <Th textAlign='center'>Actions</Th>
+                            <Th textAlign='right'>Actions</Th>
                         </Tr>
                     </Thead>
 
@@ -605,7 +605,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                <Td textAlign='center' whiteSpace='nowrap'>
+                <Td textAlign='right' whiteSpace='nowrap'>
                     <IconButton
                         aria-label="Edit"
                         variant='ghost'

@@ -347,7 +347,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                             <Th textAlign='center'># of Products</Th>
                             <Th textAlign='center'>Partnership</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
-                            <Th textAlign='center'>Actions</Th>
+                            <Th textAlign='right'>Actions</Th>
                         </Tr>
                     </Thead>
 
@@ -447,7 +447,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 <Td textAlign='center'>{item?.items?.length || 0}</Td>
                 <Td textAlign='center'>{item?.partnership || 'None'}</Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                <Td textAlign='center' whiteSpace='nowrap'>
+                <Td textAlign='right' whiteSpace='nowrap'>
                     <IconButton
                         aria-label="Edit"
                         variant='ghost'

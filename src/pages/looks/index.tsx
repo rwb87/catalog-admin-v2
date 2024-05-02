@@ -456,7 +456,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManag
                                     <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                 </>
                             }
-                            <Th textAlign='center'>Actions</Th>
+                            <Th textAlign='right'>Actions</Th>
                         </Tr>
                     </Thead>
 
@@ -677,7 +677,7 @@ const TableRow = ({ item, isLive = true, onSendLookToManagement, onUpdate, onDel
                         <Td textAlign='center' color='blue.500'>{item?.incomingDiscovers || 0}</Td>
                     </>
                 }
-                <Td textAlign='center' whiteSpace='nowrap'>
+                <Td textAlign='right' whiteSpace='nowrap'>
                     {/* Send to Management button */}
                     {
                         <Tooltip label="Send look to management" placement="bottom">
