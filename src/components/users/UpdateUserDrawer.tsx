@@ -1,4 +1,4 @@
-import { Avatar, Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
+import { Avatar, Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
@@ -25,6 +25,15 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
     }, [user]);
 
     const handleUpdateUser = async () => {
+        if(isProcessing) return;
+
+        if(editingUser?.name?.trim() === '') return notify('First Name is required', 3000);
+        if(editingUser?.lastName?.trim() === '') return notify('Last Name is required', 3000);
+        if(editingUser?.email?.trim() === '') return notify('Email is required', 3000);
+        if(editingUser?.username?.trim() === '') return notify('Username is required', 3000);
+        if(editingUser?.type?.trim() === '') return notify('Role is required', 3000);
+        if(editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required', 3000);
+
         setIsProcessing(true);
 
         const payload = new FormData();
@@ -41,7 +50,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
         if (profilePhotoRef.current.files[0]) payload.append('picture', profilePhotoRef.current.files[0]);
-        // if (user?.type === ROLES.CREATOR && creatorBannerRef.current.files[0]) payload.append('creatorBanner', creatorBannerRef.current.files[0]);
+        if (editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required', 3000);
 
         if (editingUser?.password) payload.append('password', editingUser?.password);
 
@@ -54,7 +63,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                 hasFiles: true,
             });
 
-            notify(response?.message ?? 'User updated successfully', 3000);
+            if(response) notify(`User ${editingUser?.isNew ? 'created' : 'updated'} successfully`, 3000);
             onComplete(response, editingUser?.isNew);
             setEditingUser({});
         } catch (error: any) {
@@ -148,10 +157,9 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     gap={4}
                 >
                     <FormControl id="firstName">
-                        <FormLabel>First Name</FormLabel>
+                        <FormLabel>First Name <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Input
                             type="text"
-                            required
                             autoComplete="firstName"
                             value={editingUser?.name}
                             onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
@@ -159,10 +167,9 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     </FormControl>
 
                     <FormControl id="lastName">
-                        <FormLabel>Last Name</FormLabel>
+                        <FormLabel >Last Name <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Input
                             type="text"
-                            required
                             autoComplete="lastName"
                             value={editingUser?.lastName}
                             onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
@@ -180,10 +187,9 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     gap={4}
                 >
                     <FormControl id="email">
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Email <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Input
                             type="email"
-                            required
                             autoComplete="email"
                             value={editingUser?.email}
                             onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
@@ -191,10 +197,9 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     </FormControl>
 
                     <FormControl id="username">
-                        <FormLabel>Username</FormLabel>
+                        <FormLabel>Username <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Input
                             type="text"
-                            required
                             autoComplete="username"
                             value={editingUser?.username}
                             onChange={(e) => setEditingUser({ ...editingUser, username: e.target.value })}
@@ -212,7 +217,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     gap={4}
                 >
                     <FormControl id="role">
-                        <FormLabel>Role</FormLabel>
+                        <FormLabel>Role <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
                             placeholder='Select role'
                             value={editingUser?.type}
@@ -237,7 +242,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     </FormControl>
 
                     <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
-                        <FormLabel>Shopping</FormLabel>
+                        <FormLabel>Shopping <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
                             placeholder='Select Shopping'
                             value={editingUser?.gender}
@@ -255,19 +260,17 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
                     <FormLabel>Date of Birth</FormLabel>
                     <Input
                         type="date"
-                        required
                         autoComplete="dob"
-                        value={moment(editingUser?.birthDate).format('YYYY-MM-DD')}
+                        value={editingUser?.birthDate !== null && editingUser?.birthDate?.trim() !== '' ? moment(editingUser?.birthDate).format('YYYY-MM-DD') : ''}
                         onChange={(e) => setEditingUser({ ...editingUser, birthDate: e.target.value })}
                     />
                 </FormControl>
 
                 {/* Password */}
                 <FormControl mt={4} id="password">
-                    <FormLabel>Password (Leave blank to keep current password)</FormLabel>
+                    <FormLabel>Password {!editingUser?.isNew ? '(Leave blank to keep current password)' : <Text as='span' color='red.500'>*</Text>}</FormLabel>
                     <Input
                         type="password"
-                        required
                         autoComplete="new-password"
                         value={editingUser?.password}
                         onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}

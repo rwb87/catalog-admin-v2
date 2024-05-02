@@ -435,17 +435,9 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
             {/* Update User */}
             <UpdateUserDrawer
                 user={editingUser}
-                onComplete={(user: any, isNew: boolean) => {
+                onComplete={() => {
                     setEditingUser({});
-
-                    // Reset users
-                    if(isNew) setUsers([user, ...users]);
-                    else {
-                        const index = users.findIndex((u: any) => u.id === user.id);
-                        const newUsers = [...users];
-                        newUsers[index] = user;
-                        setUsers(newUsers);
-                    }
+                    getUsers();
                 }}
                 onClose={() => setEditingUser({})}
             />
