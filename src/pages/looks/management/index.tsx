@@ -303,7 +303,7 @@ const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendL
                     brandId: brand?.id,
                 }}
                 onClose={() => setEditingData({})}
-                onComplete={() => {
+                onSave={() => {
                     window?.dispatchEvent(new CustomEvent('refresh:data'));
                     setEditingData({});
                     setBrand({});

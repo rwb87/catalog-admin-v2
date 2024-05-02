@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { IconLoader2 } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SearchableInputProps = {
     data: any[];
@@ -14,6 +14,10 @@ type SearchableInputProps = {
 const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 'Search...', isLoading = false, onDynamicSearch, onChange }: SearchableInputProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState(defaultValue || '');
+
+    useEffect(() => {
+        setSearchTerm(defaultValue || '');
+    }, [defaultValue]);
 
     const filteredItems = useMemo(() => {
         return data?.filter((item: any) => item?.[property]?.toLowerCase().includes(searchTerm?.toLowerCase()));

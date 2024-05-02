@@ -8,6 +8,8 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useGlobalVolatileStorage } from "@/_store";
 import { encodeAmpersand } from "@/helpers/utils";
+import UpdateBrandDrawer from "../brands/UpdateBrandDrawer";
+import UpdateProductDrawer from "../products/UpdateProductDrawer";
 
 type LookProductsProps = {
     look: any,
@@ -21,6 +23,9 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
 
     const [selectedBrand, setSelectedBrand] = useState<any>(null);
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
+    const [newBrand, setNewBrand] = useState<any>({});
+    const [newProduct, setNewProduct] = useState<any>({});
 
     const [isSearchingBrands, setIsSearchingBrands] = useState<boolean>(false);
     const [brandSearchTerm, setBrandSearchTerm] = useState<string>('');
@@ -39,7 +44,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         setEditedProducts(sortedTags?.map((tag: any) => tag?.item));
     },  [look?.tags]);
 
-    const getBrands = useCallback(async () => {
+    const getBrands = async () => {
         if(brandSearchTerm?.trim() === '') {
             setBrands(globalBrands);
             return setIsSearchingBrands(false);
@@ -57,7 +62,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         }
 
         setIsSearchingBrands(false);
-    }, [brandSearchTerm]);
+    }
 
     const filteredAvailableProducts = useMemo(() => {
         if(selectedBrand === null) return [];
@@ -132,6 +137,53 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         setIsProcessing(false);
     }
 
+    const handleOpenBrandDrawer = () => {
+        setNewBrand({
+            id: Math.random().toString(36).substring(7),
+            name: '',
+            pageLink: '',
+            pictureURL: '',
+            partnership: 'NONE',
+            isNew: true,
+        })
+
+        setIsAddingProductToLook(false);
+    }
+
+    const handleOpenProductDrawer = () => {
+        setNewProduct({
+            id: Math.random().toString(36).substring(7),
+            name: '',
+            link: '',
+            brand: null,
+            brandId: null,
+            price: 0,
+            dealPrice: 0,
+            pictureURL: '',
+            isNew: true,
+        });
+
+        setIsAddingProductToLook(false);
+    }
+
+    const handleCreateNewBrand = async (brand: any) => {
+        setIsAddingProductToLook(true);
+        setIsSearchingBrands(true);
+        await getBrands();
+        const isBrandAlreadyIsList = brands.find((b: any) => b.id === brand.id);
+        setSelectedBrand(isBrandAlreadyIsList || {
+            ...brand,
+            items: [],
+        });
+        setIsSearchingBrands(false);
+    }
+
+    const handleCreateNewProduct = (product: any) => {
+        setIsAddingProductToLook(true);
+        setSelectedBrand(product?.brand);
+        setSelectedProduct(product);
+    }
+
     return (
         <>
             <Box>
@@ -174,11 +226,33 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                     setSelectedProduct(null);
                 }}
             >
+                <Grid
+                    templateColumns='repeat(2, 1fr)'
+                    gap={4}
+                    mb={4}
+                >
+                    <Button
+                        variant='solid'
+                        colorScheme='blue'
+                        size='sm'
+                        leftIcon={<IconPlus size={20} />}
+                        onClick={handleOpenBrandDrawer}
+                    >Create new Brand</Button>
+
+                    <Button
+                        variant='solid'
+                        colorScheme='blue'
+                        size='sm'
+                        leftIcon={<IconPlus size={20} />}
+                        onClick={handleOpenProductDrawer}
+                    >Create new Product</Button>
+                </Grid>
+
                 <Grid gap={4}>
                     <SearchableInput
                         data={brands}
                         property="name"
-                        defaultValue=''
+                        defaultValue={selectedBrand?.name || ''}
                         placeholder="Search brand..."
                         isLoading={isSearchingBrands}
                         onDynamicSearch={(searchTerm: string) => setBrandSearchTerm(searchTerm)}
@@ -188,12 +262,32 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                     <SearchableInput
                         data={filteredAvailableProducts}
                         property="name"
-                        defaultValue=''
+                        defaultValue={selectedProduct?.name || ''}
                         placeholder="Search product..."
                         onChange={(item: any) => setSelectedProduct(item)}
                     />
                 </Grid>
             </CustomDrawer>
+
+            {/* Create Brand Drawer */}
+            <UpdateBrandDrawer
+                data={newBrand}
+                onSave={handleCreateNewBrand}
+                onClose={() => {
+                    setNewBrand({})
+                    setIsAddingProductToLook(true);
+                }}
+            />
+
+            {/* Create Product Drawer */}
+            <UpdateProductDrawer
+                data={newProduct}
+                onSave={handleCreateNewProduct}
+                onClose={() => {
+                    setNewProduct({});
+                    setIsAddingProductToLook(true);
+                }}
+            />
 
             {/* Actions */}
             <Flex
@@ -267,7 +361,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                         <Td width='30px' textAlign='left'>
                             <IconCornerDownRight size={20} />
                         </Td>
-                        <Td>
+                        <Td width='200px'>
                             {
                                 item?.pictureURL
                                     ? <Box

@@ -83,7 +83,7 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                     brandId: brand?.id,
                 }}
                 onClose={() => setEditingData({})}
-                onComplete={(product: any) => {
+                onSave={(product: any) => {
                     const newProducts = [...editedProducts];
                     const index = newProducts.findIndex((p: any) => p?.id === product?.id);
                     newProducts[index] = product;

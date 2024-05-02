@@ -9,10 +9,10 @@ import { ROLES } from "@/_config";
 
 type UpdateUserDrawerProps = {
     user: any;
-    onComplete: (user: any, isNew: boolean) => void;
+    onSave: (user: any, isNew: boolean) => void;
     onClose: () => void;
 }
-const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) => {
+const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
     const [editingUser, setEditingUser] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -64,7 +64,7 @@ const UpdateUserDrawer = ({ user, onComplete, onClose }: UpdateUserDrawerProps) 
             });
 
             if(response) notify(`User ${editingUser?.isNew ? 'created' : 'updated'} successfully`, 3000);
-            onComplete(response, editingUser?.isNew);
+            onSave(response, editingUser?.isNew);
             setEditingUser({});
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;

@@ -9,10 +9,10 @@ import { encodeAmpersand } from "@/helpers/utils";
 
 type UpdateProductDrawerProps = {
     data: any;
-    onComplete: (data: any, isNew: boolean) => void;
+    onSave: (data: any) => void;
     onClose: () => void;
 }
-const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerProps) => {
+const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps) => {
     const productImageRef = useRef<any>(null);
 
     const [editingData, setEditingData] = useState<any>({});
@@ -78,7 +78,7 @@ const UpdateProductDrawer = ({ data, onComplete, onClose }: UpdateProductDrawerP
 
             if (response) {
                 notify('Product saved successfully', 3000);
-                onComplete(editingData, false);
+                onSave(response);
                 setEditingData({});
             } else notify('An error occurred', 3000);
         } catch (error: any) {

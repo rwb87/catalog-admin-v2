@@ -435,7 +435,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
             {/* Update User */}
             <UpdateUserDrawer
                 user={editingUser}
-                onComplete={() => {
+                onSave={() => {
                     setEditingUser({});
                     getUsers();
                 }}

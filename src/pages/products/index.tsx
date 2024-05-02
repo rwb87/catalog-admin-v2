@@ -419,7 +419,7 @@ const ProductsView = () => {
             <UpdateProductDrawer
                 data={editingData}
                 onClose={() => setEditingData({})}
-                onComplete={() => getData()}
+                onSave={() => getData()}
             />
 
             {/* Delete Dialog */}

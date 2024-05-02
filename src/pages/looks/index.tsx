@@ -500,7 +500,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, onSendLookToManag
                     brandId: brand?.id,
                 }}
                 onClose={() => setEditingData({})}
-                onComplete={() => {
+                onSave={() => {
                     window?.dispatchEvent(new CustomEvent('refresh:data'));
                     setEditingData({});
                     setBrand({});
