@@ -1,5 +1,5 @@
 import { IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCornerDownRight, IconEdit, IconLink, IconTrash } from "@tabler/icons-react";
+import { IconCornerDownRight, IconEdit, IconLink } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ProductLinks from "@/components/products/ProductLinks";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
