@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
 import CustomDrawer from "../Drawer";
 import SearchableInput from "../SearchableInput";
@@ -187,16 +187,33 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
     return (
         <>
             <Box>
-                {
-                    editedProducts?.map((item: any, index: number) => <Product
-                        key={item?.id || index}
-                        item={item}
-                        index={index}
-                        handleMoveUp={handleMoveUp}
-                        handleMoveDown={handleMoveDown}
-                        handleRemove={handleRemove}
-                    />
-                )}
+                <Table>
+                    <Thead>
+                        <Tr>
+                            <Th width='30px' textAlign='center'>#</Th>
+                            <Th>Image</Th>
+                            <Th>Brand</Th>
+                            <Th>Name</Th>
+                            <Th>Style</Th>
+                            <Th textAlign='center'>Links</Th>
+                            <Th textAlign='center'>Price</Th>
+                            <Th textAlign='center'>Clickouts</Th>
+                            <Th textAlign='right'>Actions</Th>
+                        </Tr>
+                    </Thead>
+                    <Tbody>
+                        {
+                            editedProducts?.map((item: any, index: number) => <Product
+                                key={item?.id || index}
+                                item={item}
+                                index={index}
+                                handleMoveUp={handleMoveUp}
+                                handleMoveDown={handleMoveDown}
+                                handleRemove={handleRemove}
+                            />
+                        )}
+                    </Tbody>
+                </Table>
             </Box>
 
             {/* Search and Add product to Look Drawer */}
@@ -341,187 +358,167 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
 
     return (
         <>
-            <Table>
-                <Thead display={index === 0 ? 'table-header-group' : 'none'}>
-                    <Tr>
-                        <Th width='30px' textAlign='left'>#</Th>
-                        <Th>Image</Th>
-                        <Th>Brand</Th>
-                        <Th>Name</Th>
-                        <Th>Style</Th>
-                        <Th textAlign='center'>Links</Th>
-                        <Th textAlign='center'>Price</Th>
-                        <Th textAlign='center'>Clickouts</Th>
-                        <Th textAlign='right'>Actions</Th>
-                    </Tr>
-                </Thead>
+            <Tr>
+                <Td width='30px' textAlign='left'>
+                    <IconCornerDownRight size={20} />
+                </Td>
+                <Td>
+                    {
+                        item?.pictureURL
+                            ? <Box
+                                position='relative'
+                                textAlign='center'
+                                width={28}
+                            >
+                                <Image
+                                    src={item?.pictureURL}
+                                    width={28}
+                                    height='auto'
+                                    objectFit='cover'
+                                    alt={item?.name}
+                                    rounded='md'
+                                    cursor='pointer'
+                                    loading="lazy"
+                                    onClick={() => handleOpenImage(item?.pictureURL)}
+                                    onError={(e: any) => {
+                                        e.target.src = '/images/cover-placeholder.webp';
+                                        e.target.onerror = null;
+                                    }}
+                                />
 
-                <Tbody>
-                    <Tr>
-                        <Td width='30px' textAlign='left'>
-                            <IconCornerDownRight size={20} />
-                        </Td>
-                        <Td width='200px'>
-                            {
-                                item?.pictureURL
-                                    ? <Box
-                                        position='relative'
-                                        textAlign='center'
-                                        width={28}
-                                    >
-                                        <Image
-                                            src={item?.pictureURL}
-                                            width={28}
-                                            height='auto'
-                                            objectFit='cover'
-                                            alt={item?.name}
+                                {
+                                    parseInt(productDiscountPercentage) !== 0
+                                        ? <Tag
+                                            position='absolute'
+                                            top='0'
+                                            right='0'
+                                            bgColor='black'
+                                            color='white'
                                             rounded='md'
-                                            cursor='pointer'
-                                            loading="lazy"
-                                            onClick={() => handleOpenImage(item?.pictureURL)}
-                                            onError={(e: any) => {
-                                                e.target.src = '/images/cover-placeholder.webp';
-                                                e.target.onerror = null;
-                                            }}
-                                        />
-
-                                        {
-                                            parseInt(productDiscountPercentage) !== 0
-                                                ? <Tag
-                                                    position='absolute'
-                                                    top='0'
-                                                    right='0'
-                                                    bgColor='black'
-                                                    color='white'
-                                                    rounded='md'
-                                                    size='sm'
-                                                >{productDiscountPercentage}%</Tag>
-                                                : null
-                                        }
-                                    </Box>
-                                    : <>
-                                        <Text>{item?.name || '-'}</Text>
-                                        {
-                                            parseInt(productDiscountPercentage) !== 0
-                                                ? <Tag
-                                                    bgColor='black'
-                                                    color='white'
-                                                    rounded='md'
-                                                    size='sm'
-                                                >{productDiscountPercentage}%</Tag>
-                                                : null
-                                        }
-                                    </>
-                            }
-                        </Td>
-                        <Td maxWidth={40}>
-                            {
-                                item?.brand
-                                ? item?.brand?.pictureURL
-                                    ? <Image
-                                        src={item?.brand?.pictureURL}
-                                        alt={item?.brand?.name}
-                                        width={28}
-                                        height={28}
-                                        objectFit='contain'
-                                        rounded='md'
-                                        cursor='pointer'
-                                        loading="lazy"
-                                        onError={(e: any) => {
-                                            e.target.src = '/images/cover-placeholder.webp';
-                                            e.target.onerror = null;
-                                        }}
-                                        onClick={() => handleOpenImage(item?.brand?.pictureURL)}
-                                    />
-                                    : item?.brand?.name
-                                : '-'
-                            }
-                        </Td>
-                        <Td>{item?.name || '-'}</Td>
-                        <Td>{item?.style || '-'}</Td>
-                        <Td textAlign='center'>
-                            <IconButton
-                                aria-label='View Links'
-                                variant='ghost'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconLink size={22} />}
-                                onClick={() => {
-                                    if(links === null) setLinks(item?.links || [item?.link] || []);
-                                    else setLinks(null);
+                                            size='sm'
+                                        >{productDiscountPercentage}%</Tag>
+                                        : null
+                                }
+                            </Box>
+                            : <>
+                                <Text>{item?.name || '-'}</Text>
+                                {
+                                    parseInt(productDiscountPercentage) !== 0
+                                        ? <Tag
+                                            bgColor='black'
+                                            color='white'
+                                            rounded='md'
+                                            size='sm'
+                                        >{productDiscountPercentage}%</Tag>
+                                        : null
+                                }
+                            </>
+                    }
+                </Td>
+                <Td>
+                    {
+                        item?.brand
+                        ? item?.brand?.pictureURL
+                            ? <Image
+                                src={item?.brand?.pictureURL}
+                                alt={item?.brand?.name}
+                                width={28}
+                                height={28}
+                                objectFit='contain'
+                                rounded='md'
+                                cursor='pointer'
+                                loading="lazy"
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
                                 }}
+                                onClick={() => handleOpenImage(item?.brand?.pictureURL)}
                             />
-                        </Td>
-                        <Td textAlign='center'>
-                            <Text whiteSpace='nowrap'><strong>${productPrice}</strong></Text>
-                            { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
-                        </Td>
-                        <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
-                        <Td textAlign='right' whiteSpace='nowrap'>
-                            <IconButton
-                                aria-label='Move Up'
-                                variant='ghost'
-                                colorScheme='blue'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconArrowUp size={22} />}
-                                onClick={() => handleMoveUp(index)}
-                            />
+                            : item?.brand?.name
+                        : '-'
+                    }
+                </Td>
+                <Td width='250px'>{item?.name || '-'}</Td>
+                <Td>{item?.style || '-'}</Td>
+                <Td textAlign='center'>
+                    <IconButton
+                        aria-label='View Links'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconLink size={22} />}
+                        onClick={() => {
+                            if(links === null) setLinks(item?.links || [item?.link] || []);
+                            else setLinks(null);
+                        }}
+                    />
+                </Td>
+                <Td textAlign='center'>
+                    <Text whiteSpace='nowrap'><strong>${productPrice}</strong></Text>
+                    { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
+                </Td>
+                <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
+                <Td textAlign='right' whiteSpace='nowrap'>
+                    <IconButton
+                        aria-label='Move Up'
+                        variant='ghost'
+                        colorScheme='blue'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconArrowUp size={22} />}
+                        onClick={() => handleMoveUp(index)}
+                    />
 
-                            <IconButton
-                                aria-label='Move Down'
-                                variant='ghost'
-                                colorScheme='blue'
-                                rounded='full'
-                                size='sm'
-                                ml={4}
-                                icon={<IconArrowDown size={22} />}
-                                onClick={() => handleMoveDown(index)}
-                            />
+                    <IconButton
+                        aria-label='Move Down'
+                        variant='ghost'
+                        colorScheme='blue'
+                        rounded='full'
+                        size='sm'
+                        ml={4}
+                        icon={<IconArrowDown size={22} />}
+                        onClick={() => handleMoveDown(index)}
+                    />
 
-                            <IconButton
-                                aria-label="Edit"
-                                variant='ghost'
-                                rounded='full'
-                                ml={4}
-                                size='sm'
-                                icon={<IconEdit size={22} />}
-                                onClick={() => window?.dispatchEvent(new CustomEvent('action:edit-product', { detail: { product: item, brand: item?.brand } }))}
-                            />
+                    <IconButton
+                        aria-label="Edit"
+                        variant='ghost'
+                        rounded='full'
+                        ml={4}
+                        size='sm'
+                        icon={<IconEdit size={22} />}
+                        onClick={() => window?.dispatchEvent(new CustomEvent('action:edit-product', { detail: { product: item, brand: item?.brand } }))}
+                    />
 
-                            <IconButton
-                                aria-label='Delete'
-                                variant='ghost'
-                                colorScheme='red'
-                                rounded='full'
-                                size='sm'
-                                ml={4}
-                                icon={<IconTrash size={22} />}
-                                onClick={() => handleRemove(index)}
-                            />
-                        </Td>
-                    </Tr>
-                </Tbody>
-            </Table>
+                    <IconButton
+                        aria-label='Delete'
+                        variant='ghost'
+                        colorScheme='red'
+                        rounded='full'
+                        size='sm'
+                        ml={4}
+                        icon={<IconTrash size={22} />}
+                        onClick={() => handleRemove(index)}
+                    />
+                </Td>
+            </Tr>
 
             {/* Product Links */}
             {
                 links !== null
-                    ? <Box
-                        bgColor='gray.100'
-                        p={6}
-                        width='full'
-                    >
-                        <ProductLinks
-                            links={links}
-                            productId={item?.id}
-                            onCancel={() => setLinks(null)}
-                            onSave={(links: any) => {
-                                item.links = links;
-                                setLinks(null);
-                            }}
-                        />
-                    </Box>
+                    ? <Tr bgColor='gray.100' p={6}>
+                        <Td colSpan={9}>
+                            <ProductLinks
+                                links={links}
+                                productId={item?.id}
+                                onCancel={() => setLinks(null)}
+                                onSave={(links: any) => {
+                                    item.links = links;
+                                    setLinks(null);
+                                }}
+                            />
+                        </Td>
+                    </Tr>
                     : null
             }
         </>
