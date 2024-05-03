@@ -45,7 +45,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                 itemId: productId,
                 link: "",
                 linkType: "BACKUP",
-                linkClass: "NONE",
+                linkClass: "BASIC",
                 price: 0,
                 discountPrice: 0,
                 orderIndex: editedLinks.length,
@@ -174,7 +174,6 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                     <option value='GAAN'>GAAN</option>
                                     <option value='CREATOR-AFFILIATE'>⭐ Creator Affiliate</option>
                                     <option value='BASIC'>Basic</option>
-                                    <option value='NONE'>None</option>
                                 </Select>
                             </Td>
                             <Td>

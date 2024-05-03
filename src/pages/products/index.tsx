@@ -212,9 +212,8 @@ const ProductsView = () => {
                             fontWeight='medium'
                         >
                             <option value='GAAN'>GAAN</option>
-                            <option value='creator-affiliate'>⭐ Creator Affiliate</option>
-                            <option value='Basic'>Basic</option>
-                            <option value='None'>None</option>
+                            <option value='CREATOR-AFFILIATE'>⭐ Creator Affiliate</option>
+                            <option value='BASIC'>Basic</option>
                         </Select>
 
                         {/* Link Class */}
@@ -231,8 +230,8 @@ const ProductsView = () => {
                             borderColor='gray.100'
                             fontWeight='medium'
                         >
-                            <option value='alpha'>👑 Alpha</option>
-                            <option value='backup'>Backup</option>
+                            <option value='ALPHA'>👑 Alpha</option>
+                            <option value='BACKUP'>Backup</option>
                         </Select>
                     </Flex>
 
