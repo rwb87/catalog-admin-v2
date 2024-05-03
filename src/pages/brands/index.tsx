@@ -430,7 +430,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             ? <Image
                                 src={item?.pictureURL}
                                 width={28}
-                                height='auto'
+                                height={28}
                                 objectFit='contain'
                                 alt={item?.name}
                                 rounded='md'

@@ -414,7 +414,29 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                     </>
                             }
                         </Td>
-                        <Td width={40}>{item?.brand?.name || '-'}</Td>
+                        <Td maxWidth={40}>
+                            {
+                                item?.brand
+                                ? item?.brand?.pictureURL
+                                    ? <Image
+                                        src={item?.brand?.pictureURL}
+                                        alt={item?.brand?.name}
+                                        width={28}
+                                        height={28}
+                                        objectFit='contain'
+                                        rounded='md'
+                                        cursor='pointer'
+                                        loading="lazy"
+                                        onError={(e: any) => {
+                                            e.target.src = '/images/cover-placeholder.webp';
+                                            e.target.onerror = null;
+                                        }}
+                                        onClick={() => handleOpenImage(item?.brand?.pictureURL)}
+                                    />
+                                    : item?.brand?.name
+                                : '-'
+                            }
+                        </Td>
                         <Td>{item?.name || '-'}</Td>
                         <Td>{item?.style || '-'}</Td>
                         <Td textAlign='center'>
