@@ -225,6 +225,7 @@ const LooksManagementView = () => {
                 onConfirm={() => {
                     handleUpdateData({
                         status: 'live',
+                        enabled: true,
                     }, sendingToLive?.id)
                 }}
                 onCancel={() => setSendingToLive({})}
