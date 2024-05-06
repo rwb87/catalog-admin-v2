@@ -6,6 +6,7 @@ import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input } from "@ch
 import SearchableInput from "@/components/SearchableInput";
 import { IconCamera } from "@tabler/icons-react";
 import { encodeAmpersand } from "@/helpers/utils";
+import { useGlobalVolatileStorage } from "@/_store";
 
 type UpdateProductDrawerProps = {
     data: any;
@@ -14,6 +15,7 @@ type UpdateProductDrawerProps = {
 }
 const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps) => {
     const productImageRef = useRef<any>(null);
+    const {brands: globalBrands, setBrands: setGlobalBrands} = useGlobalVolatileStorage() as any;
 
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -33,6 +35,11 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
     }, [data]);
 
     const getBrands = useCallback(async () => {
+        if(globalBrands?.length) {
+            setIsSearchingBrands(false);
+            return setBrands(globalBrands);
+        }
+
         try {
             const endpoint = brandSearchTerm?.toString()?.trim() === ''
                 ? '/brands?limit=200'
@@ -44,6 +51,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             });
 
             setBrands(response);
+            setGlobalBrands(response);
         } catch (error: any) {
             setBrands([]);
         }
