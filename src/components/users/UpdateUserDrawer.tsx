@@ -33,6 +33,19 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         if(editingUser?.username?.trim() === '') return notify('Username is required', 3000);
         if(editingUser?.type?.trim() === '') return notify('Role is required', 3000);
         if(editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required', 3000);
+        if(editingUser?.birthDate) {
+            if(!moment(editingUser?.birthDate).isValid()) return notify('Invalid Date of Birth', 3000);
+
+            const futureDateMessages = [
+                'WOAAHHHH!!!! You are a time traveler? 😮',
+                'You are not born yet? 😮',
+                'You are from the future? 😮',
+                'You are a time traveler? 😮',
+                'How the earth looks like in the future? 🤔',
+            ];
+
+            if(moment(editingUser?.birthDate).isAfter(moment())) return notify(futureDateMessages[Math.floor(Math.random() * futureDateMessages.length)], 3000);
+        }
 
         setIsProcessing(true);
 
