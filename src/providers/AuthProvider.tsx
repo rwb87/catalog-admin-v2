@@ -6,7 +6,7 @@ import fetch from '@/helpers/fetch';
 
 const AuthContext = React.createContext(null);
 
-const useAuthGuard = (middleware:string) => {
+const useAuthGuard = (middleware: 'auth' | 'guest') => {
     const { token, role } = useUser() as any;
     const navigate = useNavigate();
     const location = useLocation();

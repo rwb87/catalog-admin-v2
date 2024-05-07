@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
 import { ReactElement, useEffect, useMemo, useState } from "react";
-import { IconLogout } from "@tabler/icons-react";
+import { IconLogout, IconSettings } from "@tabler/icons-react";
 import { useUi, useUser } from "@/_store";
 import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
@@ -249,7 +249,8 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
         )
     }
 
-    const isSidebarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname));
+    const extraPages = ['/settings'];
+    const isSidebarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || extraPages.includes(location.pathname);
 
     return (
         <Flex
@@ -368,9 +369,22 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
 
             {/* Logout */}
             <Flex
+                direction="column"
                 pl={0.5}
                 pr={1}
+                gap={3}
             >
+                <Box
+                    style={{
+                        display: role === ROLES.DATA_MANAGER ? 'none' : 'contents',
+                    }}
+                >
+                    <SidebarItem
+                        icon={<IconSettings size={22} />}
+                        label="Settings"
+                        link="/settings"
+                    />
+                </Box>
                 <SidebarItem
                     icon={<IconLogout size={22} />}
                     label="Logout"
@@ -388,7 +402,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
 const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
-    const { clearToken } = useUser() as any;
+    const { role, clearToken } = useUser() as any;
 
     useEffect(() => {
         setIsOpen(false);
@@ -404,7 +418,8 @@ const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
         }
     }, [location]);
 
-    const isTopbarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname));
+    const extraPages = ['/settings'];
+    const isTopbarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || extraPages.includes(location.pathname);
 
     return (
         <Flex
@@ -471,6 +486,32 @@ const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
                         </Link>
                     ))
                 }
+
+                {/* Settings Button */}
+                <Link
+                    to='/settings'
+                    style={{
+                        display: role === ROLES.DATA_MANAGER ? 'none' : 'block',
+                    }}
+                >
+                    <Button
+                        variant='none'
+                        width='full'
+                        rounded='none'
+                        gap={4}
+                        justifyContent='flex-start'
+                        textAlign='left'
+                        fontWeight='medium'
+                        py={1}
+                        colorScheme='gray'
+                        opacity={0.3}
+                        borderLeftWidth={4}
+                        borderColor='transparent'
+                    >
+                        <IconSettings size={22} />
+                        <Text fontSize='lg'>Settings</Text>
+                    </Button>
+                </Link>
 
                 {/* Logout Button */}
                 <Button

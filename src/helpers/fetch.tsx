@@ -18,7 +18,7 @@ const BASE_URL = baseUrl();
 
 type RequestOptions = {
     endpoint: string,
-    method: string,
+    method?: string,
     data?: AxiosRequestConfig['data'] | null,
     hasFiles?: boolean,
     options?: object,

@@ -9,7 +9,7 @@ import FourOhFour from '@/pages/404';
 import Login from '@/pages/auth/login';
 
 // App Pages
-import AppLayout from './layouts/app.layout';
+import AppLayout from '@/layouts/app.layout';
 
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
@@ -18,11 +18,12 @@ import CreatorsView from '@/pages/creators';
 import LooksView from '@/pages/looks';
 import LooksManagementView from '@/pages/looks/management';
 
-import ProductsView from './pages/products';
+import ProductsView from '@/pages/products';
 
 import BrandsView from '@/pages/brands';
 
 import EarningsView from '@/pages/earnings';
+import SettingsView from '@/pages/settings';
 
 export default function Routes() {
     return(
@@ -51,6 +52,8 @@ export default function Routes() {
                     <Route path="/products/management" element={<ProductsView />} />
 
                     <Route path="/earnings" element={<EarningsView />} />
+
+                    <Route path="/settings" element={<SettingsView />} />
 
                     {/* Error Pages */}
                     <Route path="*" element={<FourOhFour />} />
