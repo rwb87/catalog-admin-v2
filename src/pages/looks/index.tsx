@@ -211,8 +211,9 @@ const LooksView = () => {
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
-            setIsDeleting(false);
         }
+
+        setIsDeleting(false);
     }
 
     return (

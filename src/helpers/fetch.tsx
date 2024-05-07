@@ -52,7 +52,7 @@ const fetch = async({ endpoint = '', method = 'GET', data = null, hasFiles = fal
         url: encodeURI(`${BASE_URL}${endpoint}`),
         method: method,
         headers: headersConfig,
-        data: data,
+        data: data || undefined,
     })
     .then(response => response.data);
 }

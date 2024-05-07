@@ -43,9 +43,7 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                 const newProducts = editedProducts.filter((p: any) => p?.id !== deletingProduct?.id);
                 setEditedProducts(newProducts);
                 onSave?.(newProducts);
-            } else {
-                notify('Failed to remove product from brand');
-            }
+            } else notify('Failed to remove product from brand');
         } catch (error) {
             notify('Failed to remove product from brand');
         }
