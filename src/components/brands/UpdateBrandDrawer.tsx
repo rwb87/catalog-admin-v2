@@ -155,7 +155,10 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
 
                 {/* Image width and Height */}
                 <Grid
-                    templateColumns='repeat(2, 1fr)'
+                    templateColumns={{
+                        base: 'repeat(1, 1fr)',
+                        md: 'repeat(2, 1fr)',
+                    }}
                     gap={4}
                 >
                     <FormControl id="width">

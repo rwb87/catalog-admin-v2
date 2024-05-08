@@ -39,7 +39,12 @@ const CustomDrawer = (props: CustomDrawerProps) => {
                 <DrawerCloseButton isDisabled={isProcessing} />
                 <DrawerHeader>{title}</DrawerHeader>
 
-                <DrawerBody>{children}</DrawerBody>
+                <DrawerBody
+                    px={{
+                        base: 3,
+                        sm: 6,
+                    }}
+                >{children}</DrawerBody>
 
                 <DrawerFooter>
                     <Button
