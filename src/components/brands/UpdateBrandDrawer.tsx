@@ -235,10 +235,10 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                 <Checkbox
                     id="lockAspectRatio"
                     colorScheme='blue'
-                    checked={true}
+                    defaultChecked={true}
                     readOnly
                     cursor='not-allowed'
-                >Lock Aspect Ratio</Checkbox>
+                >Locked Aspect Ratio</Checkbox>
 
                 {/* Brand Logo input */}
                 <input
