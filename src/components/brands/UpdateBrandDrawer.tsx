@@ -2,7 +2,7 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
-import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
+import { Box, Checkbox, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
 import { getImageMetadata } from "@/helpers/utils";
 
@@ -230,6 +230,15 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                         />
                     </FormControl>
                 </Grid>
+
+                {/* Locked Aspect Ratio */}
+                <Checkbox
+                    id="lockAspectRatio"
+                    colorScheme='blue'
+                    checked={true}
+                    readOnly
+                    cursor='not-allowed'
+                >Lock Aspect Ratio</Checkbox>
 
                 {/* Brand Logo input */}
                 <input
