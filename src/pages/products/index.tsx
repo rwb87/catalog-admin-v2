@@ -1,5 +1,6 @@
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
+import LooksTableRow from "@/components/looks/LooksTableRow";
 import ProductLinks from "@/components/products/ProductLinks";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import fetch from "@/helpers/fetch";
@@ -9,7 +10,7 @@ import { encodeAmpersand } from "@/helpers/utils";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconEdit, IconLink, IconLoader2, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconHanger, IconLink, IconLoader2, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -459,6 +460,7 @@ export const ProductsTable = ({ data, isLoading, pagination, onPaginate, onEdit,
                             <Th>Name</Th>
                             <Th>Style</Th>
                             <Th textAlign='center'>Links</Th>
+                            <Th textAlign='center'>Looks</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
@@ -513,6 +515,7 @@ type TableRowProps = {
 }
 const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
+    const [looks, setLooks] = useState<any[] | null>(null);
 
     const handleOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
@@ -605,13 +608,26 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 <Td textAlign='center'>
                     <IconButton
                         aria-label='View Links'
-                        variant='ghost'
+                        variant='solid'
                         rounded='full'
                         size='sm'
                         icon={<IconLink size={22} />}
                         onClick={() => {
                             if(links === null) setLinks(item?.links || [item?.link] || []);
                             else setLinks(null);
+                        }}
+                    />
+                </Td>
+                <Td textAlign='center'>
+                    <IconButton
+                        aria-label='View Looks'
+                        variant='solid'
+                        rounded='full'
+                        size='sm'
+                        icon={<IconHanger size={22} />}
+                        onClick={() => {
+                            if(looks === null) setLooks(item?.looks || []);
+                            else setLooks(null);
                         }}
                     />
                 </Td>
@@ -661,6 +677,44 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     </Tr>
                 : null
             }
+
+            {/* Looks */}
+            <Tr display={looks !== null ? 'table-row' : 'none'}>
+                <Td colSpan={20} p={4} bgColor='gray.50'>
+                    <Table>
+                        <Thead>
+                            <Tr>
+                                <Th>Thumbnail</Th>
+                                <Th>Creator</Th>
+                                <Th textAlign='center'>Created At</Th>
+                                <Th textAlign='center'>Platform</Th>
+                                <Th textAlign='center'>Featured</Th>
+                                <Th textAlign='center'>Priority</Th>
+                                <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
+                                <Th textAlign='center'>Status</Th>
+                                <Th textAlign='right' color='blue.500'>Actions</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            {
+                                looks?.length
+                                    ? looks?.map((look: any, index: number) => <LooksTableRow
+                                        key={index}
+                                        item={look}
+                                        isUserChangeAllowed={false}
+                                        showStatus={true}
+                                        isProductExpandAllowed={false}
+                                    />)
+                                    : <Tr>
+                                        <Td colSpan={20} textAlign='center'>
+                                            <Text fontStyle='italic' opacity={0.5}>Not featured in any look</Text>
+                                        </Td>
+                                    </Tr>
+                            }
+                        </Tbody>
+                    </Table>
+                </Td>
+            </Tr>
         </>
     )
 }
