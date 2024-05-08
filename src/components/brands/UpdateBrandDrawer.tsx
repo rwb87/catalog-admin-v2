@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
 import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
+import { getImageMetadata } from "@/helpers/utils";
 
 type UpdateBrandDrawerProps = {
     data: any,
@@ -16,10 +17,23 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     useEffect(() => {
-        setEditingData(JSON.parse(JSON.stringify(data)));
+        const parsedData = JSON.parse(JSON.stringify(data));
+
+        setEditingData({
+            ...parsedData,
+            photoMetadata: parsedData?.photoMetadataParsed || {},
+        });
     }, [data]);
 
     const handleUpdateData = async () => {
+        if(!editingData?.name) return notify('Brand name is required', 3000);
+        if(!editingData?.pageLink) return notify('Brand website is required', 3000);
+        if(editingData?.partnership === undefined) return notify('Brand partnership is required', 3000);
+
+        if(editingData.photoMetadata?.width || editingData.photoMetadata?.height) {
+            if(isNaN(editingData.photoMetadata?.width) || isNaN(editingData.photoMetadata?.height)) return notify('Image width and height must be numbers', 3000);
+        }
+
         setIsProcessing(true);
 
         const payload = new FormData();
@@ -28,7 +42,13 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
         payload.append('pageLink', editingData?.pageLink);
         payload.append('partnership', editingData?.partnership);
 
-        if (brandImageRef?.current.files[0]) payload.append('picture', brandImageRef?.current.files[0]);
+        if (brandImageRef?.current.files[0]) {
+            payload.append('picture', brandImageRef?.current.files[0]);
+        }
+
+        if(editingData.photoMetadata?.width || editingData.photoMetadata?.height) {
+            payload.append('photoMetadata', JSON.stringify(editingData.photoMetadata));
+        }
 
         try {
             const response = await fetch({
@@ -99,7 +119,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                     </Select>
                 </FormControl>
 
-                <FormControl mt={4} id="creatorBanner">
+                <FormControl mt={4} id="bannerImage">
                     <FormLabel>Brand Logo (Leave blank to keep current image)</FormLabel>
 
                     <Box position='relative'>
@@ -132,18 +152,68 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                     </Box>
                 </FormControl>
 
+                {/* Image width and Height */}
+                <Grid
+                    templateColumns='repeat(2, 1fr)'
+                    gap={4}
+                >
+                    <FormControl id="width">
+                        <FormLabel>Width (px) i.e. 1920</FormLabel>
+                        <Input
+                            type="number"
+                            step="1"
+                            pattern="^\d+$"
+                            value={editingData?.photoMetadata?.width ?? ''}
+                            onChange={(e: any) => setEditingData({
+                                ...editingData,
+                                photoMetadata: {
+                                    ...editingData?.photoMetadata,
+                                    width: parseInt(e.target.value),
+                                }
+                            })}
+                        />
+                    </FormControl>
+
+                    <FormControl id="height">
+                        <FormLabel>Height (px) i.e. 1080</FormLabel>
+                        <Input
+                            type="number"
+                            step="1"
+                            pattern="^\d+$"
+                            value={editingData?.photoMetadata?.height ?? ''}
+                            onChange={(e) => setEditingData({
+                                ...editingData,
+                                photoMetadata: {
+                                    ...editingData?.photoMetadata,
+                                    height: parseInt(e.target.value),
+                                }
+                            })}
+                        />
+                    </FormControl>
+                </Grid>
+
                 {/* Brand Logo input */}
                 <input
                     type="file"
                     accept="image/*"
                     ref={brandImageRef}
                     hidden
-                    onChange={(e: any) => {
+                    onChange={async (e: any) => {
                         const photo = e.target.files[0];
 
                         if(!photo) return;
 
-                        setEditingData({ ...editingData, pictureURL: URL.createObjectURL(photo) });
+                        const imageMetadata: any = await getImageMetadata(photo);
+
+                        setEditingData({
+                            ...editingData,
+                            pictureURL: URL.createObjectURL(photo),
+                            photoMetadata: {
+                                ...imageMetadata,
+                                width: parseInt(imageMetadata?.width),
+                                height: parseInt(imageMetadata?.height),
+                            }
+                        });
                     }}
                 />
             </Grid>
