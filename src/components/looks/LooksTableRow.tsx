@@ -112,6 +112,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             setSendingLookDataToManagement({});
 
             window.dispatchEvent(new CustomEvent('refresh:data'));
+            window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
             notify('Look sent to management but message could not be sent', 5000);
         }
@@ -131,7 +132,9 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             if (response) notify('Look deleted', 3000);
             else notify('An error occurred', 3000);
 
+            setDeletingData({});
             window.dispatchEvent(new CustomEvent('refresh:data'));
+            window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -248,6 +251,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 rounded='full'
                                 size='xs'
                                 width={20}
+                                borderColor='gray.200'
                                 textAlign='center'
                                 isDisabled={showStatus && !isLiveStatus}
                                 defaultValue={item?.priority || 0}

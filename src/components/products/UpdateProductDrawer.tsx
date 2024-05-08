@@ -1,6 +1,6 @@
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
 import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input } from "@chakra-ui/react";
 import SearchableInput from "@/components/SearchableInput";
@@ -34,7 +34,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
         setEditingData(data);
     }, [data]);
 
-    const getBrands = useCallback(async () => {
+    const getBrands = async () => {
         if(globalBrands?.length) {
             setIsSearchingBrands(false);
             return setBrands(globalBrands);
@@ -57,7 +57,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
         }
 
         setIsSearchingBrands(false);
-    }, [brandSearchTerm]);
+    }
 
     const handleUpdateData = async () => {
         setIsProcessing(true);
