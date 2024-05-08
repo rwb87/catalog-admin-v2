@@ -15,6 +15,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
     const brandImageRef = useRef<any>(null);
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [aspectRatio, setAspectRatio] = useState<number | null>(null);
 
     useEffect(() => {
         const parsedData = JSON.parse(JSON.stringify(data));
@@ -26,6 +27,9 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
     }, [data]);
 
     const handleUpdateData = async () => {
+        console.log(editingData);
+        return;
+
         if(!editingData?.name) return notify('Brand name is required', 3000);
         if(!editingData?.pageLink) return notify('Brand website is required', 3000);
         if(editingData?.partnership === undefined) return notify('Brand partnership is required', 3000);
@@ -168,13 +172,26 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                             step="1"
                             pattern="^\d+$"
                             value={editingData?.photoMetadata?.width ?? ''}
-                            onChange={(e: any) => setEditingData({
+                            onChange={(e) => setEditingData({
                                 ...editingData,
                                 photoMetadata: {
                                     ...editingData?.photoMetadata,
-                                    width: parseInt(e.target.value),
+                                    width: e.target.value,
                                 }
                             })}
+                            onBlur={(e: any) => {
+                                const width = parseInt(e.target.value);
+                                if(!isNaN(width)) {
+                                    setEditingData({
+                                        ...editingData,
+                                        photoMetadata: {
+                                            ...editingData?.photoMetadata,
+                                            width,
+                                            height: Math.round(width / aspectRatio),
+                                        }
+                                    });
+                                }
+                            }}
                         />
                     </FormControl>
 
@@ -189,9 +206,22 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                                 ...editingData,
                                 photoMetadata: {
                                     ...editingData?.photoMetadata,
-                                    height: parseInt(e.target.value),
+                                    height: e.target.value,
                                 }
                             })}
+                            onBlur={(e: any) => {
+                                const height = parseInt(e.target.value);
+                                if(!isNaN(height)) {
+                                    setEditingData({
+                                        ...editingData,
+                                        photoMetadata: {
+                                            ...editingData?.photoMetadata,
+                                            height,
+                                            width: Math.round(height * aspectRatio),
+                                        }
+                                    });
+                                }
+                            }}
                         />
                     </FormControl>
                 </Grid>
@@ -209,6 +239,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
 
                         const imageMetadata: any = await getImageMetadata(photo);
 
+                        setAspectRatio(imageMetadata?.width / imageMetadata?.height);
                         setEditingData({
                             ...editingData,
                             pictureURL: URL.createObjectURL(photo),
