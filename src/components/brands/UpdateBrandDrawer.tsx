@@ -24,12 +24,13 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
             ...parsedData,
             photoMetadata: parsedData?.photoMetadataParsed || {},
         });
+
+        if(typeof parsedData?.photoMetadataParsed?.width === 'number' && typeof parsedData?.photoMetadataParsed?.height === 'number') {
+            setAspectRatio(parseInt(parsedData?.photoMetadataParsed?.width) / parseInt(parsedData?.photoMetadataParsed?.height) || null);
+        }
     }, [data]);
 
     const handleUpdateData = async () => {
-        console.log(editingData);
-        return;
-
         if(!editingData?.name) return notify('Brand name is required', 3000);
         if(!editingData?.pageLink) return notify('Brand website is required', 3000);
         if(editingData?.partnership === undefined) return notify('Brand partnership is required', 3000);
@@ -180,6 +181,8 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                                 }
                             })}
                             onBlur={(e: any) => {
+                                if(!aspectRatio) return;
+
                                 const width = parseInt(e.target.value);
                                 if(!isNaN(width)) {
                                     setEditingData({
@@ -210,6 +213,8 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                                 }
                             })}
                             onBlur={(e: any) => {
+                                if(!aspectRatio) return;
+
                                 const height = parseInt(e.target.value);
                                 if(!isNaN(height)) {
                                     setEditingData({
