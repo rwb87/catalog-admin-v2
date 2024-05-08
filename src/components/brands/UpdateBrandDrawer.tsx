@@ -46,9 +46,10 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
             payload.append('picture', brandImageRef?.current.files[0]);
         }
 
-        if(editingData.photoMetadata?.width || editingData.photoMetadata?.height) {
-            payload.append('photoMetadata', JSON.stringify(editingData.photoMetadata));
-        }
+        const photoMetadata = editingData?.photoMetadata;
+        if(editingData?.photoMetadata?.width) photoMetadata.width = parseInt(photoMetadata?.width) || null;
+        if(editingData?.photoMetadata?.height) photoMetadata.height = parseInt(photoMetadata?.height) || null;
+        payload.append('photoMetadata', JSON.stringify(photoMetadata));
 
         try {
             const response = await fetch({
