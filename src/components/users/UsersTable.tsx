@@ -211,10 +211,6 @@ const TableRow = (props: UsersTableRowProps) => {
         total: 0,
     });
 
-    const onClickLooksCount = () => {
-        setIsLooksExpanded(!isLooksExpanded);
-    }
-
     useEffect(() => {
         setLooks([]);
 
@@ -322,7 +318,7 @@ const TableRow = (props: UsersTableRowProps) => {
                                 size='sm'
                                 icon={<Text>{user?.looksCount || 0}</Text>}
                                 px={2}
-                                onClick={() => onClickLooksCount?.(user)}
+                                onClick={() => setIsLooksExpanded(!isLooksExpanded)}
                             />
                         </Td>
                         <Td textAlign='center' color='blue.500'>{user?.incomingDiscovers || 0}</Td>
