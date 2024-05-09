@@ -9,8 +9,8 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
-import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
+import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
+import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 
@@ -18,7 +18,6 @@ const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
 
     const [editingData, setEditingData] = useState<any>({});
@@ -52,15 +51,11 @@ const LooksManagementView = () => {
     }, [pagination.page]);
 
     useEffect(() => {
-        if(search?.toString()?.trim() === '') return setFilteredData(data);
+        if(search?.trim() !== '') setIsLoading(true);
 
-        setFilteredData(
-            data?.filter((item: any) => {
-                return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.link?.toLowerCase().includes(search?.toLowerCase());
-            })
-        );
-    }, [search, data]);
+        const debounce = setTimeout(() => getData(), 500);
+        return () => clearTimeout(debounce);
+    }, [search]);
 
     const getData = async () => {
         const filter = {
@@ -71,7 +66,7 @@ const LooksManagementView = () => {
 
         try {
             const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(filter)}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/looks?filter=${JSON.stringify(filter)}&search=${search?.trim()}&offset=${pagination?.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
@@ -165,14 +160,57 @@ const LooksManagementView = () => {
                 }}
             >
                 {/* Page Heading */}
-                <Flex gap={2} alignItems='center'>
+                <Flex gap={2} alignItems='center' justifyContent='space-between' width='full'>
                     <h1 className="page-heading">Looks Management</h1>
+
+                    {/* Search */}
+                    <InputGroup
+                        width={{
+                            base: 'full',
+                            lg: '250px',
+                        }}
+                    >
+                        <InputLeftElement
+                            pointerEvents='none'
+                            color='gray.300'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            rounded='full'
+                            width='2rem'
+                            height='2rem'
+                        >
+                            <IconSearch size={16} strokeWidth={1.5} />
+                        </InputLeftElement>
+
+                        <Input
+                            type='search'
+                            placeholder='Search for creators...'
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                lg: '250px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            pl={10}
+                            fontWeight='medium'
+                            _focusVisible={{
+                                borderColor: 'gray.200 !important',
+                                boxShadow: 'none !important',
+                            }}
+                            value={search}
+                            onChange={(event) => setSearch(event.target.value)}
+                        />
+                    </InputGroup>
                 </Flex>
             </Flex>
 
             {/* Table */}
             <LooksManagementTable
-                data={filteredData}
+                data={data}
                 pagination={pagination}
                 onPaginate={(page: number) => {
                     setPagination({

@@ -6,8 +6,8 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, Heading, Input, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconLoader2 } from "@tabler/icons-react";
+import { Box, Button, Flex, Heading, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { IconLoader2, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
@@ -18,7 +18,7 @@ const LooksView = () => {
     const [isLive, setIsLive] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
     const [filteredData, setFilteredData] = useState<any>([]);
-    const [search] = useState<string>('');
+    const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [sendingAllLookDataToManagement, setSendingAllLookDataToManagement] = useState<boolean>(false);
@@ -51,27 +51,23 @@ const LooksView = () => {
     }, [isLive, pagination.page, sortBy]);
 
     useEffect(() => {
-        if(search?.toString()?.trim() === '') return setFilteredData(data);
+        if(search?.trim() !== '') setIsLoading(true);
 
-        setFilteredData(
-            data?.filter((item: any) => {
-                return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-                    item?.link?.toLowerCase().includes(search?.toLowerCase());
-            })
-        );
-    }, [search, data]);
+        const debounce = setTimeout(() => getData(), 500);
+        return () => clearTimeout(debounce);
+    }, [search]);
 
     const getData = async () => {
         const filter = isLive
             ? {
                 status: [
                     "denied","live","archived","in_edit"
-                ]
+                ],
             }
             : {
                 status: [
                     "submitted_for_approval","in_admin"
-                ]
+                ],
             }
         const sortByString = sortBy?.split(':')[0];
         const orderByString = sortBy?.split(':')[1]?.toUpperCase();
@@ -79,7 +75,7 @@ const LooksView = () => {
 
         try {
             const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(filter)}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/looks?filter=${JSON.stringify(filter)}&search=${search?.trim()}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
@@ -92,9 +88,6 @@ const LooksView = () => {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
         }
-
-        // await getProducts();
-        // await getBrands();
 
         setIsLoading(false);
     };
@@ -210,7 +203,7 @@ const LooksView = () => {
                         variant='filled'
                         width={{
                             base: 'full',
-                            md: '200px',
+                            lg: '200px',
                         }}
                         size='sm'
                         rounded='full'
@@ -224,6 +217,49 @@ const LooksView = () => {
                         <option value="submitted_for_approval">Submitted for Approval</option>
                         <option value="in_data_management">Live</option>
                     </Select>
+
+                    {/* Search */}
+                    <InputGroup
+                        width={{
+                            base: 'full',
+                            lg: '250px',
+                        }}
+                    >
+                        <InputLeftElement
+                            pointerEvents='none'
+                            color='gray.300'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            rounded='full'
+                            width='2rem'
+                            height='2rem'
+                        >
+                            <IconSearch size={16} strokeWidth={1.5} />
+                        </InputLeftElement>
+
+                        <Input
+                            type='search'
+                            placeholder='Search for creators...'
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                lg: '250px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            pl={10}
+                            fontWeight='medium'
+                            _focusVisible={{
+                                borderColor: 'gray.200 !important',
+                                boxShadow: 'none !important',
+                            }}
+                            value={search}
+                            onChange={(event) => setSearch(event.target.value)}
+                        />
+                    </InputGroup>
 
                     {/* Send all look data to management */}
                     {
@@ -251,7 +287,7 @@ const LooksView = () => {
 
             {/* Table */}
             <LooksTable
-                data={filteredData}
+                data={data}
                 pagination={pagination}
                 onPaginate={(page: number) => {
                     setPagination({
