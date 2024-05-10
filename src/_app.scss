@@ -95,6 +95,10 @@ input[type=file] {
     }
 }
 
+.chakra-switch__track {
+    padding: 2px !important;
+}
+
 .page-heading {
     font-size: 1.5rem !important;
     font-weight: 300 !important;
@@ -118,6 +122,13 @@ input[type=file] {
 
 .animate-spin {
     animation: spin 1s linear infinite;
+}
+
+.image-as-icon {
+    width: 14px;
+    @media only screen and (min-width: 1600px) {
+        width: 18px;
+    }
 }
 
 @keyframes spin {

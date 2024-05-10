@@ -200,7 +200,7 @@ const LooksView = () => {
 
                     {/* Live / Incoming */}
                     <Select
-                        variant='filled'
+                        variant='outline'
                         width={{
                             base: 'full',
                             lg: '200px',
@@ -277,7 +277,7 @@ const LooksView = () => {
                             leftIcon={<img
                                 src="/icons/icon-send-look-to-management.svg"
                                 alt="Change Look"
-                                width={24}
+                                className="image-as-icon"
                             />}
                             onClick={() => setSendingAllLookDataToManagement(data)}
                         >Send all to management</Button>

@@ -1,6 +1,4 @@
 import { defineStyleConfig, extendTheme } from '@chakra-ui/react';
-// import type { StyleFunctionProps } from '@chakra-ui/styled-system';
-// const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(menuAnatomy.keys);
 
 const textBlackColor = '#121212';
 const textWhiteColor = '#dadada';
@@ -79,6 +77,13 @@ const theme = extendTheme({
 		global: () => ({
 			html: {
 				fontFamily: `'Inter' !important`,
+				fontSize: '14px',
+				'@media (min-width: 768px)': {
+					fontSize: '10px',
+				},
+				'@media (min-width: 1600px)': {
+					fontSize: '14px',
+				},
 			},
 			body: {
 				bg: '#fcfcfc',
@@ -144,8 +149,21 @@ const theme = extendTheme({
 				}
 			},
 			th: {
-				fontSize: '14px !important',
 				fontWeight: 'bold !important',
+				fontSize: '10px !important',
+				'@media (min-width: 1600px)': {
+					fontSize: '14px !important',
+				},
+			},
+			svg: {
+				width: '1.5rem',
+				height: '1.5rem',
+				padding: '2px',
+				'@media (min-width: 1600px)': {
+					width: '2rem',
+					height: '2rem',
+					padding: '4px',
+				},
 			}
 		}),
 	},
@@ -155,7 +173,13 @@ const theme = extendTheme({
 				backgroundColor: 'gray.dark',
 				color: 'text-white',
 			}
-		})
+		}),
+		IconButton: {
+			baseStyle: {
+				aspectRatio: 1/1,
+				padding: '1rem',
+			}
+		}
 	},
 });
 

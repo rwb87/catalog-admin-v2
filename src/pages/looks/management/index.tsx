@@ -564,7 +564,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                             icon={<img
                                 src="/icons/icon-send-look-back-from-management.svg"
                                 alt="Change Look"
-                                width={24}
+                                className="image-as-icon"
                             />}
                             onClick={() => onSendLookFromManagement?.(item)}
                         />

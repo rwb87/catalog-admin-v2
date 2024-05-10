@@ -221,7 +221,6 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                             <Switch
                                 isDisabled={showStatus && !isLiveStatus}
                                 colorScheme='blue'
-                                size='lg'
                                 defaultChecked={item?.enabled}
                                 onChange={() => handleUpdateData({
                                     enabled: !item?.enabled,
@@ -235,7 +234,6 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                             <Switch
                                 isDisabled={showStatus && !isLiveStatus}
                                 colorScheme='blue'
-                                size='lg'
                                 defaultChecked={item?.carouselEnabled}
                                 onChange={() => handleUpdateData({
                                     carouselEnabled: !item?.carouselEnabled,
@@ -305,7 +303,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 icon={<img
                                     src="/icons/icon-send-look-to-management.svg"
                                     alt="Change Look"
-                                    width={24}
+                                    className="image-as-icon"
                                 />}
                                 onClick={() => setSendingLookDataToManagement(item)}
                             />
