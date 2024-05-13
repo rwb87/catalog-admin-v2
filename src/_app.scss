@@ -36,6 +36,36 @@ html, body {
     background-color: var(--chakra-colors-primary-600);
 }
 
+/* Define a mixin to increase HSL values */
+@mixin increase-hsl($color, $steps, $saturation-increment, $lightness-increment) {
+    /* Calculate step increment */
+    $step-size: calc(100% / ($steps + 1));
+
+    @for $i from 1 through $steps {
+        /* Calculate new HSL values */
+        $new-hue: hue($color);
+        $new-saturation: saturation($color) + $saturation-increment;
+        $new-lightness: lightness($color) + $lightness-increment;
+
+        /* Apply the new HSL values */
+        background-color: hsl($new-hue, $new-saturation, $new-lightness);
+    }
+}
+
+  /* Define your main table style */
+$table-style: (
+    /* border: 1px solid black, */
+    /* Add any other styles you want for your tables */
+);
+
+  /* Mixin to apply the style and increase HSL */
+@mixin styled-table($color, $steps, $saturation-increment, $lightness-increment) {
+    @include increase-hsl($color, $steps, $saturation-increment, $lightness-increment);
+    @each $property, $value in $table-style {
+        #{$property}: $value;
+    }
+}
+
 .notification {
     position: fixed;
     left: 50%;
@@ -58,7 +88,6 @@ html, body {
 .table-responsive {
     overflow-x: auto;
     width: 100%;
-    background-color: white;
     border-radius: 10px;
     border: 1px solid #e0e0e0;
 
@@ -71,10 +100,8 @@ html, body {
                 }
             }
         }
-        tbody {
-            tr:last-child td {
-                border-bottom: unset;
-            }
+        table {
+            @include styled-table(#eeeeee, 3, 0%, 10%);
         }
     }
 }

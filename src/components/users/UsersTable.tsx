@@ -11,6 +11,7 @@ import notify from "@/helpers/notify";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import UpdateUserDrawer from "./UpdateUserDrawer";
 import Confirmation from "@/components/Confirmation";
+import ProductsTable from "@/components/products/ProductsTable";
 
 const SSO_PROVIDERS = {
     apple: {
@@ -155,6 +156,7 @@ const UsersTable = (props: UsersTableProps) => {
                             {
                                 userType === ROLES.CREATOR && <>
                                     <Th textAlign='center'>Looks</Th>
+                                    <Th textAlign='center'>Products</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Incoming <br /> Clickouts</Th>
                                 </>
@@ -274,55 +276,7 @@ const TableRow = (props: UsersTableRowProps) => {
     } = props;
 
     const [isLooksExpanded, setIsLooksExpanded] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [looks, setLooks] = useState<any[]>([]);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        offset: 0,
-        limit: 20,
-        total: 0,
-    });
-
-    useEffect(() => {
-        if(!isLooksExpanded) {
-            setLooks([]);
-            setIsLoading(true);
-        } else {
-            setIsLoading(true);
-            getLooks();
-
-            window?.addEventListener('refresh:looks', getLooks);
-
-            return () => window?.removeEventListener('refresh:looks', getLooks);
-        }
-    }, [isLooksExpanded, pagination.page]);
-
-    const getLooks = async () => {
-        if(!isLooksExpanded) return [];
-
-        const filter = {
-            userId: user?.id,
-        }
-
-        try {
-            const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(filter)}&offset=${pagination?.offset}&limit=${pagination.limit}`,
-                method: 'GET',
-            });
-
-            setLooks(response?.looks);
-            setPagination({
-                ...pagination,
-                total: response?.count || 0,
-            });
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-            setLooks([]);
-        }
-
-        setIsLoading(false);
-    }
+    const [isProductsExpanded, setIsProductsExpanded] = useState(false);
 
     return (
         <>
@@ -393,7 +347,24 @@ const TableRow = (props: UsersTableRowProps) => {
                                 size='sm'
                                 icon={<Text>{user?.looksCount || user?.looks?.length || 0}</Text>}
                                 px={2}
-                                onClick={() => setIsLooksExpanded(!isLooksExpanded)}
+                                onClick={() => {
+                                    setIsProductsExpanded(false);
+                                    setIsLooksExpanded(!isLooksExpanded)
+                                }}
+                            />
+                        </Td>
+                        <Td textAlign='center'>
+                            <IconButton
+                                aria-label='Products'
+                                variant='solid'
+                                rounded='full'
+                                size='sm'
+                                icon={<svg viewBox="0 0 24 22" width={14} xmlns="http://www.w3.org/2000/svg"><path d="m4.638 10.828v10.416h14.881v-10.416h3.72v-8.4342l-1.6889-0.42378-3.0653-0.77015c-0.5918-0.14863-1.2168-0.27653-1.9717-0.40581l-1.6993-0.28967-0.7107 1.5659c-0.179 0.38647-0.4648 0.71368-0.8237 0.94299s-0.776 0.35115-1.2019 0.35115-0.8429-0.12184-1.2018-0.35115c-0.359-0.22931-0.6448-0.55652-0.8238-0.94299l-0.7079-1.5659-1.7 0.27653c-0.74387 0.12997-1.3827 0.25648-1.9717 0.40581l-3.0654 0.76668-1.6889 0.43692v8.4342l3.7201 0.0034zm-1.4878-6.6941 3.0654-0.76669c0.59524-0.14863 1.2015-0.26754 1.8044-0.37193 0.35592 0.77745 0.92764 1.4363 1.6472 1.8983s1.5566 0.70751 2.4116 0.70751 1.6921-0.24557 2.4116-0.70751c0.7196-0.46194 1.2913-1.1208 1.6472-1.8983 0.6063 0.10439 1.2091 0.21915 1.8044 0.37193l3.0646 0.76669v4.4639h-2.2316c-0.3946 0-0.773 0.15674-1.052 0.43575-0.279 0.279-0.4357 0.65741-0.4357 1.0519v8.9265h-10.417v-8.9278c0-0.39461-0.15674-0.77302-0.43575-1.052-0.27901-0.279-0.65742-0.43575-1.052-0.43575h-2.2323v-4.4625z" fill="currentColor"/></svg>}
+                                p={1}
+                                onClick={() => {
+                                    setIsLooksExpanded(false);
+                                    setIsProductsExpanded(!isProductsExpanded)
+                                }}
                             />
                         </Td>
                         <Td textAlign='center' color='blue.500'>{user?.incomingDiscovers || 0}</Td>
@@ -454,79 +425,208 @@ const TableRow = (props: UsersTableRowProps) => {
                 }
             </Tr>
 
-            <Tr display={isLooksExpanded ? 'table-row' : 'none'}>
-                {
-                    isLoading
-                        ? <Td colSpan={20} textAlign='center'>
-                            <Box display='inline-block' mx='auto'>
-                                <IconLoader2
-                                    size={48}
-                                    className="animate-spin"
-                                />
-                            </Box>
-                        </Td>
-                        : <Td colSpan={20} p={4} bgColor='gray.50'>
-                            <Table>
-                                <Thead>
-                                    <Tr>
-                                        <Th>Thumbnail</Th>
-                                        <Th>Creator</Th>
-                                        <Th textAlign='center'>Created At</Th>
-                                        <Th textAlign='center'>Platform</Th>
-                                        <Th textAlign='center'>Featured</Th>
-                                        <Th textAlign='center'>Priority</Th>
-                                        <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
-                                        <Th textAlign='center'>Status</Th>
-                                        <Th textAlign='right'>Actions</Th>
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
-                                    {
-                                        !looks?.length
-                                            ? <Tr>
-                                                <Td colSpan={20} textAlign='center'>
-                                                    <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
-                                                </Td>
-                                            </Tr>
-                                            : <>
-                                                {
-                                                    looks?.map((look: any) => <LooksTableRow
-                                                        key={look?.id}
-                                                        item={{
-                                                            ...look,
-                                                            user: user,
-                                                        }}
-                                                        isUserChangeAllowed={false}
-                                                        showStatus={true}
-                                                    />)
-                                                }
+            {/* Looks */}
+            <UserLooks
+                isOpen={isLooksExpanded}
+                user={user}
+            />
 
-                                                <Tr>
-                                                    <Td colSpan={20}>
-                                                        <Pagination
-                                                            total={pagination?.total || 0}
-                                                            limit={pagination?.limit || 0}
-                                                            page={pagination?.page || 1}
-                                                            setPage={(page: number) => {
-                                                                setPagination({
-                                                                    ...pagination,
-                                                                    page: page,
-                                                                    offset: (page - 1) * pagination.limit
-                                                                })
-                                                            }}
-                                                        />
-                                                    </Td>
-                                                </Tr>
-                                            </>
-                                    }
-                                </Tbody>
-                            </Table>
-                        </Td>
-                }
-            </Tr>
+            {/* Products */}
+            <UserProducts
+                isOpen={isProductsExpanded}
+                user={user}
+            />
         </>
     )
 }
 
+const UserLooks = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [looks, setLooks] = useState<any[]>([]);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        offset: 0,
+        limit: 20,
+        total: 0,
+    });
+
+    useEffect(() => {
+        if(!isOpen) {
+            setLooks([]);
+            setIsLoading(true);
+        } else {
+            setIsLoading(true);
+            getLooks();
+
+            window?.addEventListener('refresh:looks', getLooks);
+
+            return () => window?.removeEventListener('refresh:looks', getLooks);
+        }
+    }, [isOpen, pagination.page]);
+
+    const getLooks = async () => {
+        const filter = {
+            userId: user?.id,
+        }
+
+        try {
+            const response = await fetch({
+                endpoint: `/looks?filter=${JSON.stringify(filter)}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                method: 'GET',
+            });
+
+            setLooks(response?.looks);
+            setPagination({
+                ...pagination,
+                total: response?.count || 0,
+            });
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+            setLooks([]);
+        }
+
+        setIsLoading(false);
+    }
+
+    return (
+        <Tr display={isOpen ? 'table-row' : 'none'}>
+            {
+                isLoading
+                    ? <Td colSpan={20} textAlign='center'>
+                        <Box display='inline-block' mx='auto'>
+                            <IconLoader2
+                                size={48}
+                                className="animate-spin"
+                            />
+                        </Box>
+                    </Td>
+                    : <Td colSpan={20} p={4} bgColor='gray.50'>
+                        <Table>
+                            <Thead>
+                                <Tr>
+                                    <Th>Thumbnail</Th>
+                                    <Th>Creator</Th>
+                                    <Th textAlign='center'>Created At</Th>
+                                    <Th textAlign='center'>Platform</Th>
+                                    <Th textAlign='center'>Featured</Th>
+                                    <Th textAlign='center'>Priority</Th>
+                                    <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
+                                    <Th textAlign='center'>Status</Th>
+                                    <Th textAlign='right'>Actions</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {
+                                    !looks?.length
+                                        ? <Tr>
+                                            <Td colSpan={20} textAlign='center'>
+                                                <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
+                                            </Td>
+                                        </Tr>
+                                        : <>
+                                            {
+                                                looks?.map((look: any) => <LooksTableRow
+                                                    key={look?.id}
+                                                    item={{
+                                                        ...look,
+                                                        user: user,
+                                                    }}
+                                                    isUserChangeAllowed={false}
+                                                    showStatus={true}
+                                                />)
+                                            }
+
+                                            <Tr>
+                                                <Td colSpan={20}>
+                                                    <Pagination
+                                                        total={pagination?.total || 0}
+                                                        limit={pagination?.limit || 0}
+                                                        page={pagination?.page || 1}
+                                                        setPage={(page: number) => {
+                                                            setPagination({
+                                                                ...pagination,
+                                                                page: page,
+                                                                offset: (page - 1) * pagination.limit
+                                                            })
+                                                        }}
+                                                    />
+                                                </Td>
+                                            </Tr>
+                                        </>
+                                }
+                            </Tbody>
+                        </Table>
+                    </Td>
+            }
+        </Tr>
+    )
+}
+
+const UserProducts = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [products, setProducts] = useState<any[]>([]);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        offset: 0,
+        limit: 20,
+        total: 0,
+    });
+
+    useEffect(() => {
+        if(!isOpen) {
+            setProducts([]);
+            setIsLoading(true);
+        } else {
+            setIsLoading(true);
+            getProducts();
+
+            window?.addEventListener('refresh:looks', getProducts);
+
+            return () => window?.removeEventListener('refresh:looks', getProducts);
+        }
+    }, [isOpen, pagination.page]);
+
+    const getProducts = async () => {
+        try {
+            const response = await fetch({
+                endpoint: `/users/${user?.id}/items?offset=${pagination?.offset}&limit=${pagination.limit}`,
+                method: 'GET',
+            });
+
+            setProducts(response?.items);
+            setPagination({
+                ...pagination,
+                total: response?.count || 0,
+            });
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+            setProducts([]);
+        }
+
+        setIsLoading(false);
+    }
+
+    return (
+        <Tr display={isOpen ? 'table-row' : 'none'}>
+            <Td colSpan={20} p={4} bgColor='gray.50'>
+                <ProductsTable
+                    data={products || []}
+                    isLoading={isLoading}
+                    pagination={pagination}
+                    onPaginate={(page: number) => {
+                        setPagination({
+                            ...pagination,
+                            page: page,
+                            offset: (page - 1) * pagination.limit
+                        })
+                    }}
+                    noUi={true}
+                />
+            </Td>
+        </Tr>
+    )
+}
+
 export default UsersTable;
-export { TableRow as UsersTableRow };
