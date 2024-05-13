@@ -1,5 +1,5 @@
 import formatDateTime from "@/helpers/formatDateTime";
-import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
+import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react"
 import { IconEdit, IconLoader2, IconMail, IconTrash } from "@tabler/icons-react";
 import Pagination from "@/components/Pagination";
 import moment from "moment";
@@ -255,15 +255,17 @@ const TableRow = (props: UsersTableRowProps) => {
         <>
             <Tr>
                 <Td>
-                    <Flex alignItems='center'>
-                        <Avatar
-                            size='sm'
-                            mr={2}
-                            name={user?.username}
-                            src={user?.pictureURL}
-                        />
-                        {user?.username || '-'}
-                    </Flex>
+                    <Tooltip label={user?.description || null} aria-label='Username' placement='bottom'>
+                        <Flex alignItems='center'>
+                            <Avatar
+                                size='sm'
+                                mr={2}
+                                name={user?.username}
+                                src={user?.pictureURL}
+                            />
+                            {user?.username || '-'}
+                        </Flex>
+                    </Tooltip>
                 </Td>
                 {
                     userType !== ROLES.ADMIN && <Td>

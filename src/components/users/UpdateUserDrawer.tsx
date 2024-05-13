@@ -1,4 +1,4 @@
-import { Avatar, Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text } from "@chakra-ui/react";
+import { Avatar, Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text, Textarea } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
@@ -59,6 +59,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);
         if(editingUser?.birthDate) payload.append('birthDate', moment(editingUser?.birthDate).format('YYYY-MM-DD'));
+        payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : null);
 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
@@ -286,6 +287,18 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
                     />
                 </FormControl>
+
+                {/* Creator Description */}
+                {
+                    editingUser?.type === ROLES.CREATOR && <FormControl mt={4} id="description">
+                        <FormLabel>Description</FormLabel>
+                        <Textarea
+                            autoComplete="off"
+                            value={editingUser?.description}
+                            onChange={(e) => setEditingUser({ ...editingUser, description: e.target.value })}
+                        />
+                    </FormControl>
+                }
 
                 {/* Creator Banner */}
                 {
