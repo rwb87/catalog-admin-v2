@@ -59,7 +59,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);
         if(editingUser?.birthDate) payload.append('birthDate', moment(editingUser?.birthDate).format('YYYY-MM-DD'));
-        payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : null);
+        payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : '');
 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
@@ -108,7 +108,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
 
                     {/* Cover Photo */}
                     <Image
-                        src={editingUser?.coverURL}
+                        src={editingUser?.coverURL || '/images/cover-placeholder.webp'}
                         alt={editingUser?.name}
                         width='full'
                         loading="lazy"
@@ -294,7 +294,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         <FormLabel>Description</FormLabel>
                         <Textarea
                             autoComplete="off"
-                            value={editingUser?.description}
+                            value={editingUser?.description ? editingUser?.description : ''}
                             onChange={(e) => setEditingUser({ ...editingUser, description: e.target.value })}
                         />
                     </FormControl>

@@ -9,6 +9,8 @@ import LooksTableRow from "../looks/LooksTableRow";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
+import UpdateUserDrawer from "./UpdateUserDrawer";
+import Confirmation from "@/components/Confirmation";
 
 const SSO_PROVIDERS = {
     apple: {
@@ -33,11 +35,12 @@ type UsersTableProps = {
     isLoading?: boolean;
     userType: ROLES;
     data?: any;
-    pagination: any;
-    onPaginate: (page: number) => void;
+    pagination?: any;
+    onPaginate?: (page: number) => void;
     hasActions?: boolean;
     onEdit?: (user: any) => void;
     onDelete?: (user: any) => void;
+    noUi?: boolean;
 }
 const UsersTable = (props: UsersTableProps) => {
     const {
@@ -47,12 +50,15 @@ const UsersTable = (props: UsersTableProps) => {
         pagination,
         onPaginate,
         hasActions = true,
-        onEdit,
-        onDelete,
+        noUi = false,
     } = props;
 
     const [editingData, setEditingData] = useState<any>({});
     const [brand, setBrand] = useState<any>({});
+
+    const [editingUser, setEditingUser] = useState<any>({});
+    const [deletingUser, setDeletingUser] = useState<any>({});
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     useEffect(() => {
         const openProductToModify = (event: any) => {
@@ -64,19 +70,66 @@ const UsersTable = (props: UsersTableProps) => {
             setBrand(brand);
         }
 
-        window?.addEventListener('action:edit-product', openProductToModify);
+        const openUserToModify = (event: any) => {
+            const { type = null } = event.detail;
 
-        return () => window?.removeEventListener('action:edit-product', openProductToModify);
+            if(!type) return;
+
+            setEditingUser({
+                id: Math.random().toString(36).substring(7),
+                name: '',
+                lastName: '',
+                username: '',
+                email: '',
+                password: '',
+                type: type,
+                coverURL: '',
+                pictureURL: '',
+                creatorBannerURL: '',
+                birthDate: null,
+                isNew: true,
+            });
+        }
+
+        window?.addEventListener('action:edit-product', openProductToModify);
+        window?.addEventListener('action:new-user', openUserToModify);
+
+        return () => {
+            window?.removeEventListener('action:edit-product', openProductToModify);
+            window?.removeEventListener('action:new-user', openUserToModify);
+        }
     }, []);
+
+    const handleDelete = async () => {
+        setIsDeleting(true);
+
+        try {
+            const response = await fetch({
+                endpoint: `/users/${deletingUser?.id}`,
+                method: 'DELETE',
+            });
+
+            if (response) notify('User deleted successfully', 3000);
+            else notify('An error occurred', 3000);
+
+            window?.dispatchEvent(new CustomEvent('refresh:data'));
+            setDeletingUser({});
+        } catch (error: any) {
+            const message = error?.response?.data?.message || error?.message;
+            notify(message, 3000);
+        }
+
+        setIsDeleting(false);
+    }
 
     return (
         <>
-            <Box className="table-responsive">
+            <Box className={!noUi ? 'table-responsive' : ''}>
                 <Table
                     variant='simple'
                     colorScheme="gray"
                 >
-                    <Thead>
+                    <Thead display={noUi && isLoading ? 'none' : 'table-header-group'}>
                         <Tr>
                             <Th textTransform='capitalize'>{userType?.replace('_', ' ')}</Th>
                             { userType !== ROLES.ADMIN && <Th>SSO</Th> }
@@ -151,13 +204,32 @@ const UsersTable = (props: UsersTableProps) => {
                                         userType={userType}
                                         user={user}
                                         hasActions={hasActions}
-                                        onEdit={onEdit}
-                                        onDelete={onDelete}
+                                        onEdit={(user: any) => setEditingUser(user)}
+                                        onDelete={(user) => setDeletingUser(user)}
                                     />)
                         }
                     </Tbody>
                 </Table>
             </Box>
+
+            {/* Update User */}
+            <UpdateUserDrawer
+                user={editingUser}
+                onSave={() => {
+                    setEditingUser({});
+                    window?.dispatchEvent(new CustomEvent('refresh:data'));
+                }}
+                onClose={() => setEditingUser({})}
+            />
+
+            {/* Delete Dialog */}
+            <Confirmation
+                isOpen={!!deletingUser?.id}
+                text={`Are you sure you want to delete <strong>${deletingUser?.username}?</strong> You can't undo this action afterwards.`}
+                isProcessing={isDeleting}
+                onConfirm={handleDelete}
+                onCancel={() => setDeletingUser({})}
+            />
 
             {/* Update Product */}
             <UpdateProductDrawer
@@ -212,9 +284,10 @@ const TableRow = (props: UsersTableRowProps) => {
     });
 
     useEffect(() => {
-        setLooks([]);
-
-        if(isLooksExpanded) {
+        if(!isLooksExpanded) {
+            setLooks([]);
+            setIsLoading(true);
+        } else {
             setIsLoading(true);
             getLooks();
 
@@ -318,7 +391,7 @@ const TableRow = (props: UsersTableRowProps) => {
                                 variant='solid'
                                 rounded='full'
                                 size='sm'
-                                icon={<Text>{user?.looksCount || 0}</Text>}
+                                icon={<Text>{user?.looksCount || user?.looks?.length || 0}</Text>}
                                 px={2}
                                 onClick={() => setIsLooksExpanded(!isLooksExpanded)}
                             />
@@ -456,3 +529,4 @@ const TableRow = (props: UsersTableRowProps) => {
 }
 
 export default UsersTable;
+export { TableRow as UsersTableRow };

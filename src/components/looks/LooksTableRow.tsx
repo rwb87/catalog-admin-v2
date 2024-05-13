@@ -25,6 +25,8 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
     const [images, setImages] = useState<any[]>([]);
 
     const dateTime = useMemo(() => {
+        if(!item?.createdAt) return '-';
+
         const date = formatDateTime(item?.createdAt, false);
         const time = new Intl.DateTimeFormat('en-US', {
             hour: 'numeric',

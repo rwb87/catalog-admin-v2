@@ -205,7 +205,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
                 <Box position='relative'>
                     <Image
-                        src={editingData?.pictureURL}
+                        src={editingData?.pictureURL || '/images/cover-placeholder.webp'}
                         alt={editingData?.name}
                         width='full'
                         loading="lazy"

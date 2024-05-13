@@ -4,9 +4,7 @@ import notify from "@/helpers/notify";
 import { Box, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
-import UpdateUserDrawer from "@/components/users/UpdateUserDrawer";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
-import Confirmation from "@/components/Confirmation";
 import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 import { encodeAmpersand } from "@/helpers/utils";
@@ -23,10 +21,6 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
     const [filterShoppersByCreatedAt, setFilterShoppersByCreatedAt] = useState<string>('');
     const [adminUserType, setAdminUserType] = useState<string>(ROLES.SUPER_ADMIN);
 
-    const [editingUser, setEditingUser] = useState<any>({});
-    const [deletingUser, setDeletingUser] = useState<any>({});
-    const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
     const [pagination, setPagination] = useState({
         page: 1,
         offset: 0,
@@ -40,6 +34,10 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
         setIsLoading(true);
 
         getUsers();
+
+        window?.addEventListener('refresh:data', getUsers);
+
+        return () => window?.removeEventListener('refresh:data', getUsers);
     }, [sortBy, pagination?.offset, filterShoppersByCreatedAt, adminUserType]);
 
     useEffect(() => {
@@ -66,28 +64,6 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
         }
 
         setIsLoading(false);
-    }
-
-    const handleDelete = async () => {
-        setIsDeleting(true);
-
-        try {
-            const response = await fetch({
-                endpoint: `/users/${deletingUser?.id}`,
-                method: 'DELETE',
-            });
-
-            if (response) notify('User deleted successfully', 3000);
-            else notify('An error occurred', 3000);
-
-            setUsers(users.filter((user: any) => user.id !== deletingUser.id));
-            setDeletingUser({});
-        } catch (error: any) {
-            const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
-        }
-
-        setIsDeleting(false);
     }
 
     const totalIncomingClickouts = useMemo(() => {
@@ -193,20 +169,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         }}
                         size='sm'
                         icon={<IconPlus size={20} />}
-                        onClick={() => setEditingUser({
-                            id: Math.random().toString(36).substring(7),
-                            name: '',
-                            lastName: '',
-                            username: '',
-                            email: '',
-                            password: '',
-                            type: userType,
-                            coverURL: '',
-                            pictureURL: '',
-                            creatorBannerURL: '',
-                            birthDate: null,
-                            isNew: true,
-                        })}
+                        onClick={() => window.dispatchEvent(new CustomEvent('action:new-user', { detail: { type: userType } }))}
                     />
                 </Flex>
 
@@ -397,20 +360,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                             }}
                             size='sm'
                             icon={<IconPlus size={20} />}
-                            onClick={() => setEditingUser({
-                                id: Math.random().toString(36).substring(7),
-                                name: '',
-                                lastName: '',
-                                username: '',
-                                email: '',
-                                password: '',
-                                type: userType,
-                                coverURL: '',
-                                pictureURL: '',
-                                creatorBannerURL: '',
-                                birthDate: null,
-                                isNew: true,
-                            })}
+                            onClick={() => window.dispatchEvent(new CustomEvent('action:new-user', { detail: { type: userType } }))}
                         />
                     </Tooltip>
                 </Flex>
@@ -428,27 +378,6 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
                 hasActions={(userType === ROLES.ADMIN && userRole === ROLES.SUPER_ADMIN) || userType !== ROLES.ADMIN}
-                onEdit={(user: any) => setEditingUser(user)}
-                onDelete={(user) => setDeletingUser(user)}
-            />
-
-            {/* Update User */}
-            <UpdateUserDrawer
-                user={editingUser}
-                onSave={() => {
-                    setEditingUser({});
-                    getUsers();
-                }}
-                onClose={() => setEditingUser({})}
-            />
-
-            {/* Delete Dialog */}
-            <Confirmation
-                isOpen={!!deletingUser?.id}
-                text={`Are you sure you want to delete <strong>${deletingUser?.username}?</strong> You can't undo this action afterwards.`}
-                isProcessing={isDeleting}
-                onConfirm={handleDelete}
-                onCancel={() => setDeletingUser({})}
             />
         </>
     )
