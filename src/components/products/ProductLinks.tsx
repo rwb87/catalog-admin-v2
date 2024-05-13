@@ -1,3 +1,4 @@
+import { PRODUCT_LINK_TYPES } from "@/_config";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
@@ -20,11 +21,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         if(!links?.length) return setEditedLinks([]);
 
         const newLinks = JSON.parse(JSON.stringify(links));
-        let sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
-
-        // Make alpha link always first
-        sortedLinks = sortedLinks.filter((link: any) => link.linkType !== 'ALPHA');
-        sortedLinks.unshift(newLinks.find((link: any) => link.linkType === 'ALPHA'));
+        const sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
 
         setEditedLinks(sortedLinks);
     }, [links]);
@@ -125,10 +122,10 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                     <Tr>
                         <Th width='30px'></Th>
                         <Th>Link</Th>
-                        <Th>Class</Th>
                         <Th>Type</Th>
                         <Th>Price</Th>
                         <Th>Discount Price</Th>
+                        <Th>Status</Th>
                         <Th textAlign='right'>Actions</Th>
                     </Tr>
                 </Thead>
@@ -164,34 +161,20 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                     borderColor='gray.100'
                                     size='sm'
                                     rounded='full'
-                                    width={48}
-                                    name='linkClass'
-                                    isReadOnly={!allowModify}
-                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
-                                    value={link?.linkClass ?? ''}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                >
-                                    <option value='GAAN'>GAAN</option>
-                                    <option value='CREATOR-AFFILIATE'>⭐ Creator Affiliate</option>
-                                    <option value='BASIC'>Basic</option>
-                                </Select>
-                            </Td>
-                            <Td>
-                                <Select
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    size='sm'
-                                    rounded='full'
-                                    width={32}
+                                    width={60}
                                     name='linkType'
                                     isReadOnly={!allowModify}
                                     icon={allowModify ? <BiChevronDown size={2} /> : <></>}
                                     value={link?.linkType ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 >
-                                    <option value='ALPHA'>👑 Alpha</option>
-                                    <option value='BACKUP'>Backup</option>
+                                    {
+                                        Object.keys(PRODUCT_LINK_TYPES).map((key: any) => (
+                                            PRODUCT_LINK_TYPES[key] === PRODUCT_LINK_TYPES.CREATOR_AFFILIATE
+                                                ? <option key={key} value={PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}>⭐ {PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}</option>
+                                                : <option key={key} value={PRODUCT_LINK_TYPES[key]}>{PRODUCT_LINK_TYPES[key]}</option>
+                                        ))
+                                    }
                                 </Select>
                             </Td>
                             <Td maxWidth='200px'>
@@ -229,6 +212,24 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                     value={link?.discountPrice ?? ''}
                                     onChange={(e) => handleInputChange(e, index)}
                                 />
+                            </Td>
+                            <Td>
+                                <Select
+                                    variant='solid'
+                                    borderWidth={1}
+                                    borderColor='gray.100'
+                                    size='sm'
+                                    rounded='full'
+                                    width={28}
+                                    name='status'
+                                    isReadOnly={!allowModify}
+                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
+                                    value={link?.status ?? false}
+                                    onChange={(e) => handleInputChange(e, index)}
+                                >
+                                    <option value='active'>Active</option>
+                                    <option value='inactive'>Inactive</option>
+                                </Select>
                             </Td>
                             <Td
                                 textAlign='right'
