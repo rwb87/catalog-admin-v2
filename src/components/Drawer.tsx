@@ -32,7 +32,8 @@ const CustomDrawer = (props: CustomDrawerProps) => {
             placement='right'
             onClose={() => {if (!isProcessing) onClose()}}
             closeOnEsc={!isProcessing}
-            closeOnOverlayClick={!isProcessing}
+            // closeOnOverlayClick={!isProcessing}
+            closeOnOverlayClick={false}
         >
             <DrawerOverlay />
             <DrawerContent>

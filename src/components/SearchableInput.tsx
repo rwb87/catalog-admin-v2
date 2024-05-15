@@ -48,7 +48,7 @@ const SearchableInput = ({ data, property = 'name', defaultValue, placeholder = 
                 pointerEvents='none'
                 position='absolute'
                 right={2}
-                top={2.5}
+                top={1}
             >
                 <IconLoader2 size={18} className="animate-spin" />
             </Box>
