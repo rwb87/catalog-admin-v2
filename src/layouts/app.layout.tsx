@@ -1,12 +1,13 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import { IconLogout, IconSettings } from "@tabler/icons-react";
-import { useUi, useUser } from "@/_store";
+import { useGlobalVolatileStorage, useUi, useUser } from "@/_store";
 import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 import Lightcase from "@/components/Lightcase";
 import { ROLES } from "@/_config";
+import fetch from "@/helpers/fetch";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -132,10 +133,31 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
 const Content = ({ children, activePage }: { children: ReactElement | ReactElement[], activePage: string }) => {
     const { isSidebarCollapsed } = useUi() as any;
+    const { setBrands, setStyles } = useGlobalVolatileStorage() as any;
 
     useEffect(() => {
         window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
     }, [activePage]);
+
+    useEffect(() => {
+        fetchGlobalData();
+    }, []);
+
+    const fetchGlobalData = async () => {
+        const endpoints = [
+            '/brands?limit=50',
+            '/items/styles?limit=50',
+        ];
+
+        const requests = endpoints.map(async (endpoint) => await fetch({ endpoint: endpoint }));
+        const responses = await Promise.all(requests);
+
+        const brands = responses[0]?.data || responses[0] || [];
+        const styles = responses[1]?.data || responses[1] || [];
+
+        setBrands(brands);
+        setStyles(styles);
+    }
 
     return (
         <Box

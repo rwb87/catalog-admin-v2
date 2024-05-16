@@ -243,7 +243,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     }
                 </Td>
                 <Td>{item?.name || '-'}</Td>
-                <Td>{item?.style || '-'}</Td>
+                <Td>{item?.style?.label || '-'}</Td>
                 <Td textAlign='center'>
                     <IconButton
                         aria-label='View Links'

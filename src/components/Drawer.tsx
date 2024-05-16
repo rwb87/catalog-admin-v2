@@ -1,4 +1,4 @@
-import {Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay} from '@chakra-ui/react';
+import {Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay} from '@chakra-ui/react';
 
 type CustomDrawerProps = {
     isOpen: boolean;
@@ -37,7 +37,6 @@ const CustomDrawer = (props: CustomDrawerProps) => {
         >
             <DrawerOverlay />
             <DrawerContent>
-                <DrawerCloseButton isDisabled={isProcessing} />
                 <DrawerHeader>{title}</DrawerHeader>
 
                 <DrawerBody

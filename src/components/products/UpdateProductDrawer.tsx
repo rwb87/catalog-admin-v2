@@ -16,7 +16,11 @@ type UpdateProductDrawerProps = {
 }
 const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps) => {
     const productImageRef = useRef<any>(null);
-    const {brands: globalBrands, setBrands: setGlobalBrands} = useGlobalVolatileStorage() as any;
+
+    const {
+        brands: globalBrands,
+        styles: globalStyles,
+    } = useGlobalVolatileStorage() as any;
 
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -26,39 +30,73 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
     const [brands, setBrands] = useState<any[]>([]);
     const [newBrand, setNewBrand] = useState<any | null>({});
 
+    const [isCreatingStyle, setIsCreatingStyle] = useState<boolean>(false);
+    const [isSearchingStyles, setIsSearchingStyles] = useState<boolean>(false);
+    const [styleSearchTerm, setStyleSearchTerm] = useState<string>('');
+    const [styles, setStyles] = useState<any[]>([]);
+
     useEffect(() => {
         setEditingData(data);
+
+        setIsCreatingStyle(false);
+
+        setBrands(globalBrands);
+        setStyles(globalStyles);
+
+        setBrandSearchTerm(data?.brand?.name);
+        setStyleSearchTerm(data?.style?.label);
     }, [data]);
 
     useEffect(() => {
         setIsSearchingBrands(true);
         const debounce = setTimeout(() => getBrands(), 500);
         return () => clearTimeout(debounce);
-    }, [brandSearchTerm]);
+    }, [brandSearchTerm, editingData?.brand?.name]);
+
+    useEffect(() => {
+        setIsSearchingStyles(true);
+        const debounce = setTimeout(() => getStyles(), 500);
+        return () => clearTimeout(debounce);
+    }, [styleSearchTerm, editingData?.style?.label]);
 
     const getBrands = async () => {
-        if(globalBrands?.length && brandSearchTerm?.toString()?.trim() === '') {
+        if(globalBrands && !brandSearchTerm?.toString()?.trim()?.length) {
             setIsSearchingBrands(false);
             return setBrands(globalBrands);
         }
 
         try {
-            const endpoint = brandSearchTerm?.toString()?.trim() === ''
-                ? '/brands?limit=200'
-                : `/brands?search=${encodeAmpersand(brandSearchTerm)}`;
-
             const response = await fetch({
-                endpoint: endpoint,
+                endpoint: `/brands?search=${encodeAmpersand(brandSearchTerm)}`,
                 method: 'GET',
             });
 
             setBrands(response);
-            setGlobalBrands(response);
         } catch (error: any) {
             setBrands([]);
         }
 
         setIsSearchingBrands(false);
+    }
+
+    const getStyles = async () => {
+        if(globalStyles && !styleSearchTerm?.toString()?.trim()?.length) {
+            setIsSearchingStyles(false);
+            return setStyles(globalStyles);
+        }
+
+        try {
+            const response = await fetch({
+                endpoint: `/items/styles?search=${encodeAmpersand(styleSearchTerm)}`,
+                method: 'GET',
+            });
+
+            setStyles(response);
+        } catch (error: any) {
+            setStyles([]);
+        }
+
+        setIsSearchingStyles(false);
     }
 
     const handleUpdateData = async () => {
@@ -75,6 +113,12 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
         const dealPercent = parseFloat(editingData?.dealPrice) > 0 ? ((parseFloat(editingData?.dealPrice) - parseFloat(editingData?.price)) / parseFloat(editingData?.price)) * 100 : 0;
         payload.append('dealPercent', dealPercent?.toString());
+
+        if(isCreatingStyle) {
+            payload.append('style', editingData?.style?.label);
+        } else if (editingData?.style?.label?.toString()?.trim()) {
+            payload.append('styleId', editingData?.styleId || editingData?.style?.id);
+        }
 
         if (productImageRef?.current.files[0]) payload.append('picture', productImageRef?.current.files[0]);
 
@@ -120,7 +164,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                     gap={4}
                 >
                     <FormControl id="name">
-                        <FormLabel>Product Name</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <Input
                             type="text"
                             autoComplete="off"
@@ -131,7 +175,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                     </FormControl>
 
                     <FormControl id="link">
-                        <FormLabel>Product Link</FormLabel>
+                        <FormLabel>Initial Link</FormLabel>
                         <Input
                             type="text"
                             autoComplete="off"
@@ -188,7 +232,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                 {/* Brand */}
                 <FormControl mt={4}>
                     <Flex justify='space-between' mb={1}>
-                        <FormLabel>Product Brand</FormLabel>
+                        <FormLabel>Brand</FormLabel>
 
                         {/* Create brand button */}
                         <Button
@@ -226,6 +270,69 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                             });
                         }}
                     />
+                </FormControl>
+
+                {/* Style */}
+                <FormControl mt={4}>
+                    <Flex justify='space-between' mb={1}>
+                        <FormLabel>Style</FormLabel>
+
+                        {/* Create style button */}
+                        <Button
+                            size='sm'
+                            variant='ghost'
+                            colorScheme='gray'
+                            leftIcon={<IconPlus
+                                size={16}
+                                style={{
+                                    rotate: isCreatingStyle ? '45deg' : '',
+                                    transition: 'rotate 0.1s ease-in-out',
+                                }}
+                            />}
+                            onClick={() => {
+                                setIsCreatingStyle(!isCreatingStyle)
+                                setEditingData({
+                                    ...editingData,
+                                    style: isCreatingStyle ? data?.style : {},
+                                });
+                            }}
+                        >{isCreatingStyle ? 'Select' : 'Create'} Style</Button>
+                    </Flex>
+
+                    {/* Style search input */}
+                    {
+                        isCreatingStyle
+                            ? <Input
+                                display={isCreatingStyle ? 'block' : 'none'}
+                                type="text"
+                                autoComplete="off"
+                                value={editingData?.style?.label || ''}
+                                onChange={(e) => {
+                                    setEditingData({
+                                        ...editingData,
+                                        style: {
+                                            label: e.target.value,
+                                        },
+                                    })
+                                }}
+                            />
+                            : <SearchableInput
+                                data={styles}
+                                property='label'
+                                defaultValue={editingData?.style?.label}
+                                placeholder="Search style..."
+                                isLoading={isSearchingStyles}
+                                onDynamicSearch={(term: any) => setStyleSearchTerm(term)}
+                                onChange={(style: any) => {
+                                    setEditingData({
+                                        ...editingData,
+                                        style: style,
+                                        styleId: style?.id,
+                                    });
+                                }}
+                            />
+                    }
+
                 </FormControl>
 
                 {/* Product Image */}

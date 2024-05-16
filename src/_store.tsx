@@ -50,8 +50,12 @@ export const useUi = create(
 export const useGlobalVolatileStorage = create(
     (set) => ({
         brands: [],
+        styles: [],
         setBrands: (brands: any) => set({
             brands: brands,
+        }),
+        setStyles: (styles: any) => set({
+            styles: styles,
         }),
     })
 )

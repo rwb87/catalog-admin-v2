@@ -1,4 +1,4 @@
-export const encodeAmpersand = (str: string) => str.replaceAll('&', '%26');
+export const encodeAmpersand = (str: string) => str?.replaceAll('&', '%26');
 
 export const getImageMetadata = async (file: File) => {
     const img = new Image();
