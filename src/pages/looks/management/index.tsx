@@ -13,6 +13,7 @@ import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Input, InputGrou
 import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
+import { LOOK_STATUSES } from "@/_config";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -58,11 +59,7 @@ const LooksManagementView = () => {
     }, [search]);
 
     const getData = async () => {
-        const filter = {
-            status: [
-                "in_data_management",
-            ]
-        }
+        const filter = { status: [ LOOK_STATUSES.IN_DATA_MANAGEMENT ] };
 
         try {
             const response = await fetch({

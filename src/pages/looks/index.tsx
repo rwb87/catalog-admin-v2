@@ -1,4 +1,4 @@
-import { useGlobalVolatileStorage } from "@/_store";
+import { useGlobalVolatileStorage, useUser } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
@@ -6,23 +6,26 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, Heading, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconLoader2, IconSearch } from "@tabler/icons-react";
+import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconLoader2, IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
+import { LOOK_STATUSES } from "@/_config";
 
 const LooksView = () => {
+    const { user } = useUser() as any;
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [isLive, setIsLive] = useState<boolean>(true);
+    const [filter, setFilter] = useState<string>('');
     const [data, setData] = useState<any>([]);
-    const [filteredData, setFilteredData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [sendingAllLookDataToManagement, setSendingAllLookDataToManagement] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+    const [isCreatingNewLook, setIsCreatingNewLook] = useState<boolean>(false);
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -36,19 +39,20 @@ const LooksView = () => {
     useEffect(() => {
         getBrands();
 
-        window?.addEventListener('refresh:data', getData);
-
-        return () => window?.removeEventListener('refresh:data', getData);
+        setFilter(LOOK_STATUSES.LIVE);
     }, []);
 
     useEffect(() => {
         setIsLoading(true);
 
         setData([]);
-        setFilteredData([]);
 
         getData();
-    }, [isLive, pagination.page, sortBy]);
+
+        window?.addEventListener('refresh:data', getData);
+
+        return () => window?.removeEventListener('refresh:data', getData);
+    }, [filter, pagination.page, sortBy]);
 
     useEffect(() => {
         if(search?.trim() !== '') setIsLoading(true);
@@ -58,24 +62,17 @@ const LooksView = () => {
     }, [search]);
 
     const getData = async () => {
-        const filter = isLive
-            ? {
-                status: [
-                    "denied","live","archived","in_edit"
-                ],
-            }
-            : {
-                status: [
-                    "submitted_for_approval","in_admin"
-                ],
-            }
+        if(!filter) return;
+
+        const urlFilter = { status: [filter] };
+
         const sortByString = sortBy?.split(':')[0];
         const orderByString = sortBy?.split(':')[1]?.toUpperCase();
         const finalSortByString = `${sortByString}+${orderByString}`;
 
         try {
             const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(filter)}&search=${search?.trim()}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/looks?filter=${JSON.stringify(urlFilter)}&search=${search?.trim()}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
@@ -127,6 +124,30 @@ const LooksView = () => {
         } catch (error: any) {
             notify('All submitted looks sent to management but message could not be sent', 5000);
         }
+    }
+
+    const handleCreateNewLook = async () => {
+        setIsProcessing(true);
+
+        try {
+            await fetch({
+                endpoint: '/looks',
+                method: 'POST',
+                data: {
+                    status: LOOK_STATUSES.IN_EDIT,
+                    enabled: false,
+                    userId: user?.id,
+                },
+            });
+
+            notify('New look created successfully', 3000);
+            setFilter(LOOK_STATUSES.IN_EDIT);
+        } catch (error: any) {
+            notify(error?.response?.data?.message || error?.message, 3000);
+        }
+
+        setIsCreatingNewLook(false);
+        setIsProcessing(false);
     }
 
     return (
@@ -211,11 +232,13 @@ const LooksView = () => {
                         borderWidth={2}
                         borderColor='gray.100'
                         fontWeight='medium'
-                        value={isLive ? 'in_data_management' : 'submitted_for_approval'}
-                        onChange={(event: any) => setIsLive(event.target.value === 'in_data_management')}
+                        textTransform='capitalize'
+                        value={filter}
+                        onChange={(event: any) => setFilter(event.target.value)}
                     >
-                        <option value="submitted_for_approval">Submitted for Approval</option>
-                        <option value="in_data_management">Live</option>
+                        <option value={LOOK_STATUSES.LIVE}>Live</option>
+                        <option value={LOOK_STATUSES.SUBMITTED_FOR_APPROVAL}>Submitted for Approval</option>
+                        <option value={LOOK_STATUSES.IN_EDIT}>In Edit</option>
                     </Select>
 
                     {/* Search */}
@@ -263,7 +286,7 @@ const LooksView = () => {
 
                     {/* Send all look data to management */}
                     {
-                        (!isLive && data?.length > 0) && <Button
+                        (filter === LOOK_STATUSES.SUBMITTED_FOR_APPROVAL && data?.length > 0) && <Button
                             size='sm'
                             rounded='full'
                             backgroundColor='black'
@@ -282,6 +305,24 @@ const LooksView = () => {
                             onClick={() => setSendingAllLookDataToManagement(data)}
                         >Send all to management</Button>
                     }
+
+                    {/* Create button for Desktop */}
+                    <Tooltip label='Add new look' placement="left">
+                        <IconButton
+                            aria-label="Add new product"
+                            variant='solid'
+                            rounded='full'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            display={{
+                                base: 'none',
+                                lg: 'inline-flex',
+                            }}
+                            size='sm'
+                            icon={<IconPlus size={20} />}
+                            onClick={() => setIsCreatingNewLook(true)}
+                        />
+                    </Tooltip>
                 </Flex>
             </Flex>
 
@@ -324,6 +365,20 @@ const LooksView = () => {
                 onConfirm={handleSendAllLookDataToManagement}
                 onCancel={() => setSendingAllLookDataToManagement(false)}
             />
+
+            {/* Create new look alert */}
+            <Confirmation
+                isOpen={isCreatingNewLook}
+                title="Confirmation"
+                text="If you click <strong>Continue</strong>, a new look will be created and you can add products and photos to it. The look will have the status <strong>in edit</strong> and will not be visible to the public until you publish it. Are you sure you want to continue?"
+                isProcessing={isProcessing}
+                cancelText="Cancel"
+                confirmText="Continue"
+                processingConfirmText="Creating..."
+                isDangerous={false}
+                onConfirm={handleCreateNewLook}
+                onCancel={() => setIsCreatingNewLook(false)}
+            />
         </Content>
     )
 }
@@ -335,7 +390,7 @@ type LooksTableProps = {
     isLoading: boolean,
 }
 const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps) => {
-    const isLive = data?.[0]?.status === 'live';
+    const isLive = data?.[0]?.status === LOOK_STATUSES.LIVE;
     const [editingData, setEditingData] = useState<any>({});
     const [brand, setBrand] = useState<any>({});
 

@@ -17,3 +17,14 @@ export const PRODUCT_LINK_TYPES = {
     CREATOR_AFFILIATE: 'CREATOR-AFFILIATE',
 }
 export type PRODUCT_LINK_TYPES = typeof PRODUCT_LINK_TYPES[keyof typeof PRODUCT_LINK_TYPES];
+
+export const LOOK_STATUSES = {
+    LIVE: 'live',
+    IN_EDIT: 'in_edit',
+    ARCHIVED: 'archived',
+    DENIED: 'denied',
+    SUBMITTED_FOR_APPROVAL: 'submitted_for_approval',
+    IN_ADMIN: 'in_admin',
+    IN_DATA_MANAGEMENT: 'in_data_management',
+}
+export type LOOK_STATUSES = typeof LOOK_STATUSES[keyof typeof LOOK_STATUSES];

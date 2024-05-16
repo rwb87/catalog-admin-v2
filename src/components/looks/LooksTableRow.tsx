@@ -1,12 +1,13 @@
 import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Button, IconButton, Image, Input, Switch, Td, Text, Tooltip, Tr } from "@chakra-ui/react";
-import { IconChevronDown, IconPhoto, IconTrash } from "@tabler/icons-react";
+import { IconChevronDown, IconPhoto, IconTrash, IconUpload } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import LookPhotos from "./LookPhotos";
 import LookProducts from "./LookProducts";
 import Confirmation from "@/components/Confirmation";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import { LOOK_STATUSES } from "@/_config";
 
 type TableRowProps = {
     item: any,
@@ -21,6 +22,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [deletingData, setDeletingData] = useState<any>({});
     const [sendingLookDataToManagement, setSendingLookDataToManagement] = useState<any>({});
+    const [isSubmittingLookForApproval, setIsSubmittingLookForApproval] = useState<any>({});
 
     const [images, setImages] = useState<any[]>([]);
 
@@ -104,7 +106,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             }
 
             handleUpdateData({
-                status: 'in_data_management',
+                status: LOOK_STATUSES.IN_DATA_MANAGEMENT,
                 enabled: false,
                 carouselEnabled: false,
             }, sendingLookDataToManagement?.id);
@@ -117,6 +119,29 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
             notify('Look sent to management but message could not be sent', 5000);
+        }
+
+        setIsProcessing(false);
+    }
+
+    const handleSubmitLookForApproval = async () => {
+        setIsProcessing(true);
+
+        try {
+            handleUpdateData({
+                status: LOOK_STATUSES.SUBMITTED_FOR_APPROVAL,
+                enabled: false,
+                carouselEnabled: false,
+            }, isSubmittingLookForApproval?.id);
+
+            notify('Look sent successfully', 3000);
+
+            setSendingLookDataToManagement({});
+
+            window.dispatchEvent(new CustomEvent('refresh:data'));
+            window.dispatchEvent(new CustomEvent('refresh:looks'));
+        } catch (error: any) {
+            notify('Look sent for approval', 5000);
         }
 
         setIsProcessing(false);
@@ -158,9 +183,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
         return '/images/cover-placeholder.webp';
     }, [item?.thumbnailImage, item?.photos]);
 
-    const isLiveStatus = item?.status === 'live';
-    // const isSubmittedForApproval = item?.status === 'submitted_for_approval';
-    const isDataManagement = item?.status === 'in_data_management';
+    const isLiveStatus = item?.status === LOOK_STATUSES.LIVE;
 
     return (
         <>
@@ -289,7 +312,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                     {
                         <Tooltip label="Send look to management" placement="bottom">
                             <IconButton
-                                display={isDataManagement ? 'none' : 'inline-flex'}
+                                display={[LOOK_STATUSES.IN_DATA_MANAGEMENT, LOOK_STATUSES.IN_EDIT]?.includes(item?.status) ? 'none' : 'inline-flex'}
                                 aria-label="Edit"
                                 variant='ghost'
                                 rounded='full'
@@ -308,6 +331,23 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                     className="image-as-icon"
                                 />}
                                 onClick={() => setSendingLookDataToManagement(item)}
+                            />
+                        </Tooltip>
+                    }
+
+                    {/* Submit look for approval */}
+                    {
+                        <Tooltip label="Submit look for approval" placement="bottom">
+                            <IconButton
+                                display={item?.status !== LOOK_STATUSES.IN_EDIT ? 'none' : 'inline-flex'}
+                                aria-label="Edit"
+                                variant='ghost'
+                                rounded='full'
+                                size='sm'
+                                mr={4}
+                                colorScheme='green'
+                                icon={<IconUpload size={22} />}
+                                onClick={() => setIsSubmittingLookForApproval(item)}
                             />
                         </Tooltip>
                     }
@@ -360,10 +400,13 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                     <LookPhotos
                         lookId={item?.id}
                         images={images}
-                        onSave={(list: any) => {
-                            handleUpdateData({ photos: list }, item?.id);
+                        onSave={async (list: any) => {
+                            await handleUpdateData({ photos: list }, item?.id);
                             setIsImagesExpanded(false);
                             setImages([]);
+
+                            window?.dispatchEvent(new CustomEvent('refresh:data'));
+                            window?.dispatchEvent(new CustomEvent('refresh:looks'));
                         }}
                         onCancel={() => {
                             setIsImagesExpanded(false)
@@ -386,36 +429,55 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                 </Td>
             </Tr>
 
-            {/* Delete Dialog */}
-            <Confirmation
-                isOpen={!!deletingData?.id}
-                text={`Are you sure you want to delete this look? You can't undo this action afterwards.`}
-                isProcessing={isDeleting}
-                onConfirm={handleDelete}
-                onCancel={() => setDeletingData({})}
-            />
+            <Tr>
+                <Td colSpan={20} display='contents'>
 
-            {/* Send look data to management alert */}
-            <Confirmation
-                isOpen={!!sendingLookDataToManagement?.id}
-                title="Send look data to management"
-                html={<Input
-                    type="text"
-                    placeholder="Message for management (optional)"
-                    rounded='md'
-                    size='sm'
-                    width='full'
-                    name='management-message'
-                    autoComplete='off'
-                />}
-                isProcessing={isProcessing}
-                cancelText="Cancel"
-                confirmText="Send"
-                processingConfirmText="Sending..."
-                isDangerous={false}
-                onConfirm={handleSendLookDataToManagement}
-                onCancel={() => setSendingLookDataToManagement({})}
-            />
+                    {/* Delete Dialog */}
+                    <Confirmation
+                        isOpen={!!deletingData?.id}
+                        text={`Are you sure you want to delete this look? You can't undo this action afterwards.`}
+                        isProcessing={isDeleting}
+                        onConfirm={handleDelete}
+                        onCancel={() => setDeletingData({})}
+                    />
+
+                    {/* Send look data to management alert */}
+                    <Confirmation
+                        isOpen={!!sendingLookDataToManagement?.id}
+                        title="Send look data to management"
+                        html={<Input
+                            type="text"
+                            placeholder="Message for management (optional)"
+                            rounded='md'
+                            size='sm'
+                            width='full'
+                            name='management-message'
+                            autoComplete='off'
+                        />}
+                        isProcessing={isProcessing}
+                        cancelText="Cancel"
+                        confirmText="Send"
+                        processingConfirmText="Sending..."
+                        isDangerous={false}
+                        onConfirm={handleSendLookDataToManagement}
+                        onCancel={() => setSendingLookDataToManagement({})}
+                    />
+
+                    {/* Submit look for approval */}
+                    <Confirmation
+                        isOpen={!!isSubmittingLookForApproval?.id}
+                        title="Submit look for approval"
+                        text={`Are you sure you want to submit this look for approval?`}
+                        isProcessing={isProcessing}
+                        cancelText="Cancel"
+                        confirmText="Submit"
+                        processingConfirmText="Sending..."
+                        isDangerous={false}
+                        onConfirm={handleSubmitLookForApproval}
+                        onCancel={() => setIsSubmittingLookForApproval({})}
+                    />
+                </Td>
+            </Tr>
         </>
     )
 }
