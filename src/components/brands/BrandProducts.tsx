@@ -174,7 +174,7 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                 </Td>
                 <Td width={40}>{brand?.name || '-'}</Td>
                 <Td>{product?.name || '-'}</Td>
-                <Td>{product?.style || '-'}</Td>
+                <Td>{product?.style?.label || '-'}</Td>
                 <Td textAlign='center'>
                     {
                         <IconButton
