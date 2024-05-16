@@ -120,6 +120,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             payload.append('styleId', editingData?.styleId || editingData?.style?.id);
         }
 
+        if (!editingData?.style && !editingData?.styleId) payload.append('styleId', '');
+
         if (productImageRef?.current.files[0]) payload.append('picture', productImageRef?.current.files[0]);
 
         try {
