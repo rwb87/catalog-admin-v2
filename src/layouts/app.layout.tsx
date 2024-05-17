@@ -143,12 +143,18 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
 
     useEffect(() => {
         fetchGlobalData();
+
+        window?.addEventListener('global:fetch-global-data', fetchGlobalData);
+
+        return () => window?.removeEventListener('global:fetch-global-data', fetchGlobalData);
     }, []);
 
     const fetchGlobalData = async () => {
+        const limit = 200;
+
         const endpoints = [
-            '/brands?limit=50',
-            '/items/styles?limit=50',
+            `/brands?limit=${limit}`,
+            `/items/styles?limit=${limit}`,
         ];
 
         const requests = endpoints.map(async (endpoint) => await fetch({ endpoint: endpoint }));

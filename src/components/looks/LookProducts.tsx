@@ -272,8 +272,8 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                         defaultValue={selectedBrand?.name || ''}
                         placeholder="Search brand..."
                         isLoading={isSearchingBrands}
-                        onDynamicSearch={(searchTerm: string) => setBrandSearchTerm(searchTerm)}
-                        onChange={(item: any) => setSelectedBrand(item)}
+                        onInputChange={(searchTerm: string) => setBrandSearchTerm(searchTerm)}
+                        onSelect={(item: any) => setSelectedBrand(item)}
                     />
 
                     <SearchableInput
@@ -281,7 +281,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                         property="name"
                         defaultValue={selectedProduct?.name || ''}
                         placeholder="Search product..."
-                        onChange={(item: any) => setSelectedProduct(item)}
+                        onSelect={(item: any) => setSelectedProduct(item)}
                     />
                 </Grid>
             </CustomDrawer>

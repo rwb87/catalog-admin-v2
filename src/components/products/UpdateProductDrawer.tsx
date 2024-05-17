@@ -49,14 +49,22 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
     useEffect(() => {
         setIsSearchingBrands(true);
-        const debounce = setTimeout(() => getBrands(), 500);
-        return () => clearTimeout(debounce);
+
+        if(globalBrands && !brandSearchTerm?.toString()?.trim()?.length) getBrands();
+        else {
+            const debounce = setTimeout(() => getBrands(), 500);
+            return () => clearTimeout(debounce);
+        }
     }, [brandSearchTerm, editingData?.brand?.name]);
 
     useEffect(() => {
         setIsSearchingStyles(true);
-        const debounce = setTimeout(() => getStyles(), 500);
-        return () => clearTimeout(debounce);
+
+        if(globalStyles && !styleSearchTerm?.toString()?.trim()?.length) getStyles();
+        else {
+            const debounce = setTimeout(() => getStyles(), 500);
+            return () => clearTimeout(debounce);
+        }
     }, [styleSearchTerm, editingData?.style?.label]);
 
     const getBrands = async () => {
@@ -114,11 +122,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
         const dealPercent = parseFloat(editingData?.dealPrice) > 0 ? ((parseFloat(editingData?.dealPrice) - parseFloat(editingData?.price)) / parseFloat(editingData?.price)) * 100 : 0;
         payload.append('dealPercent', dealPercent?.toString());
 
-        if(isCreatingStyle) {
-            payload.append('style', editingData?.style?.label);
-        } else if (editingData?.style?.label?.toString()?.trim()) {
-            payload.append('styleId', editingData?.styleId || editingData?.style?.id);
-        }
+        if(isCreatingStyle) payload.append('style', editingData?.style?.label);
+        else if (editingData?.style?.label?.toString()?.trim()) payload.append('styleId', editingData?.styleId || editingData?.style?.id);
 
         if (!editingData?.style && !editingData?.styleId) payload.append('styleId', '');
 
@@ -136,6 +141,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                 notify('Product saved successfully', 3000);
                 onSave(response);
                 setEditingData({});
+                window?.dispatchEvent(new CustomEvent('global:fetch-global-data'));
             } else notify('An error occurred', 3000);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message || 'An error occurred';
@@ -264,8 +270,9 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                         defaultValue={editingData?.brand?.name}
                         placeholder="Search brand..."
                         isLoading={isSearchingBrands}
-                        onDynamicSearch={(term: any) => setBrandSearchTerm(term)}
-                        onChange={(brand: any) => {
+                        onInputChange={(term: any) => setBrandSearchTerm(term)}
+                        onSelect={(brand: any) => {
+                            console.log(brand);
                             setEditingData({
                                 ...editingData,
                                 brand: brand,
@@ -309,6 +316,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                                 type="text"
                                 autoComplete="off"
                                 value={editingData?.style?.label || ''}
+                                placeholder="Enter style label..."
+                                height='38px'
                                 onChange={(e) => {
                                     setEditingData({
                                         ...editingData,
@@ -324,8 +333,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                                 defaultValue={editingData?.style?.label}
                                 placeholder="Search style..."
                                 isLoading={isSearchingStyles}
-                                onDynamicSearch={(term: any) => setStyleSearchTerm(term)}
-                                onChange={(style: any) => {
+                                onInputChange={(term: any) => setStyleSearchTerm(term)}
+                                onSelect={(style: any) => {
                                     setEditingData({
                                         ...editingData,
                                         style: style,
