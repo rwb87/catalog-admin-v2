@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
 import { BiDollar } from "react-icons/bi";
 import Lightcase from "@/components/Lightcase";
-import { ROLES } from "@/_config";
+import { Config, ROLES } from "@/_config";
 import fetch from "@/helpers/fetch";
 
 type AppLayoutProps = {
@@ -80,9 +80,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
     useEffect(() => {
         const getActivePage = (event: any) => {
-            if(!event?.detail?.activePage) return null;
+            const { activePage } = event.detail;
+            if(!activePage) return null;
 
-            setActivePage(event?.detail?.activePage);
+            setActivePage(activePage);
+            document.title = `${Config.APP_NAME} | ${activePage}`;
         }
 
         return window?.addEventListener('set:active-page', getActivePage);
