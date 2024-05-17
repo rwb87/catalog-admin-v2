@@ -17,10 +17,7 @@ type UpdateProductDrawerProps = {
 const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps) => {
     const productImageRef = useRef<any>(null);
 
-    const {
-        brands: globalBrands,
-        styles: globalStyles,
-    } = useGlobalVolatileStorage() as any;
+    const { brands: globalBrands, styles: globalStyles } = useGlobalVolatileStorage() as any;
 
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -55,7 +52,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             const debounce = setTimeout(() => getBrands(), 500);
             return () => clearTimeout(debounce);
         }
-    }, [brandSearchTerm, editingData?.brand?.name]);
+    }, [brandSearchTerm]);
 
     useEffect(() => {
         setIsSearchingStyles(true);
@@ -65,7 +62,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             const debounce = setTimeout(() => getStyles(), 500);
             return () => clearTimeout(debounce);
         }
-    }, [styleSearchTerm, editingData?.style?.label]);
+    }, [styleSearchTerm]);
 
     const getBrands = async () => {
         if(globalBrands && !brandSearchTerm?.toString()?.trim()?.length) {
@@ -93,6 +90,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             return setStyles(globalStyles);
         }
 
+        console.log('Searching styles...', styleSearchTerm);
+
         try {
             const response = await fetch({
                 endpoint: `/items/styles?search=${encodeAmpersand(styleSearchTerm)}`,
@@ -108,6 +107,11 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
     }
 
     const handleUpdateData = async () => {
+        if(!editingData?.name) return notify('Please enter a name', 3000);
+        if(!editingData?.link) return notify('Please enter a link', 3000);
+        if(!editingData?.price) return notify('Please enter a price', 3000);
+        if(!editingData?.brand?.id) return notify('Please select a brand', 3000);
+
         setIsProcessing(true);
 
         const payload = new FormData();
@@ -272,7 +276,6 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                         isLoading={isSearchingBrands}
                         onInputChange={(term: any) => setBrandSearchTerm(term)}
                         onSelect={(brand: any) => {
-                            console.log(brand);
                             setEditingData({
                                 ...editingData,
                                 brand: brand,
@@ -333,7 +336,9 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                                 defaultValue={editingData?.style?.label}
                                 placeholder="Search style..."
                                 isLoading={isSearchingStyles}
-                                onInputChange={(term: any) => setStyleSearchTerm(term)}
+                                onInputChange={(term: any) => {
+                                    setStyleSearchTerm(term)
+                                }}
                                 onSelect={(style: any) => {
                                     setEditingData({
                                         ...editingData,
@@ -343,7 +348,6 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                                 }}
                             />
                     }
-
                 </FormControl>
 
                 {/* Product Image */}
