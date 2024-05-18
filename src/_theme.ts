@@ -158,6 +158,7 @@ const theme = extendTheme({
 			svg: {
 				width: '1.5rem',
 				height: '1.5rem',
+				aspectRatio: 1/1,
 				padding: '2px',
 				'@media (min-width: 1600px)': {
 					width: '2rem',
