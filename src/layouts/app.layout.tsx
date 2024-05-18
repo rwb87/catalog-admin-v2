@@ -1,10 +1,9 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
 import { ReactElement, useEffect, useMemo, useState } from "react";
-import { IconLogout, IconSettings } from "@tabler/icons-react";
+import { IconCurrencyDollar, IconLogout, IconSettings } from "@tabler/icons-react";
 import { useGlobalVolatileStorage, useUi, useUser } from "@/_store";
 import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
-import { BiDollar } from "react-icons/bi";
 import Lightcase from "@/components/Lightcase";
 import { Config, ROLES } from "@/_config";
 import fetch from "@/helpers/fetch";
@@ -14,6 +13,14 @@ type AppLayoutProps = {
 }
 const AppLayout = ({ children }: AppLayoutProps) => {
     const [activePage, setActivePage] = useState<string>('');
+
+    const iconSize = useMemo(() => {
+        return window?.innerWidth > 1600
+            ? '28px'
+            : window?.innerWidth > 768
+                ? '16px'
+                : '24px';
+    }, []);
 
     const sidebarItems = useMemo(() => ([
         {
@@ -53,7 +60,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             isDefault: true,
         },
         {
-            icon: <BiDollar style={{ width: '2rem', height: '2rem' }} />,
+            icon: <IconCurrencyDollar style={{ width: iconSize, height: iconSize }}/>,
             label: "Earnings",
             link: "/earnings",
             isDefault: true,
@@ -179,7 +186,7 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
                 xl: 6,
             }}
             pt={{
-                base: 6,
+                base: 12,
                 md: 8,
                 xl: 6,
             }}
