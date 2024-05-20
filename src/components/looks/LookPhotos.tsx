@@ -243,12 +243,12 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                             variant='solid'
                                             colorScheme='red'
                                             aria-label='Delete'
-                                            icon={<IconTrash size={16} />}
+                                            icon={<IconTrash style={{ width: '24px', height: '24px' }} />}
                                             position='absolute'
                                             top={-1}
                                             right={-1}
-                                            p={1}
                                             rounded='full'
+                                            aspectRatio={1}
                                             onClick={(event: any) => {
                                                 event.stopPropagation();
 
