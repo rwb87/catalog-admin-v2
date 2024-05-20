@@ -237,7 +237,7 @@ const LooksView = () => {
                         onChange={(event: any) => setFilter(event.target.value)}
                     >
                         <option value={LOOK_STATUSES.LIVE}>Live</option>
-                        <option value={LOOK_STATUSES.SUBMITTED_FOR_APPROVAL}>Submitted for Approval</option>
+                        <option value={LOOK_STATUSES.SUBMITTED_FOR_APPROVAL}>Incoming</option>
                         <option value={LOOK_STATUSES.IN_EDIT}>In Edit</option>
                     </Select>
 
