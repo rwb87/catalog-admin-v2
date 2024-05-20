@@ -231,7 +231,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         <Avatar
                             size='sm'
                             name={item?.user?.username || '-'}
-                            src={item?.user?.pictureURL}
+                            src={item?.user?.smallPictureURL}
                         />
                         <Text>{item?.user?.username || '-'}</Text>
                     </Button>

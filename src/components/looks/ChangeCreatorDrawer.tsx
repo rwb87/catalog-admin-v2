@@ -128,7 +128,7 @@ const ChangeCreatorDrawer = () => {
                                         <Avatar
                                             size='sm'
                                             name={creator?.username || '-'}
-                                            src={creator?.pictureURL}
+                                            src={creator?.smallPictureURL}
                                         />
                                         <Text>{creator?.username || '-'}</Text>
                                     </Flex>

@@ -477,7 +477,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                             <Avatar
                                 size='sm'
                                 name={item?.user?.username || '-'}
-                                src={item?.user?.pictureURL}
+                                src={item?.user?.smallPictureURL}
                             />
                             <Text>{item?.user?.username || '-'}</Text>
                         </Button>

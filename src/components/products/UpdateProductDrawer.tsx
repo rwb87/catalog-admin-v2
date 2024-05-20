@@ -260,6 +260,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                                     name: '',
                                     pageLink: '',
                                     pictureURL: '',
+                                    smallPictureURL: '',
                                     partnership: 'NONE',
                                     isNew: true,
                                 })
@@ -395,7 +396,11 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
                         if(!photo) return;
 
-                        setEditingData({ ...editingData, pictureURL: URL.createObjectURL(photo) });
+                        setEditingData({
+                            ...editingData,
+                            pictureURL: URL.createObjectURL(photo),
+                            smallPictureURL: URL.createObjectURL(photo),
+                        });
                     }}
                 />
             </CustomDrawer>

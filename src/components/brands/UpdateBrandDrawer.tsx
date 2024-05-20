@@ -258,6 +258,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                         setEditingData({
                             ...editingData,
                             pictureURL: URL.createObjectURL(photo),
+                            smallPictureURL: URL.createObjectURL(photo),
                             photoMetadata: {
                                 ...imageMetadata,
                                 width: parseInt(imageMetadata?.width),

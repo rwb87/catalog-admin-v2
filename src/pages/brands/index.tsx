@@ -170,6 +170,7 @@ const BrandsView = () => {
                             name: '',
                             pageLink: '',
                             pictureURL: '',
+                            smallPictureURL: '',
                             partnership: 'NONE',
                             isNew: true,
                         })}
@@ -286,6 +287,7 @@ const BrandsView = () => {
                                 name: '',
                                 pageLink: '',
                                 pictureURL: '',
+                                smallPictureURL: '',
                                 partnership: 'NONE',
                                 isNew: true,
                             })}
@@ -429,7 +431,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     {
                         item?.pictureURL
                             ? <Image
-                                src={item?.pictureURL}
+                                src={item?.smallPictureURL}
                                 width={28}
                                 height={28}
                                 objectFit='contain'

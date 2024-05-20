@@ -143,6 +143,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
             name: '',
             pageLink: '',
             pictureURL: '',
+            smallPictureURL: '',
             partnership: 'NONE',
             isNew: true,
         })
@@ -160,6 +161,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
             price: 0,
             dealPrice: 0,
             pictureURL: '',
+            smallPictureURL: '',
             isNew: true,
         });
 
@@ -371,7 +373,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                 width={28}
                             >
                                 <Image
-                                    src={item?.pictureURL}
+                                    src={item?.smallPictureURL}
                                     width={28}
                                     height='auto'
                                     objectFit='cover'
@@ -420,7 +422,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                         item?.brand
                         ? item?.brand?.pictureURL
                             ? <Image
-                                src={item?.brand?.pictureURL}
+                                src={item?.brand?.smallPictureURL}
                                 alt={item?.brand?.name}
                                 width={28}
                                 height={28}

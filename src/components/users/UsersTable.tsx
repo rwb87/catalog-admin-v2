@@ -86,6 +86,7 @@ const UsersTable = (props: UsersTableProps) => {
                 type: type,
                 coverURL: '',
                 pictureURL: '',
+                smallPictureURL: '',
                 creatorBannerURL: '',
                 birthDate: null,
                 isNew: true,
@@ -288,7 +289,7 @@ const TableRow = (props: UsersTableRowProps) => {
                                 size='sm'
                                 mr={2}
                                 name={user?.username}
-                                src={user?.pictureURL}
+                                src={user?.smallPictureURL}
                             />
                             {user?.username || '-'}
                         </Flex>

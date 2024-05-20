@@ -143,7 +143,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         <Avatar
                             size='2xl'
                             name={editingUser?.name}
-                            src={editingUser?.pictureURL}
+                            src={editingUser?.smallPictureURL}
                             border='4px solid white'
                         />
 
@@ -362,7 +362,11 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
 
                         if(!photo) return;
 
-                        setEditingUser({ ...editingUser, pictureURL: URL.createObjectURL(photo) });
+                        setEditingUser({
+                            ...editingUser,
+                            pictureURL: URL.createObjectURL(photo),
+                            smallPictureURL: URL.createObjectURL(photo),
+                        });
                     }}
                 />
 

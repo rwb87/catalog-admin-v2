@@ -155,7 +155,7 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                     {
                         product?.pictureURL
                             ? <Image
-                                src={product?.pictureURL}
+                                src={product?.smallPictureURL}
                                 alt={product?.name}
                                 width={20}
                                 height={28}
