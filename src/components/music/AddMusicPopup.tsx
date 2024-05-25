@@ -1,17 +1,20 @@
 import { MUSIC_PROVIDERS } from "@/_config";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, Button, Flex, Image, Input, Modal, ModalBody, ModalContent, ModalOverlay, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, Image, Input, Modal, ModalBody, ModalContent, ModalOverlay, Text } from "@chakra-ui/react";
 import { IconLoader2 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AddMusicPopup = () => {
+    const audioPlayerRef = useRef<HTMLAudioElement>(null);
+
     const [isOpen, setIsOpen] = useState(false);
     const [link, setLink] = useState('');
     const [musicDetails, setMusicDetails] = useState<any>({});
     const [isLoading, setIsLoading] = useState(false);
     const [isAddingMusic, setIsAddingMusic] = useState(false);
     const [switchingTrack, setSwitchingTrack] = useState<any>({});
+    const [isPlaying, setIsPlaying] = useState(false);
 
     useEffect(() => {
         const togglePopup = (event?: any) => {
@@ -84,6 +87,7 @@ const AddMusicPopup = () => {
         }
 
         setIsLoading(false);
+        setIsPlaying(true);
     }
 
     const handleAddMusicToLibrary = async () => {
@@ -98,6 +102,19 @@ const AddMusicPopup = () => {
         }
 
         setIsAddingMusic(false);
+    }
+
+    const handlePreviewPlay = () => {
+        if (audioPlayerRef.current) {
+            if(isPlaying) {
+                audioPlayerRef.current.pause();
+                audioPlayerRef.current.currentTime = 0;
+                setIsPlaying(false);
+            } else {
+                audioPlayerRef.current.play();
+                setIsPlaying(true);
+            }
+        }
     }
 
     return (
@@ -164,16 +181,43 @@ const AddMusicPopup = () => {
                                             />
                                         </Box>
 
-                                        <Button
-                                            colorScheme='green'
-                                            size='sm'
-                                            width='full'
-                                            mt={4}
-                                            isLoading={isAddingMusic}
-                                            loadingText='Adding music...'
-                                            disabled={isAddingMusic}
-                                            onClick={handleAddMusicToLibrary}
-                                        >Add Music</Button>
+                                        {/* Audio Player */}
+                                        <audio
+                                            ref={audioPlayerRef}
+                                            src={musicDetails?.previewUrl}
+                                            controls={isPlaying}
+                                            autoPlay={isPlaying}
+                                            style={{ display: 'none' }}
+                                            onEnded={() => setIsPlaying(false)}
+                                            onError={() => setIsPlaying(false)}
+                                            onPause={() => setIsPlaying(false)}
+                                        />
+
+                                        <Grid
+                                            templateColumns={musicDetails?.previewUrl ? '1fr 1fr' : '1fr'}
+                                            gap={2}
+                                        >
+                                            {
+                                                musicDetails?.previewUrl && <Button
+                                                    colorScheme='gray'
+                                                    size='sm'
+                                                    width='full'
+                                                    mt={4}
+                                                    onClick={handlePreviewPlay}
+                                                >{isPlaying ? 'Stop' : 'Play'}</Button>
+                                            }
+
+                                            <Button
+                                                colorScheme='green'
+                                                size='sm'
+                                                width='full'
+                                                mt={4}
+                                                isLoading={isAddingMusic}
+                                                loadingText={switchingTrack?.id ? 'Switching Track...' : 'Adding to library...'}
+                                                disabled={isAddingMusic}
+                                                onClick={handleAddMusicToLibrary}
+                                            >{switchingTrack?.id ? 'Switch Track' : 'Add to library'}</Button>
+                                        </Grid>
                                     </Flex>
                                 </Flex>
                                 : null
