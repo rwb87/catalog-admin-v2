@@ -21,7 +21,14 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         if(!links?.length) return setEditedLinks([]);
 
         const newLinks = JSON.parse(JSON.stringify(links));
-        const sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+        let sortedLinks = newLinks.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
+
+        // Sort links by status active or inactive
+        sortedLinks = sortedLinks.sort((a: any, b: any) => {
+            if (a?.status === 'active' && b?.status === 'inactive') return -1;
+            if (a?.status === 'inactive' && b?.status === 'active') return 1;
+            return 0;
+        });
 
         setEditedLinks(sortedLinks);
     }, [links]);
@@ -75,13 +82,6 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
     }
 
     const handleSave = async () => {
-
-        // Check if there is an Alpha link
-        const hasAlphaLink = editedLinks.filter((link: any) => link.linkType === 'ALPHA').length;
-        if (!hasAlphaLink) return notify('A product must have an Alpha link');
-
-        // Check if there is more than one Alpha link
-        if (hasAlphaLink > 1) return notify('A product can only have one Alpha link');
 
         // Filter out empty links
         const filteredLinks = editedLinks.filter((link: any) => link.link.trim() !== '');
