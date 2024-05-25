@@ -358,6 +358,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                         <Tr>
                             <Th>Name</Th>
                             <Th>Image</Th>
+                            <Th>Image Size</Th>
                             <Th textAlign='center'>Website</Th>
                             <Th textAlign='center'># of Products</Th>
                             <Th textAlign='center'>Partnership</Th>
@@ -447,6 +448,9 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             />
                             : <IconUnlink size={26} />
                     }
+                </Td>
+                <Td>
+                    W: {item?.photoMetadataParsed?.width}px, H: {item?.photoMetadataParsed?.height}px
                 </Td>
                 <Td textAlign='center'>
                     {
