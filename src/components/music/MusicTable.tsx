@@ -1,11 +1,12 @@
-import { Avatar, Box, Flex, IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconExternalLink, IconLoader2, IconPlayerPlay, IconPlayerStop, IconTrash, IconWorldWww } from "@tabler/icons-react";
+import { Avatar, Box, Flex, IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconExternalLink, IconLoader2, IconPlayerPlay, IconPlayerStop, IconSwitch, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import Pagination from "@/components/Pagination";
 import { MUSIC_PROVIDERS } from "@/_config";
 import Confirmation from "@/components/Confirmation";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
+import AddMusicPopup from "./AddMusicPopup";
 
 type MusicsTableProps = {
     data: any,
@@ -110,6 +111,9 @@ const MusicsTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Musi
                 onConfirm={handleDelete}
                 onCancel={() => setDeletingData({})}
             />
+
+            {/* Add Music Popup */}
+            <AddMusicPopup />
         </>
     )
 }
@@ -137,6 +141,10 @@ const TableRow = ({ item, onDelete }: TableRowProps) => {
                 setIsPlaying(true);
             }
         }
+    }
+
+    const handleSwitchTrack = () => {
+        window.dispatchEvent(new CustomEvent('modal:add-music', { detail: { music: item } }));
     }
 
     return (
@@ -229,6 +237,18 @@ const TableRow = ({ item, onDelete }: TableRowProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
+                    <Tooltip label='Switch track'>
+                        <IconButton
+                            aria-label='Switch'
+                            variant='ghost'
+                            colorScheme='gray'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconSwitch size={22} />}
+                            onClick={handleSwitchTrack}
+                        />
+                    </Tooltip>
+
                     <IconButton
                         aria-label='Delete'
                         variant='ghost'
