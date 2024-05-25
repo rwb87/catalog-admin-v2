@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Heading, IconButton, Switch, Text, Tooltip } from "@chakra-ui/react";
 import { ReactElement, useEffect, useMemo, useState } from "react";
-import { IconCurrencyDollar, IconLogout, IconSettings } from "@tabler/icons-react";
+import { IconLogout, IconSettings } from "@tabler/icons-react";
 import { useGlobalVolatileStorage, useUi, useUser } from "@/_store";
 import { Link, useLocation } from "react-router-dom";
 import { RiMenu5Line } from "react-icons/ri";
@@ -13,14 +13,6 @@ type AppLayoutProps = {
 }
 const AppLayout = ({ children }: AppLayoutProps) => {
     const [activePage, setActivePage] = useState<string>('');
-
-    const iconSize = useMemo(() => {
-        return window?.innerWidth > 1600
-            ? '28px'
-            : window?.innerWidth > 768
-                ? '16px'
-                : '24px';
-    }, []);
 
     const sidebarItems = useMemo(() => ([
         {
@@ -60,7 +52,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             isDefault: true,
         },
         {
-            icon: <IconCurrencyDollar style={{ width: iconSize, height: iconSize }}/>,
+            icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M13 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M9 17v-13h10v13" /><path d="M9 8h10" /></svg>,
+            label: "Music",
+            link: "/music",
+            isDefault: true,
+        },
+        {
+            icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.7 8a3 3 0 0 0 -2.7 -2h-4a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6h-4a3 3 0 0 1 -2.7 -2" /><path d="M12 3v3m0 12v3" /></svg>,
             label: "Earnings",
             link: "/earnings",
             isDefault: true,
@@ -262,7 +260,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
                             color : 'black',
                             opacity: 1,
                         }}
-                        padding={isCollapsed ? 1 : 4}
+                        padding={isCollapsed ? '3px' : 4}
                     >
                         {
                             typeof icon === 'string'

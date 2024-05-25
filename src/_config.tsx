@@ -28,3 +28,19 @@ export const LOOK_STATUSES = {
     IN_DATA_MANAGEMENT: 'in_data_management',
 }
 export type LOOK_STATUSES = typeof LOOK_STATUSES[keyof typeof LOOK_STATUSES];
+
+export const MUSIC_PROVIDERS = {
+    SPOTIFY: {
+        name: 'Spotify',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Spotify_logo_with_text.svg/559px-Spotify_logo_with_text.svg.png?20160123211747',
+    },
+    APPLE_MUSIC: {
+        name: 'Apple Music',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Apple_Music_logo.svg/2560px-Apple_Music_logo.svg.png',
+    },
+    CUSTOM: {
+        name: 'Custom',
+        logo: null,
+    },
+}
+export type MUSIC_PROVIDERS = typeof MUSIC_PROVIDERS[keyof typeof MUSIC_PROVIDERS];
