@@ -25,7 +25,9 @@ import BrandsView from '@/pages/brands';
 import MusicView from '@/pages/music';
 
 import EarningsView from '@/pages/earnings';
-import SettingsView from '@/pages/settings';
+
+import SettingsViewGeneral from '@/pages/settings/general';
+import SettingsViewCreatorAffiliateLinks from '@/pages/settings/creator-affiliate-links';
 
 export default function Routes() {
     return(
@@ -57,7 +59,8 @@ export default function Routes() {
 
                     <Route path="/earnings" element={<EarningsView />} />
 
-                    <Route path="/settings" element={<SettingsView />} />
+                    <Route path="/settings" element={<SettingsViewGeneral />} />
+                    <Route path="/settings/creator-affiliate-links" element={<SettingsViewCreatorAffiliateLinks />} />
 
                     {/* Error Pages */}
                     <Route path="*" element={<FourOhFour />} />

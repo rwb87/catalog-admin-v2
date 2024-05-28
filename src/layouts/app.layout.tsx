@@ -82,6 +82,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             isDefault: false,
         },
     ]), []);
+    const extraPages = ['/settings', '/settings/creator-affiliate-links'];
 
     useEffect(() => {
         const getActivePage = (event: any) => {
@@ -113,6 +114,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 <Sidebar
                     sidebarItems={sidebarItems}
                     activePage={activePage}
+                    extraPages={extraPages}
                 />
             </Box>
 
@@ -126,6 +128,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 <TopBar
                     activePage={activePage}
                     sidebarItems={sidebarItems}
+                    extraPages={extraPages}
                 />
             </Box>
 
@@ -209,8 +212,9 @@ type SidebarProps = {
         isDefault?: boolean;
     }[];
     activePage: string;
+    extraPages: string[];
 }
-const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
+const Sidebar = ({ sidebarItems, activePage, extraPages }: SidebarProps) => {
     const { isSidebarCollapsed: isCollapsed, toggleSidebar } = useUi() as any;
     const { role, clearToken } = useUser() as any;
     const [sidebarDefaultView, setSidebarDefaultView] = useState(true);
@@ -285,7 +289,6 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
         )
     }
 
-    const extraPages = ['/settings'];
     const isSidebarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || extraPages.includes(location.pathname);
 
     return (
@@ -437,7 +440,7 @@ const Sidebar = ({ sidebarItems, activePage }: SidebarProps) => {
     )
 }
 
-const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
+const TopBar = ({ sidebarItems, activePage, extraPages }: SidebarProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
     const { clearToken } = useUser() as any;
@@ -493,7 +496,6 @@ const TopBar = ({ sidebarItems, activePage }: SidebarProps) => {
         )
     }
 
-    const extraPages = ['/settings'];
     const isTopbarVisible = sidebarItems.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || extraPages.includes(location.pathname);
 
     return (
