@@ -34,7 +34,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
         newImages.filter((image: any) => image.deletedAt === null);
 
         // Order by orderIndex
-        newImages.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+        // newImages.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
 
         setList(JSON.parse(JSON.stringify(newImages)));
     }, [images]);
