@@ -58,7 +58,7 @@ const MusicsTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Musi
                             <Th textAlign='center'>Preview</Th>
                             <Th textAlign='center'>Link</Th>
                             <Th textAlign='center'>Products</Th>
-                            <Th textAlign='center'>Type</Th>
+                            <Th textAlign='center'>Provider</Th>
                             <Th textAlign='center'>Added By</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
@@ -219,7 +219,8 @@ const TableRow = ({ item, onDelete }: TableRowProps) => {
                     <Image
                         src={MUSIC_PROVIDERS[item?.type?.toUpperCase()]?.logo}
                         alt={item?.type}
-                        width={20}
+                        title={MUSIC_PROVIDERS[item?.type?.toUpperCase()]?.name}
+                        width={8}
                         height='auto'
                         loading='lazy'
                         mx='auto'
