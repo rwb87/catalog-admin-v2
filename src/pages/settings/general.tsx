@@ -94,7 +94,7 @@ const SettingsViewGeneral = () => {
                 <Row
                     label="Brand Image Size (in px)"
                     description="This will change the brand image size for the mobile application"
-                    placeholder='Enter size in px. e.g. "300"'
+                    placeholder='Enter size in px. e.g. "300px"'
                     regex="^\d+$"
                     name={SETTINGS.BRAND_IMAGE_SIZE}
                     value={settings?.find((setting: any) => setting.key === SETTINGS.BRAND_IMAGE_SIZE && setting.type === 'MOBILE')?.value}
