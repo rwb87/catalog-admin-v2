@@ -80,7 +80,7 @@ const SettingsViewAffiliateLinks = () => {
         <SettingsLayout isLoading={isLoading}>
             <Box p={4}>
                 <Heading as='h2' size='sm' mb={2}>Creator Affiliate Links</Heading>
-                <Heading as='h3' size='xs' fontWeight='normal'>If submitted product links contains any of these following links, they will trigger Creator Affiliate.</Heading>
+                <Heading as='h3' size='xs' fontWeight='normal'>If submitted product links contains any of the following combinations, they will trigger Creator Affiliate.</Heading>
 
                 {/* Rows */}
                 <Grid
