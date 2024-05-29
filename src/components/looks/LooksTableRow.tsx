@@ -65,7 +65,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
         }));
     }
 
-    const handleUpdateData = async (data: any, id?: string) => {
+    const handleUpdateData = async (data: any, id?: string, refreshData: boolean = true) => {
         setIsProcessing(true);
 
         try {
@@ -84,7 +84,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             notify(message, 3000);
         }
 
-        window.dispatchEvent(new CustomEvent('refresh:data'));
+        if(refreshData) window.dispatchEvent(new CustomEvent('refresh:data'));
         setIsProcessing(false);
     }
 
@@ -254,7 +254,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 defaultChecked={item?.enabled}
                                 onChange={() => handleUpdateData({
                                     enabled: !item?.enabled,
-                                }, item?.id)}
+                                }, item?.id, false)}
                             />
                         </Td>
                         <Td
@@ -272,7 +272,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 defaultChecked={item?.carouselEnabled}
                                 onChange={() => handleUpdateData({
                                     carouselEnabled: !item?.carouselEnabled,
-                                }, item?.id)}
+                                }, item?.id, false)}
                             />
                         </Td>
                         <Td
@@ -293,7 +293,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
 
                                     handleUpdateData({
                                         priority: parseInt(e.target.value),
-                                    }, item?.id)
+                                    }, item?.id, false)
                                 }}
                             />
                         </Td>
