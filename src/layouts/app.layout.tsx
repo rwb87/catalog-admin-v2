@@ -94,8 +94,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         }
 
         window?.addEventListener('set:active-page', getActivePage);
-
-        return () => window?.removeEventListener('set:active-page', getActivePage);
     }, []);
 
     return (
@@ -146,10 +144,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 const Content = ({ children, activePage }: { children: ReactElement | ReactElement[], activePage: string }) => {
     const { isSidebarCollapsed } = useUi() as any;
     const { setBrands, setStyles } = useGlobalVolatileStorage() as any;
+    const location = useLocation();
 
     useEffect(() => {
-        window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
-    }, [activePage]);
+        if(window && location && activePage) window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
+    }, [activePage, location]);
 
     useEffect(() => {
         fetchGlobalData();
