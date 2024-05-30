@@ -93,7 +93,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             document.title = `${Config.APP_NAME} | ${activePage}`;
         }
 
-        return window?.addEventListener('set:active-page', getActivePage);
+        window?.addEventListener('set:active-page', getActivePage);
+
+        return () => window?.removeEventListener('set:active-page', getActivePage);
     }, []);
 
     return (
