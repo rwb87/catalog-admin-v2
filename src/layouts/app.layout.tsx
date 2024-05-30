@@ -147,7 +147,11 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
     const location = useLocation();
 
     useEffect(() => {
-        if(window && location && activePage) window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
+        if(window && location && activePage) {
+            setTimeout(() => {
+                window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
+            }, 1000);
+        }
     }, [activePage, location]);
 
     useEffect(() => {
