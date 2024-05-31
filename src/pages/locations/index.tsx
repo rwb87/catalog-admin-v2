@@ -1,4 +1,4 @@
-import MusicsTable from "@/components/music/MusicTable";
+import LocationTable from "@/components/location/LocationTable";
 import fetch from "@/helpers/fetch";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
@@ -6,7 +6,7 @@ import { Flex, IconButton, Input, InputGroup, InputLeftElement, Tooltip } from "
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-const MusicView = () => {
+const LocationView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
@@ -38,11 +38,11 @@ const MusicView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/musics?search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
+                endpoint: `/locations?search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
-            setData(response?.musics);
+            setData(response?.locations);
             setPagination({
                 ...pagination,
                 total: response?.count,
@@ -55,7 +55,7 @@ const MusicView = () => {
     }
 
     return (
-        <Content activePage="Musics">
+        <Content activePage="Locations">
 
             {/* Search and Options */}
             <Flex
@@ -90,7 +90,7 @@ const MusicView = () => {
                     }}
                     gap={2}
                 >
-                    <h1 className="page-heading">Musics</h1>
+                    <h1 className="page-heading">Locations</h1>
                 </Flex>
 
                 {/* Search and Actions */}
@@ -168,14 +168,14 @@ const MusicView = () => {
                             }}
                             size='sm'
                             icon={<IconPlus size={20} />}
-                            onClick={() => window.dispatchEvent(new Event('modal:add-music'))}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('action:new-location'))}
                         />
                     </Tooltip>
                 </Flex>
             </Flex>
 
             {/* Content */}
-            <MusicsTable
+            <LocationTable
                 data={data}
                 isLoading={isLoading}
                 pagination={pagination}
@@ -184,11 +184,10 @@ const MusicView = () => {
                     page: pageNumber,
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
-                onEdit={(id) => console.log('Edit', id)}
                 onDelete={getData}
             />
         </Content>
     )
 }
 
-export default MusicView;
+export default LocationView;

@@ -24,6 +24,8 @@ import BrandsView from '@/pages/brands';
 
 import MusicView from '@/pages/music';
 
+import LocationView from './pages/locations';
+
 import EarningsView from '@/pages/earnings';
 
 import SettingsViewGeneral from '@/pages/settings/general';
@@ -55,7 +57,9 @@ export default function Routes() {
                     <Route path="/products" element={<ProductsView />} />
                     <Route path="/products/management" element={<ProductsView />} />
 
-                    <Route path="/music" element={<MusicView />} />
+                    <Route path="/musics" element={<MusicView />} />
+
+                    <Route path="/locations" element={<LocationView />} />
 
                     <Route path="/earnings" element={<EarningsView />} />
 

@@ -53,8 +53,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         },
         {
             icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M13 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M9 17v-13h10v13" /><path d="M9 8h10" /></svg>,
-            label: "Music",
-            link: "/music",
+            label: "Musics",
+            link: "/musics",
+            isDefault: true,
+        },
+        {
+            icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>,
+            label: "Locations",
+            link: "/locations",
             isDefault: true,
         },
         {
@@ -146,13 +152,15 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
     const { setBrands, setStyles } = useGlobalVolatileStorage() as any;
     const location = useLocation();
 
+    const isPageReady = useMemo(() => activePage !== '' && location ? true : false, [activePage, location]);
+
     useEffect(() => {
-        if(window && location && activePage) {
+        if(window && isPageReady) {
             setTimeout(() => {
                 window?.dispatchEvent(new CustomEvent('set:active-page', { detail: { activePage } }));
-            }, 1000);
+            }, isPageReady ? 0 : 1000);
         }
-    }, [activePage, location]);
+    }, [isPageReady, activePage]);
 
     useEffect(() => {
         fetchGlobalData();

@@ -85,6 +85,11 @@ $table-style: (
     }
 }
 
+.nil {
+    font-style: italic;
+    opacity: 0.5;
+}
+
 .table-responsive {
     overflow-x: auto;
     width: 100%;
