@@ -168,7 +168,6 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
                             type="number"
                             step="any"
                             autoComplete="off"
-                            required={true}
                             value={editingData?.latitude || ''}
                             onChange={(e) => setEditingData({ ...editingData, latitude: e.target.value })}
                         />
@@ -180,7 +179,6 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
                             type="number"
                             step="any"
                             autoComplete="off"
-                            required={true}
                             value={editingData?.longitude || ''}
                             onChange={(e) => setEditingData({ ...editingData, longitude: e.target.value })}
                         />
@@ -196,7 +194,6 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
                                 <Input
                                     type="text"
                                     autoComplete="off"
-                                    required={true}
                                     value={editingData?.website || ''}
                                     onChange={(e) => setEditingData({ ...editingData, website: e.target.value })}
                                 />
@@ -208,7 +205,6 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
                                 <Input
                                     type="text"
                                     autoComplete="off"
-                                    required={true}
                                     value={editingData?.appleMapsUrl || ''}
                                     onChange={(e) => setEditingData({ ...editingData, appleMapsUrl: e.target.value })}
                                 />
@@ -220,7 +216,6 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
                                 <Input
                                     type="text"
                                     autoComplete="off"
-                                    required={true}
                                     value={editingData?.googleMapsUrl || ''}
                                     onChange={(e) => setEditingData({ ...editingData, googleMapsUrl: e.target.value })}
                                 />
