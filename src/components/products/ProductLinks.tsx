@@ -122,7 +122,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         const alerts: any = [];
 
         // Status: Unavailable
-        if(!link?.scrapedDataParsed) {
+        if(typeof link?.scrapedDataParsed === 'undefined' || typeof link?.scrapedDataParsed?.status === 'undefined') {
             alerts.push(
                 <Tooltip label='Link data unavailable'>
                     <IconUnlink size={20} />
