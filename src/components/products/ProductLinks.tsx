@@ -116,7 +116,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
     }
 
     const renderLinkStatus = (link: any) => {
-        const isDataAvailable = typeof link?.scrapedDataParsed === 'undefined' || typeof link?.scrapedDataParsed?.status === 'undefined';
+        const isDataAvailable = typeof link?.scrapedDataParsed !== 'undefined' && typeof link?.scrapedDataParsed?.status !== 'undefined';
         const is404 = link?.scrapedDataParsed?.status === 404;
         const isOtherError = link?.scrapedDataParsed?.status !== 200 && link?.scrapedDataParsed?.status !== 404;
         const isOutOfStock = link?.scrapedDataParsed?.status === 200 && (link?.scrapedDataParsed?.outOfStock || false);
@@ -125,7 +125,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         // Status: Unavailable
         if(!isDataAvailable) {
             alerts.push(
-                <Tooltip label='Link data unavailable'>
+                <Tooltip label='Link information unavailable'>
                     <IconUnlink size={20} />
                 </Tooltip>
             )
