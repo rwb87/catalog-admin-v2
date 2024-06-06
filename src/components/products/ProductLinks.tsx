@@ -116,13 +116,14 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
     }
 
     const renderLinkStatus = (link: any) => {
+        const isDataAvailable = typeof link?.scrapedDataParsed === 'undefined' || typeof link?.scrapedDataParsed?.status === 'undefined';
         const is404 = link?.scrapedDataParsed?.status === 404;
         const isOtherError = link?.scrapedDataParsed?.status !== 200 && link?.scrapedDataParsed?.status !== 404;
         const isOutOfStock = link?.scrapedDataParsed?.status === 200 && (link?.scrapedDataParsed?.outOfStock || false);
         const alerts: any = [];
 
         // Status: Unavailable
-        if(typeof link?.scrapedDataParsed === 'undefined' || typeof link?.scrapedDataParsed?.status === 'undefined') {
+        if(!isDataAvailable) {
             alerts.push(
                 <Tooltip label='Link data unavailable'>
                     <IconUnlink size={20} />
@@ -131,7 +132,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         }
 
         // Status: 404 Link not found
-        if(is404) {
+        if(isDataAvailable && is404) {
             alerts.push(
                 <Tooltip label='Link not found'>
                     <IconError404 size={20} />
@@ -140,7 +141,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         }
 
         // Status: Other error
-        if(isOtherError) {
+        if(isDataAvailable && isOtherError) {
             alerts.push(
                 <Tooltip label={`Status: ${link?.scrapedDataParsed?.status}`}>
                     <IconAlertTriangle size={20} />
@@ -149,7 +150,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         }
 
         // Status: 200 Out of stock
-        if(isOutOfStock) {
+        if(isDataAvailable && isOutOfStock) {
             alerts.push(
                 <Tooltip label='Out of stock'>
                     <IconShoppingCartExclamation size={20} />
