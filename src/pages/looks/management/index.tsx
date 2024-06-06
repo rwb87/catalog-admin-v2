@@ -631,6 +631,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                     look={item}
                     onSave={() => {
                         setIsProductsExpanded(false);
+                        window?.dispatchEvent(new CustomEvent('refresh:data'));
                     }}
                 />
             </Box>

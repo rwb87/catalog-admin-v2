@@ -428,7 +428,10 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                 <Td colSpan={20}>
                     <LookProducts
                         look={item}
-                        onSave={() => setIsProductsExpanded(false)}
+                        onSave={() => {
+                            setIsProductsExpanded(false)
+                            window?.dispatchEvent(new CustomEvent('refresh:data'));
+                        }}
                     />
                 </Td>
             </Tr>
