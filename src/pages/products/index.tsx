@@ -5,7 +5,7 @@ import sortData from "@/helpers/sorting";
 import { encodeAmpersand } from "@/helpers/utils";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
+import { Divider, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -84,6 +84,12 @@ const ProductsView = () => {
 
     const totalClickouts = useMemo(() => {
         return data.reduce((acc: number, item: any) => acc + (item?.clickouts || 0), 0);
+    }, [data]);
+
+    const proudctAlters = useMemo(() => {
+        if (!data) return 0;
+
+        return data?.reduce((acc: number, item: any) => acc + (item?.alters || 0), 0);
     }, [data]);
 
     return (
@@ -224,6 +230,8 @@ const ProductsView = () => {
                             <option value=''>All Time</option>
                         </Select>
 
+                        <Divider orientation='vertical' height='20px' />
+
                         <Text
                             color='green.500'
                             fontWeight='bold'
@@ -233,6 +241,18 @@ const ProductsView = () => {
                             }}
                             whiteSpace='nowrap'
                         >Clickouts: {totalClickouts || 0}</Text>
+
+                        <Divider orientation='vertical' height='20px' />
+
+                        <Text
+                            color='red.500'
+                            fontWeight='bold'
+                            fontSize={{
+                                base: '10px',
+                                '2xl': '12px',
+                            }}
+                            whiteSpace='nowrap'
+                        >Alerts: {proudctAlters || 0}</Text>
                     </Flex>
                 </Flex>
 

@@ -1,7 +1,7 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Divider, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import UsersTable from "@/components/users/UsersTable";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
@@ -149,10 +149,13 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         {
                             userType === ROLES.CREATOR && <>
                                 <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
+                                <Divider orientation='vertical' height='40px' />
                                 <Text ml={2} color='green.500'>Incoming <br />Clickouts: {totalIncomingClickouts || 0}</Text>
                             </>
                         }
+                        <Divider orientation='vertical' height='40px' />
                         <Text ml={2} color='blue.500'>Outgoing <br />Discovers: {totalOutgoingDiscovers || 0}</Text>
+                        <Divider orientation='vertical' height='40px' />
                         <Text ml={2} color='green.500'>Outgoing <br />Clickouts: {totalOutgoingClickouts || 0}</Text>
                     </Box>
 

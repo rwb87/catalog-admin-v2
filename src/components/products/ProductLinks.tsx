@@ -1,9 +1,9 @@
 import { PRODUCT_LINK_TYPES } from "@/_config";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconAlertTriangle, IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconError404, IconPlus, IconShoppingCartExclamation, IconTrash, IconUnlink } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 
 type LookProductsProps = {
@@ -115,6 +115,66 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         onSave?.(links);
     }
 
+    const renderLinkStatus = (link: any) => {
+        const is404 = link?.scrapedDataParsed?.status === 404;
+        const isOtherError = link?.scrapedDataParsed?.status !== 200 && link?.scrapedDataParsed?.status !== 404;
+        const isOutOfStock = link?.scrapedDataParsed?.status === 200 && (link?.scrapedDataParsed?.outOfStock || false);
+        const alerts: any = [];
+
+        // Status: Unavailable
+        if(!link?.scrapedDataParsed) {
+            alerts.push(
+                <Tooltip label='Link data unavailable'>
+                    <IconUnlink size={20} />
+                </Tooltip>
+            )
+        }
+
+        // Status: 404 Link not found
+        if(is404) {
+            alerts.push(
+                <Tooltip label='Link not found'>
+                    <IconError404 size={20} />
+                </Tooltip>
+            )
+        }
+
+        // Status: Other error
+        if(isOtherError) {
+            alerts.push(
+                <Tooltip label={`Status: ${link?.scrapedDataParsed?.status}`}>
+                    <IconAlertTriangle size={20} />
+                </Tooltip>
+            )
+        }
+
+        // Status: 200 Out of stock
+        if(isOutOfStock) {
+            alerts.push(
+                <Tooltip label='Out of stock'>
+                    <IconShoppingCartExclamation size={20} />
+                </Tooltip>
+            )
+        }
+
+        // Return if there are alerts
+        if(alerts?.length) {
+            return (
+                <Flex
+                    alignItems='center'
+                    justifyContent='center'
+                    gap={2}
+                    width='full'
+                    color='red.500'
+                    textAlign='center'
+                >{ alerts?.map((alert: any, index: number) => <React.Fragment key={index}>{alert}</React.Fragment>) }</Flex>
+            )
+        }
+
+        // Return if everything is OK
+        return <Text color='green.500' fontSize='sm' fontWeight='bold'>OK</Text>
+    }
+
     return (
         <>
             <Table>
@@ -126,149 +186,155 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                         <Th>Price</Th>
                         <Th>Discount Price</Th>
                         <Th>Status</Th>
+                        <Th textAlign='center'>Link Status</Th>
                         <Th textAlign='right'>Actions</Th>
                     </Tr>
                 </Thead>
 
                 <Tbody>
                     {
-                        editedLinks?.map((link: any, index: number) => <Tr key={index}>
-                            <Td width='30px' textAlign='left'>
-                                <IconCornerDownRight size={20} />
-                            </Td>
-                            <Td>
-                                <Input
-                                    type='text'
-                                    placeholder='Link'
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    px={6}
-                                    size='sm'
-                                    rounded='full'
-                                    autoComplete="off"
-                                    required={true}
-                                    name='link'
-                                    readOnly={!allowModify}
-                                    value={link?.link ?? ''}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                />
-                            </Td>
-                            <Td>
-                                <Select
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    size='sm'
-                                    rounded='full'
-                                    width={60}
-                                    name='linkType'
-                                    isReadOnly={!allowModify}
-                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
-                                    value={link?.linkType ?? ''}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                >
-                                    {
-                                        Object.keys(PRODUCT_LINK_TYPES).map((key: any) => (
-                                            PRODUCT_LINK_TYPES[key] === PRODUCT_LINK_TYPES.CREATOR_AFFILIATE
-                                                ? <option key={key} value={PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}>⭐ {PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}</option>
-                                                : <option key={key} value={PRODUCT_LINK_TYPES[key]}>{PRODUCT_LINK_TYPES[key]}</option>
-                                        ))
-                                    }
-                                </Select>
-                            </Td>
-                            <Td maxWidth='200px'>
-                                <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder='Price'
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    px={6}
-                                    size='sm'
-                                    rounded='full'
-                                    autoComplete="off"
-                                    name='price'
-                                    readOnly={!allowModify}
-                                    value={link?.price ?? ''}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                />
-                            </Td>
-                            <Td maxWidth='200px'>
-                                <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder='Discount Price'
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    px={6}
-                                    size='sm'
-                                    rounded='full'
-                                    autoComplete="off"
-                                    name='discountPrice'
-                                    readOnly={!allowModify}
-                                    value={link?.discountPrice ?? ''}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                />
-                            </Td>
-                            <Td>
-                                <Select
-                                    variant='solid'
-                                    borderWidth={1}
-                                    borderColor='gray.100'
-                                    size='sm'
-                                    rounded='full'
-                                    width={28}
-                                    name='status'
-                                    isReadOnly={!allowModify}
-                                    icon={allowModify ? <BiChevronDown size={2} /> : <></>}
-                                    value={link?.status ?? false}
-                                    onChange={(e) => handleInputChange(e, index)}
-                                >
-                                    <option value='active'>Active</option>
-                                    <option value='inactive'>Inactive</option>
-                                </Select>
-                            </Td>
-                            <Td
-                                textAlign='right'
-                                whiteSpace='nowrap'
-                                display={allowModify ? 'table-cell' : 'none'}
-                            >
-                                <IconButton
-                                    aria-label='Move Up'
-                                    variant='ghost'
-                                    colorScheme='blue'
-                                    rounded='full'
-                                    size='sm'
-                                    icon={<IconArrowUp size={22} />}
-                                    onClick={() => handleMoveUp(index)}
-                                />
+                        editedLinks?.map((link: any, index: number) => {
+                            return (
+                                <Tr key={index}>
+                                    <Td width='30px' textAlign='left'>
+                                        <IconCornerDownRight size={20} />
+                                    </Td>
+                                    <Td>
+                                        <Input
+                                            type='text'
+                                            placeholder='Link'
+                                            variant='solid'
+                                            borderWidth={1}
+                                            borderColor='gray.100'
+                                            px={6}
+                                            size='sm'
+                                            rounded='full'
+                                            autoComplete="off"
+                                            required={true}
+                                            name='link'
+                                            readOnly={!allowModify}
+                                            value={link?.link ?? ''}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                        />
+                                    </Td>
+                                    <Td>
+                                        <Select
+                                            variant='solid'
+                                            borderWidth={1}
+                                            borderColor='gray.100'
+                                            size='sm'
+                                            rounded='full'
+                                            width={60}
+                                            name='linkType'
+                                            isReadOnly={!allowModify}
+                                            icon={allowModify ? <BiChevronDown size={2} /> : <></>}
+                                            value={link?.linkType ?? ''}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                        >
+                                            {
+                                                Object.keys(PRODUCT_LINK_TYPES).map((key: any) => (
+                                                    PRODUCT_LINK_TYPES[key] === PRODUCT_LINK_TYPES.CREATOR_AFFILIATE
+                                                        ? <option key={key} value={PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}>⭐ {PRODUCT_LINK_TYPES.CREATOR_AFFILIATE}</option>
+                                                        : <option key={key} value={PRODUCT_LINK_TYPES[key]}>{PRODUCT_LINK_TYPES[key]}</option>
+                                                ))
+                                            }
+                                        </Select>
+                                    </Td>
+                                    <Td maxWidth='200px'>
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder='Price'
+                                            variant='solid'
+                                            borderWidth={1}
+                                            borderColor='gray.100'
+                                            px={6}
+                                            size='sm'
+                                            rounded='full'
+                                            autoComplete="off"
+                                            name='price'
+                                            readOnly={!allowModify}
+                                            value={link?.price ?? ''}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                        />
+                                    </Td>
+                                    <Td maxWidth='200px'>
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            placeholder='Discount Price'
+                                            variant='solid'
+                                            borderWidth={1}
+                                            borderColor='gray.100'
+                                            px={6}
+                                            size='sm'
+                                            rounded='full'
+                                            autoComplete="off"
+                                            name='discountPrice'
+                                            readOnly={!allowModify}
+                                            value={link?.discountPrice ?? ''}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                        />
+                                    </Td>
+                                    <Td>
+                                        <Select
+                                            variant='solid'
+                                            borderWidth={1}
+                                            borderColor='gray.100'
+                                            size='sm'
+                                            rounded='full'
+                                            width={28}
+                                            name='status'
+                                            isReadOnly={!allowModify}
+                                            icon={allowModify ? <BiChevronDown size={2} /> : <></>}
+                                            value={link?.status ?? false}
+                                            onChange={(e) => handleInputChange(e, index)}
+                                        >
+                                            <option value='active'>Active</option>
+                                            <option value='inactive'>Inactive</option>
+                                        </Select>
+                                    </Td>
+                                    <Td textAlign='center'>{renderLinkStatus(link)}</Td>
+                                    <Td
+                                        textAlign='right'
+                                        whiteSpace='nowrap'
+                                        display={allowModify ? 'table-cell' : 'none'}
+                                    >
+                                        <IconButton
+                                            aria-label='Move Up'
+                                            variant='ghost'
+                                            colorScheme='blue'
+                                            rounded='full'
+                                            size='sm'
+                                            icon={<IconArrowUp size={22} />}
+                                            onClick={() => handleMoveUp(index)}
+                                        />
 
-                                <IconButton
-                                    aria-label='Move Down'
-                                    variant='ghost'
-                                    colorScheme='blue'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={4}
-                                    icon={<IconArrowDown size={22} />}
-                                    onClick={() => handleMoveDown(index)}
-                                />
+                                        <IconButton
+                                            aria-label='Move Down'
+                                            variant='ghost'
+                                            colorScheme='blue'
+                                            rounded='full'
+                                            size='sm'
+                                            ml={4}
+                                            icon={<IconArrowDown size={22} />}
+                                            onClick={() => handleMoveDown(index)}
+                                        />
 
-                                <IconButton
-                                    aria-label='Delete'
-                                    variant='ghost'
-                                    colorScheme='red'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={4}
-                                    icon={<IconTrash size={22} />}
-                                    onClick={() => handleRemove(index)}
-                                />
-                            </Td>
-                        </Tr>)
+                                        <IconButton
+                                            aria-label='Delete'
+                                            variant='ghost'
+                                            colorScheme='red'
+                                            rounded='full'
+                                            size='sm'
+                                            ml={4}
+                                            icon={<IconTrash size={22} />}
+                                            onClick={() => handleRemove(index)}
+                                        />
+                                    </Td>
+                                </Tr>
+                            )
+                        })
                     }
                 </Tbody>
             </Table>
