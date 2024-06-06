@@ -6,6 +6,7 @@ import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import Confirmation from "@/components/Confirmation";
 import notify from "@/helpers/notify";
 import fetch from "@/helpers/fetch";
+import KeywordsPopover from "@/components/products/KeywordsPopover";
 
 type BrandProductsProps = {
     brand: any;
@@ -196,11 +197,14 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                 </Td>
                 <Td textAlign='center' color='green.500'>{product?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
+                    <KeywordsPopover keywords={product?.keywords} />
+
                     <IconButton
                         aria-label="Edit"
                         variant='ghost'
                         rounded='full'
                         size='sm'
+                        ml={4}
                         icon={<IconEdit size={22} />}
                         onClick={() => onEdit?.(product)}
                     />

@@ -10,6 +10,7 @@ import { useGlobalVolatileStorage } from "@/_store";
 import { encodeAmpersand } from "@/helpers/utils";
 import UpdateBrandDrawer from "../brands/UpdateBrandDrawer";
 import UpdateProductDrawer from "../products/UpdateProductDrawer";
+import KeywordsPopover from "@/components/products/KeywordsPopover";
 
 type LookProductsProps = {
     look: any,
@@ -481,6 +482,8 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                         icon={<IconArrowDown size={22} />}
                         onClick={() => handleMoveDown(index)}
                     />
+
+                    <KeywordsPopover keywords={item?.keywords} />
 
                     <IconButton
                         aria-label="Edit"

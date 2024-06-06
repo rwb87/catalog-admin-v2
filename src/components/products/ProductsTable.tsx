@@ -10,6 +10,7 @@ import ProductLinks from "./ProductLinks";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { ROLES } from "@/_config";
 import UsersTable from "@/components/users/UsersTable";
+import KeywordsPopover from "./KeywordsPopover";
 
 type ProductsTableProps = {
     data: any,
@@ -300,11 +301,14 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
+                    <KeywordsPopover keywords={item?.keywords} />
+
                     <IconButton
                         aria-label="Edit"
                         variant='ghost'
                         rounded='full'
                         size='sm'
+                        ml={4}
                         icon={<IconEdit size={22} />}
                         onClick={() => onEdit(item)}
                     />
