@@ -398,7 +398,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps
         const openProductToModify = (event: any) => {
             const { product = null, brand = null } = event.detail;
 
-            if(!product || !brand) return;
+            if(!product) return;
 
             setEditingData(product);
             setBrand(brand);

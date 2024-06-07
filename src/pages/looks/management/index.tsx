@@ -288,7 +288,7 @@ const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendL
         const openProductToModify = (event: any) => {
             const { product = null, brand = null } = event.detail;
 
-            if(!product || !brand) return;
+            if(!product) return;
 
             setEditingData(product);
             setBrand(brand);
