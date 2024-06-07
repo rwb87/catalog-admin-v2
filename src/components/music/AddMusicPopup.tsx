@@ -174,7 +174,7 @@ const AddMusicPopup = () => {
                                             <Image
                                                 src={MUSIC_PROVIDERS[musicDetails?.type?.toUpperCase()]?.logo}
                                                 alt={musicDetails?.type}
-                                                width={24}
+                                                width={10}
                                                 height='auto'
                                                 mt={4}
                                                 loading='lazy'
