@@ -359,6 +359,8 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
         ? ((alphaLink?.discountPrice || item?.dealPrice) ? ((parseFloat(productDiscountPrice) - parseFloat(productPrice)) / parseFloat(productPrice)) * 100 : 0).toFixed(0)
         : '100';
 
+    if(!item) return null;
+
     return (
         <>
             <Tr>

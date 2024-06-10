@@ -145,6 +145,8 @@ type ProductProps = {
 const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
+    if(!product) return null;
+
     return (
         <>
             <Tr key={product?.id}>

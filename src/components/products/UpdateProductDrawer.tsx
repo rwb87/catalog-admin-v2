@@ -108,7 +108,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
     const handleUpdateData = async () => {
         if(!editingData?.name) return notify('Please enter a name', 3000);
-        if(!editingData?.link) return notify('Please enter a link', 3000);
+        // if(!editingData?.link) return notify('Please enter a link', 3000);
         if(!editingData?.price) return notify('Please enter a price', 3000);
         if(!editingData?.brand?.id) return notify('Please select a brand', 3000);
 
@@ -117,7 +117,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
         const payload = new FormData();
 
         payload.append('name', editingData?.name);
-        payload.append('link', editingData?.link);
+        payload.append('link', editingData?.link || null);
         payload.append('brand', editingData?.brand ?? null);
         payload.append('brandId', editingData?.brand?.id ?? null);
         payload.append('price', parseFloat(editingData?.price || 0).toFixed(2));
@@ -171,7 +171,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                     mt={4}
                     templateColumns={{
                         base: '1fr',
-                        md: 'repeat(2, 1fr)',
+                        md: 'repeat(1, 1fr)',
                     }}
                     gap={4}
                 >
@@ -186,7 +186,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
                         />
                     </FormControl>
 
-                    <FormControl id="link">
+                    <FormControl id="link" display='none'>
                         <FormLabel>Initial Link</FormLabel>
                         <Input
                             type="text"
