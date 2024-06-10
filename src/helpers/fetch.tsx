@@ -6,11 +6,11 @@ const baseUrl = () => {
         case 'local':
             return import.meta.env.VITE_APP_API_URL
         case 'prod':
-            return 'https://api.styleup.app/api'
+            return 'https://api.shopcatalog.app/api'
         case 'preprod':
-            return 'https://api-preprod.styleup.app/api'
+            return 'https://api-preprod.shopcatalog.app/api'
         default:
-            return 'https://api-dev.styleup.app/api'
+            return 'https://api-dev.shopcatalog.app/api'
     }
 };
 
