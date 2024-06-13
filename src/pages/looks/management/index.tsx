@@ -14,6 +14,7 @@ import { IconLoader2, IconMessage, IconPhoto, IconSearch, IconTrash } from "@tab
 import { useEffect, useMemo, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import { LOOK_STATUSES } from "@/_config";
+import KeywordsPopover from "@/components/KeywordsPopover";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -491,6 +492,8 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         colorScheme='green'
                         onClick={() => onSendToLive?.(item)}
                     >Send Live</Button>
+
+                    <KeywordsPopover keywords={item?.keywordLooks} />
 
                     {/* Message */}
                     <Popover>

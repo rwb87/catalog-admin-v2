@@ -8,6 +8,7 @@ import Confirmation from "@/components/Confirmation";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { LOOK_STATUSES } from "@/_config";
+import KeywordsPopover from "@/components/KeywordsPopover";
 
 type TableRowProps = {
     item: any,
@@ -318,6 +319,10 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                     textAlign='right'
                     whiteSpace='nowrap'
                 >
+                    <Box display='inline-block' mr={4}>
+                        <KeywordsPopover keywords={item?.keywordLooks} />
+                    </Box>
+
                     {/* Send to Management button */}
                     {
                         <Tooltip label="Send look to management" placement="bottom">

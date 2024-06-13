@@ -10,7 +10,7 @@ import { useGlobalVolatileStorage } from "@/_store";
 import { encodeAmpersand } from "@/helpers/utils";
 import UpdateBrandDrawer from "../brands/UpdateBrandDrawer";
 import UpdateProductDrawer from "../products/UpdateProductDrawer";
-import KeywordsPopover from "@/components/products/KeywordsPopover";
+import KeywordsPopover from "@/components/KeywordsPopover";
 
 type LookProductsProps = {
     look: any,

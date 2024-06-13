@@ -6,7 +6,7 @@ import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import Confirmation from "@/components/Confirmation";
 import notify from "@/helpers/notify";
 import fetch from "@/helpers/fetch";
-import KeywordsPopover from "@/components/products/KeywordsPopover";
+import KeywordsPopover from "@/components/KeywordsPopover";
 
 type BrandProductsProps = {
     brand: any;

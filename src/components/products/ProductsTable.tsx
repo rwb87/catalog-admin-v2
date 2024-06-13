@@ -10,7 +10,7 @@ import ProductLinks from "./ProductLinks";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { ROLES } from "@/_config";
 import UsersTable from "@/components/users/UsersTable";
-import KeywordsPopover from "./KeywordsPopover";
+import KeywordsPopover from "@/components/KeywordsPopover";
 
 type ProductsTableProps = {
     data: any,
