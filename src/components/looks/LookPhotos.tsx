@@ -33,10 +33,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
         // Filter deleted images
         newImages.filter((image: any) => image.deletedAt === null);
 
-        // Order by orderIndex
-        // newImages.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
-
         setList(JSON.parse(JSON.stringify(newImages)));
+        setIsProcessing(false);
     }, [images]);
 
     const onDragStart = (event: any) => {
@@ -95,6 +93,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
     }
 
     const handleSaveList = async () => {
+        setIsProcessing(true);
+
         if(list?.find((image: any) => image.isUpload)) await handleUploadNewImages();
 
         const newList = JSON.parse(JSON.stringify(list));
@@ -126,13 +126,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                 hasFiles: true
             });
 
-            if(response) {
-                setIsProcessing(false);
-                return response;
-            } else {
-                setIsProcessing(false);
-                return [];
-            }
+            setIsProcessing(false);
+            return response || [];
         } catch (error) {
             setIsProcessing(false);
             return [];
