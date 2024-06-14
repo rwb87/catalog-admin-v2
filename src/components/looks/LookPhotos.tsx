@@ -216,7 +216,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 onDragStart={onDragStart}
                                 onDragOver={onDragOver}
                                 onDrop={onDrop}
-                                onClick={() => handleOnOpenImage(image?.link)}
+                                onClick={() => handleOnOpenImage(image?.croppedLink)}
                             >
                                 <Image
                                     src={image?.croppedLink}
