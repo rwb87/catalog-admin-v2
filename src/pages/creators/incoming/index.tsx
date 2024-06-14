@@ -47,7 +47,7 @@ const IncomingCreatorsView = () => {
                 endpoint: `/users/become-creator?&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}`,
                 method: 'GET',
             });
-            setUsers(response);
+            setUsers(response?.users);
             setPagination({
                 ...pagination,
                 total: response?.count,
