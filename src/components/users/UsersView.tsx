@@ -154,31 +154,27 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         }}
                         whiteSpace='break-spaces'
                     >
-
-                        {/* Switch between live and incoming requests */}
-                        <Select
-                            display={userType === ROLES.CREATOR ? 'block' : 'none'}
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: 32,
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            fontWeight='medium'
-                            defaultValue='NORMAL'
-                            onChange={handleChangeCreatorsType}
-                        >
-                            <option value='NORMAL'>Live</option>
-                            <option value='CREATOR_REQUESTS'>Incoming</option>
-                        </Select>
-
-
                         {
                             userType === ROLES.CREATOR && <>
+                                <Select
+                                    variant='outline'
+                                    width={{
+                                        base: 'full',
+                                        lg: 32,
+                                    }}
+                                    size='sm'
+                                    rounded='full'
+                                    bgColor='white'
+                                    borderWidth={2}
+                                    borderColor='gray.100'
+                                    fontWeight='medium'
+                                    defaultValue='NORMAL'
+                                    onChange={handleChangeCreatorsType}
+                                >
+                                    <option value='NORMAL'>Live</option>
+                                    <option value='CREATOR_REQUESTS'>Incoming</option>
+                                </Select>
+                                <Divider orientation='vertical' height='40px' />
                                 <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
                                 <Divider orientation='vertical' height='40px' />
                                 <Text ml={2} color='green.500'>Incoming <br />Clickouts: {totalIncomingClickouts || 0}</Text>
