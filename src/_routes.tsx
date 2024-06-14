@@ -13,7 +13,9 @@ import AppLayout from '@/layouts/app.layout';
 
 import AdminsView from '@/pages/admins';
 import ShoppersView from '@/pages/shoppers';
+
 import CreatorsView from '@/pages/creators';
+import IncomingCreatorsView from '@/pages/creators/incoming';
 
 import LooksView from '@/pages/looks';
 import LooksManagementView from '@/pages/looks/management';
@@ -46,7 +48,9 @@ export default function Routes() {
                     {/* App Pages */}
                     <Route path="/administrators" element={<AdminsView />} />
                     <Route path="/shoppers" element={<ShoppersView />} />
+
                     <Route path="/creators" element={<CreatorsView />} />
+                    <Route path="/creators/incoming" element={<IncomingCreatorsView />} />
 
                     <Route path="/looks" element={<LooksView />} />
                     <Route path="/looks/management" element={<LooksManagementView />} />

@@ -212,7 +212,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 }}
                             />
 
-                            {item?.photos?.filter((item: any) => item?.deletedAt === null)?.length > 1 && <Box position='absolute' right={1} top={1} pointerEvents='none'><IconPhoto color="white" /></Box>}
+                            {item?.photos?.filter((item: any) => item?.deletedAt === null)?.length > 1 && <Box position='absolute' right={0} top={0} pointerEvents='none'><IconPhoto color="white" /></Box>}
                         </Box>
                     }
                 </Td>

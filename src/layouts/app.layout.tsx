@@ -88,7 +88,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             isDefault: false,
         },
     ]), []);
-    const extraPages = ['/settings', '/settings/creator-affiliate-links'];
+    const extraPages = [
+        '/settings',
+        '/settings/creator-affiliate-links',
+        '/creators/incoming'
+    ];
 
     useEffect(() => {
         const getActivePage = (event: any) => {

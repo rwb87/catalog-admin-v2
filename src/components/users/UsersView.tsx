@@ -8,11 +8,13 @@ import { IconPlus, IconSearch } from "@tabler/icons-react";
 import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 import { encodeAmpersand } from "@/helpers/utils";
+import { useNavigate } from "react-router-dom";
 
 type UsersViewProps = {
     userType: ROLES;
 }
 const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
+    const routeTo = useNavigate();
     const { role: userRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
@@ -64,6 +66,12 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
         }
 
         setIsLoading(false);
+    }
+
+    const handleChangeCreatorsType = (event: any) => {
+        const { value } = event.target;
+
+        if (value === 'CREATOR_REQUESTS') routeTo('/creators/incoming');
     }
 
     const totalIncomingClickouts = useMemo(() => {
@@ -146,6 +154,29 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         }}
                         whiteSpace='break-spaces'
                     >
+
+                        {/* Switch between live and incoming requests */}
+                        <Select
+                            display={userType === ROLES.CREATOR ? 'block' : 'none'}
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                lg: 32,
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            fontWeight='medium'
+                            defaultValue='NORMAL'
+                            onChange={handleChangeCreatorsType}
+                        >
+                            <option value='NORMAL'>Live</option>
+                            <option value='CREATOR_REQUESTS'>Incoming</option>
+                        </Select>
+
+
                         {
                             userType === ROLES.CREATOR && <>
                                 <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
