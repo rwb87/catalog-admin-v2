@@ -1,9 +1,9 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Avatar, Box, Button, Flex, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
-import { IconLoader2, IconPhoto, IconSearch } from "@tabler/icons-react";
+import { IconLoader2, IconMail, IconPhoto, IconSearch } from "@tabler/icons-react";
 import { encodeAmpersand } from "@/helpers/utils";
 import { useNavigate } from "react-router-dom";
 import { Content } from "@/layouts/app.layout";
@@ -379,7 +379,20 @@ const TableRow = ({ item }: TableRowProps) => {
                         </Flex>
                     </Tooltip>
                 </Td>
-                <Td>{item?.user?.email}</Td>
+                <Td>
+                    {
+                        item?.user?.email
+                            ? <IconButton
+                                aria-label='Email'
+                                variant='ghost'
+                                rounded='full'
+                                size='sm'
+                                icon={<IconMail size={22} />}
+                                onClick={() => window.open(`mailto:${item?.user?.email}`)}
+                            />
+                            : '-'
+                    }
+                </Td>
                 <Td textTransform='capitalize'>{item?.user?.gender || '-'}</Td>
                 <Td textTransform='capitalize'>{item?.user?.location || '-'}</Td>
                 <Td>{ (typeof item?.user?.heightFeet !== 'undefined' && item?.user?.heightFeet !== null && item?.user?.heightFeet !== '') ? item?.user?.heightFeet + '.' + item?.user?.heightInch + 'ft' : '-'}</Td>
