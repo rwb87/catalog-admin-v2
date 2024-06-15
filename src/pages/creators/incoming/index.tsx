@@ -237,7 +237,7 @@ const UsersTable = ({ data, pagination, onPaginate, isLoading }: UsersTableProps
                         <Tr>
                             <Th>Photos</Th>
                             <Th>Shopper</Th>
-                            <Th>Email</Th>
+                            <Th textAlign='center'>Email</Th>
                             <Th>Appeals</Th>
                             <Th>Location</Th>
                             <Th>Height</Th>
@@ -379,7 +379,7 @@ const TableRow = ({ item }: TableRowProps) => {
                         </Flex>
                     </Tooltip>
                 </Td>
-                <Td>
+                <Td textAlign='center'>
                     {
                         item?.user?.email
                             ? <IconButton
