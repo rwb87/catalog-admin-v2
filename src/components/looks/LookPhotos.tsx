@@ -26,7 +26,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
 
     useEffect(() => {
         const newImages = images.map((image: any) => {
-            if(image?.link === '') image.link = '/images/cover-placeholder.webp';
+            if(image?.originalImageLink === '') image.originalImageLink = '/images/cover-placeholder.webp';
             return image;
         });
 
@@ -183,9 +183,9 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
 
                             for(let i = 0; i < files.length; i++) {
                                 newList?.push({
-                                    link: URL.createObjectURL(files[i]),
-                                    croppedLink: URL.createObjectURL(files[i]),
-                                    originalLink: URL.createObjectURL(files[i]),
+                                    originalImageLink: URL.createObjectURL(files[i]),
+                                    mobileImageLink: URL.createObjectURL(files[i]),
+                                    backOfficeImageLink: URL.createObjectURL(files[i]),
                                     orderIndex: newList.length,
                                     isUpload: true
                                 });
@@ -216,10 +216,10 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 onDragStart={onDragStart}
                                 onDragOver={onDragOver}
                                 onDrop={onDrop}
-                                onClick={() => handleOnOpenImage(image?.croppedLink)}
+                                onClick={() => handleOnOpenImage(image?.mobileImageLink)}
                             >
                                 <Image
-                                    src={image?.croppedLink}
+                                    src={image?.mobileImageLink}
                                     alt={`Image ${index}`}
                                     height='full'
                                     width='full'

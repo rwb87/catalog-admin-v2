@@ -357,7 +357,7 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
                     <Box position='relative'>
                         <Image
-                            src={editingData?.pictureURL || '/images/cover-placeholder.webp'}
+                            src={editingData?.originalImageLink || '/images/cover-placeholder.webp'}
                             alt={editingData?.name}
                             width='full'
                             loading="lazy"
@@ -398,8 +398,8 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
 
                         setEditingData({
                             ...editingData,
-                            pictureURL: URL.createObjectURL(photo),
-                            smallPictureURL: URL.createObjectURL(photo),
+                            originalImageLink: URL.createObjectURL(photo),
+                            squareImageLink: URL.createObjectURL(photo),
                         });
                     }}
                 />

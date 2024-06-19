@@ -161,8 +161,8 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
             brandId: null,
             price: 0,
             dealPrice: 0,
-            pictureURL: '',
-            smallPictureURL: '',
+            originalImageLink: '',
+            squareImageLink: '',
             isNew: true,
         });
 
@@ -369,14 +369,14 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                 </Td>
                 <Td>
                     {
-                        item?.pictureURL
+                        item?.originalImageLink
                             ? <Box
                                 position='relative'
                                 textAlign='center'
                                 width={28}
                             >
                                 <Image
-                                    src={item?.smallPictureURL}
+                                    src={item?.squareImageLink}
                                     width={28}
                                     height='auto'
                                     objectFit='cover'
@@ -384,7 +384,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                     rounded='md'
                                     cursor='pointer'
                                     loading="lazy"
-                                    onClick={() => handleOpenImage(item?.pictureURL)}
+                                    onClick={() => handleOpenImage(item?.originalImageLink)}
                                     onError={(e: any) => {
                                         e.target.src = '/images/cover-placeholder.webp';
                                         e.target.onerror = null;

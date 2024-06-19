@@ -34,8 +34,8 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }
                 brandId: null,
                 price: 0,
                 dealPrice: 0,
-                pictureURL: '',
-                smallPictureURL: '',
+                originalImageLink: '',
+                squareImageLink: '',
                 isNew: true,
             });
         }
@@ -176,14 +176,14 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
             <Tr>
                 <Td>
                     {
-                        item?.pictureURL
+                        item?.originalImageLink
                             ? <Box
                                 position='relative'
                                 textAlign='center'
                                 width={28}
                             >
                                 <Image
-                                    src={item?.smallPictureURL}
+                                    src={item?.squareImageLink}
                                     width={28}
                                     height='auto'
                                     objectFit='cover'
@@ -191,7 +191,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                     rounded='md'
                                     cursor='pointer'
                                     loading="lazy"
-                                    onClick={() => handleOpenImage(item?.pictureURL)}
+                                    onClick={() => handleOpenImage(item?.originalImageLink)}
                                     onError={(e: any) => {
                                         e.target.src = '/images/cover-placeholder.webp';
                                         e.target.onerror = null;
