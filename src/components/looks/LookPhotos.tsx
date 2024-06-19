@@ -219,7 +219,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 onClick={() => handleOnOpenImage(image?.mobileImageLink)}
                             >
                                 <Image
-                                    src={image?.mobileImageLink}
+                                    src={image?.backOfficeImageLink}
                                     alt={`Image ${index}`}
                                     height='full'
                                     width='full'
