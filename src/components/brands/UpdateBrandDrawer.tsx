@@ -2,8 +2,8 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
-import { Box, Checkbox, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
-import { IconCamera, IconCheck } from "@tabler/icons-react";
+import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select } from "@chakra-ui/react";
+import { IconCamera } from "@tabler/icons-react";
 import { getImageMetadata } from "@/helpers/utils";
 
 type UpdateBrandDrawerProps = {
@@ -172,7 +172,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                             type="number"
                             step="1"
                             pattern="^\d+$"
-                            value={editingData?.photoMetadata?.width ?? ''}
+                            value={editingData?.photoMetadata?.width || ''}
                             onChange={(e) => setEditingData({
                                 ...editingData,
                                 photoMetadata: {
@@ -204,7 +204,7 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                             type="number"
                             step="1"
                             pattern="^\d+$"
-                            value={editingData?.photoMetadata?.height ?? ''}
+                            value={editingData?.photoMetadata?.height || ''}
                             onChange={(e) => setEditingData({
                                 ...editingData,
                                 photoMetadata: {
@@ -232,14 +232,30 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
                 </Grid>
 
                 {/* Locked Aspect Ratio */}
-                <Checkbox
-                    id="lockAspectRatio"
-                    colorScheme='blue'
-                    defaultChecked={true}
-                    readOnly
-                    cursor='not-allowed'
-                    icon={<IconCheck style={{ width: 30, height: 30, padding: 0 }} strokeWidth={2} />}
-                >Locked Aspect Ratio</Checkbox>
+                <label
+                    htmlFor="locked-aspect-ratio"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        cursor: 'not-allowed',
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <input
+                        id="locked-aspect-ratio"
+                        type="checkbox"
+                        defaultChecked={true}
+                        readOnly={true}
+                        style={{
+                            cursor: 'not-allowed',
+                            pointerEvents: 'none',
+                            width: '16px',
+                            height: '16px',
+                        }}
+                    /> Locked Aspect Ratio
+                </label>
+
 
                 {/* Brand Logo input */}
                 <input
