@@ -9,6 +9,7 @@ import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 import { encodeAmpersand } from "@/helpers/utils";
 import { useNavigate } from "react-router-dom";
+import AddMusicPopup from "@/components/music/AddMusicPopup";
 
 type UsersViewProps = {
     userType: ROLES;
@@ -408,6 +409,11 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
                 hasActions={(userType === ROLES.ADMIN && userRole === ROLES.SUPER_ADMIN) || userType !== ROLES.ADMIN}
+            />
+
+            {/* Add music popup */}
+            <AddMusicPopup
+                onComplete={(music: any) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music } }))}
             />
         </>
     )

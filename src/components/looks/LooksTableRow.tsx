@@ -507,6 +507,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         onSave={() => {
                             setIsMusicsExpanded(false)
                             window?.dispatchEvent(new CustomEvent('refresh:data'))
+                            window?.dispatchEvent(new CustomEvent('refresh:looks'))
                         }}
                     />
                 </Td>

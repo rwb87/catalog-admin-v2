@@ -491,76 +491,78 @@ const UserLooks = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
     }
 
     return (
-        <Tr display={isOpen ? 'table-row' : 'none'}>
-            {
-                isLoading
-                    ? <Td colSpan={20} textAlign='center'>
-                        <Box display='inline-block' mx='auto'>
-                            <IconLoader2
-                                size={48}
-                                className="animate-spin"
-                            />
-                        </Box>
-                    </Td>
-                    : <Td colSpan={20} p={4} bgColor='gray.50'>
-                        <Table>
-                            <Thead>
-                                <Tr>
-                                    <Th>Thumbnail</Th>
-                                    <Th>Creator</Th>
-                                    <Th textAlign='center'>Created At</Th>
-                                    <Th textAlign='center'>Platform</Th>
-                                    <Th textAlign='center'>Featured</Th>
-                                    <Th textAlign='center'>Priority</Th>
-                                    <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
-                                    <Th textAlign='center'>Status</Th>
-                                    <Th textAlign='right'>Actions</Th>
-                                </Tr>
-                            </Thead>
-                            <Tbody>
-                                {
-                                    !looks?.length
-                                        ? <Tr>
-                                            <Td colSpan={20} textAlign='center'>
-                                                <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
-                                            </Td>
-                                        </Tr>
-                                        : <>
-                                            {
-                                                looks?.map((look: any) => <LooksTableRow
-                                                    key={look?.id}
-                                                    item={{
-                                                        ...look,
-                                                        user: user,
-                                                    }}
-                                                    isUserChangeAllowed={false}
-                                                    showStatus={true}
-                                                />)
-                                            }
-
-                                            <Tr>
-                                                <Td colSpan={20}>
-                                                    <Pagination
-                                                        total={pagination?.total || 0}
-                                                        limit={pagination?.limit || 0}
-                                                        page={pagination?.page || 1}
-                                                        setPage={(page: number) => {
-                                                            setPagination({
-                                                                ...pagination,
-                                                                page: page,
-                                                                offset: (page - 1) * pagination.limit
-                                                            })
-                                                        }}
-                                                    />
+        <>
+            <Tr display={isOpen ? 'table-row' : 'none'}>
+                {
+                    isLoading
+                        ? <Td colSpan={20} textAlign='center'>
+                            <Box display='inline-block' mx='auto'>
+                                <IconLoader2
+                                    size={48}
+                                    className="animate-spin"
+                                />
+                            </Box>
+                        </Td>
+                        : <Td colSpan={20} p={4} bgColor='gray.50'>
+                            <Table>
+                                <Thead>
+                                    <Tr>
+                                        <Th>Thumbnail</Th>
+                                        <Th>Creator</Th>
+                                        <Th textAlign='center'>Created At</Th>
+                                        <Th textAlign='center'>Platform</Th>
+                                        <Th textAlign='center'>Featured</Th>
+                                        <Th textAlign='center'>Priority</Th>
+                                        <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
+                                        <Th textAlign='center'>Status</Th>
+                                        <Th textAlign='right'>Actions</Th>
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {
+                                        !looks?.length
+                                            ? <Tr>
+                                                <Td colSpan={20} textAlign='center'>
+                                                    <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                                 </Td>
                                             </Tr>
-                                        </>
-                                }
-                            </Tbody>
-                        </Table>
-                    </Td>
-            }
-        </Tr>
+                                            : <>
+                                                {
+                                                    looks?.map((look: any) => <LooksTableRow
+                                                        key={look?.id}
+                                                        item={{
+                                                            ...look,
+                                                            user: user,
+                                                        }}
+                                                        isUserChangeAllowed={false}
+                                                        showStatus={true}
+                                                    />)
+                                                }
+
+                                                <Tr>
+                                                    <Td colSpan={20}>
+                                                        <Pagination
+                                                            total={pagination?.total || 0}
+                                                            limit={pagination?.limit || 0}
+                                                            page={pagination?.page || 1}
+                                                            setPage={(page: number) => {
+                                                                setPagination({
+                                                                    ...pagination,
+                                                                    page: page,
+                                                                    offset: (page - 1) * pagination.limit
+                                                                })
+                                                            }}
+                                                        />
+                                                    </Td>
+                                                </Tr>
+                                            </>
+                                    }
+                                </Tbody>
+                            </Table>
+                        </Td>
+                }
+            </Tr>
+        </>
     )
 }
 
