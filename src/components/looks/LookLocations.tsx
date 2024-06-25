@@ -13,7 +13,7 @@ type LookLocationsProps = {
     onSave: (data: any) => void,
 }
 export default function LookLocations({ lookId, data, onSave }: LookLocationsProps) {
-    const [editedData, setEditedData] = useState<any>({});
+    const [editedData, setEditedData] = useState<any>([]);
     const [editingData, setEditingData] = useState<any>({});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isSearching, setIsSearching] = useState<boolean>(false);
