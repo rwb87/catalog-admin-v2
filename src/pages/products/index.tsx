@@ -1,3 +1,4 @@
+import AddMusicPopup from "@/components/music/AddMusicPopup";
 import ProductsTable from "@/components/products/ProductsTable";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
@@ -380,6 +381,11 @@ const ProductsView = () => {
                         offset: (page - 1) * pagination.limit,
                     })
                 }}
+            />
+
+            {/* Add music popup */}
+            <AddMusicPopup
+                onComplete={(music: any) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music } }))}
             />
         </Content>
     )

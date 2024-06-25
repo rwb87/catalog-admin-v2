@@ -200,6 +200,8 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
 
     const isLiveStatus = item?.status === LOOK_STATUSES.LIVE;
 
+    if(!item?.id) return;
+
     return (
         <>
 
