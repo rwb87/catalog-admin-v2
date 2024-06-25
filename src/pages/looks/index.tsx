@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
+import AddMusicPopup from "@/components/music/AddMusicPopup";
 
 const LooksView = () => {
     const { user } = useUser() as any;
@@ -480,6 +481,11 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps
 
             {/* Look Creator Change */}
             <ChangeCreatorDrawer />
+
+            {/* Add music popup */}
+            <AddMusicPopup
+                onComplete={(music: any) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music } }))}
+            />
 
             {/* Pagination */}
             <Pagination

@@ -1,6 +1,6 @@
 import formatDateTime from "@/helpers/formatDateTime";
 import { Avatar, Box, Button, IconButton, Image, Input, Switch, Td, Text, Tooltip, Tr } from "@chakra-ui/react";
-import { IconPhoto, IconTrash, IconUpload } from "@tabler/icons-react";
+import { IconMapPin, IconMusic, IconPhoto, IconTrash, IconUpload } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import LookPhotos from "./LookPhotos";
 import LookProducts from "./LookProducts";
@@ -9,6 +9,7 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
+import LookMusics from "./LookMusics";
 
 type TableRowProps = {
     item: any,
@@ -19,6 +20,8 @@ type TableRowProps = {
 const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowed = true, showStatus = false }: TableRowProps) => {
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState<boolean>(false);
+    const [isMusicsExpanded, setIsMusicsExpanded] = useState<boolean>(false);
+    const [isLocationsExpanded, setIsLocationsExpanded] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [deletingData, setDeletingData] = useState<any>({});
@@ -43,19 +46,29 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
     const handleExpandImages = () => {
         setIsProductsExpanded(false);
 
-        if(!isImagesExpanded) {
-            setImages(item?.photos);
-            setIsImagesExpanded(true);
-        } else {
-            setImages([]);
-            setIsImagesExpanded(false);
-        }
+        setImages(isImagesExpanded ? [] : item?.photos);
+        setIsImagesExpanded(!isImagesExpanded);
     }
 
     const handleExpandProducts = () => {
         setIsImagesExpanded(false);
-
+        setIsMusicsExpanded(false);
+        setIsLocationsExpanded(false);
         setIsProductsExpanded(!isProductsExpanded);
+    }
+
+    const handleExpandMusics = () => {
+        setIsImagesExpanded(false);
+        setIsProductsExpanded(false);
+        setIsLocationsExpanded(false);
+        setIsMusicsExpanded(!isMusicsExpanded);
+    }
+
+    const handleExpandLocations = () => {
+        setIsImagesExpanded(false);
+        setIsProductsExpanded(false);
+        setIsMusicsExpanded(false);
+        setIsLocationsExpanded(!isLocationsExpanded);
     }
 
     const handleOpenChangeCreatorDrawer = (item: any) => {
@@ -66,7 +79,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
         }));
     }
 
-    const handleUpdateData = async (data: any, id?: string, refreshData: boolean = true) => {
+    const handleUpdateData = async (data: any, id?: number, refreshData: boolean = true) => {
         setIsProcessing(true);
 
         try {
@@ -188,6 +201,8 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
 
     return (
         <>
+
+            {/* Row */}
             <Tr>
                 <Td>
                     {
@@ -387,6 +402,44 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         onClick={handleExpandProducts}
                     />
 
+                    {/* Expand Musics */}
+                    <IconButton
+                        aria-label='Expand'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        backgroundColor='black'
+                        color='white'
+                        ml={4}
+                        _hover={{
+                            backgroundColor: 'blackAlpha.700',
+                        }}
+                        _focusVisible={{
+                            backgroundColor: 'blackAlpha.800',
+                        }}
+                        icon={<IconMusic style={{ width: 24 }} />}
+                        onClick={handleExpandMusics}
+                    />
+
+                    {/* Expand Locations */}
+                    <IconButton
+                        aria-label='Expand'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        backgroundColor='black'
+                        color='white'
+                        ml={4}
+                        _hover={{
+                            backgroundColor: 'blackAlpha.700',
+                        }}
+                        _focusVisible={{
+                            backgroundColor: 'blackAlpha.800',
+                        }}
+                        icon={<IconMapPin style={{ width: 24 }} />}
+                        onClick={handleExpandLocations}
+                    />
+
                     {/* Delete */}
                     <IconButton
                         aria-label='Delete'
@@ -442,6 +495,34 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                 </Td>
             </Tr>
 
+            {/* Musics */}
+            <Tr
+                display={isMusicsExpanded ? 'table-row' : 'none'}
+                bgColor='gray.50'
+            >
+                <Td colSpan={20}>
+                    <LookMusics
+                        lookId={item?.id}
+                        data={item?.musics?.map((music: any) => music?.music)}
+                        onSave={() => {
+                            setIsMusicsExpanded(false)
+                            window?.dispatchEvent(new CustomEvent('refresh:data'))
+                        }}
+                    />
+                </Td>
+            </Tr>
+
+            {/* Locations */}
+            <Tr
+                display={isLocationsExpanded ? 'table-row' : 'none'}
+                bgColor='gray.50'
+            >
+                <Td colSpan={20}>
+                    {/* <LookMusics data={[]} /> */}
+                </Td>
+            </Tr>
+
+            {/* Confirmations */}
             <Tr>
                 <Td colSpan={20} display='contents'>
 

@@ -5,7 +5,10 @@ import { Box, Button, Flex, Grid, Image, Input, Modal, ModalBody, ModalContent, 
 import { IconLoader2 } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
-const AddMusicPopup = () => {
+type AddMusicPopupProps = {
+    onComplete?: (music: any) => void,
+}
+export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
     const audioPlayerRef = useRef<HTMLAudioElement>(null);
 
     const [isOpen, setIsOpen] = useState(false);
@@ -73,6 +76,7 @@ const AddMusicPopup = () => {
 
                 setIsOpen(false);
                 setLink('');
+                onComplete?.(response);
                 setMusicDetails({});
                 setIsLoading(false);
                 setIsAddingMusic(false);
@@ -96,7 +100,7 @@ const AddMusicPopup = () => {
         try {
             await fetchDetails(true);
 
-            window.dispatchEvent(new Event('refresh:data'));
+            if(typeof onComplete !== 'function') window.dispatchEvent(new Event('refresh:data'));
         } catch (error) {
             notify('Not a valid Spotify or Apple Music URL');
         }
@@ -227,5 +231,3 @@ const AddMusicPopup = () => {
         </Modal>
     );
 }
-
-export default AddMusicPopup;
