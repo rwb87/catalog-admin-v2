@@ -10,6 +10,7 @@ import notify from "@/helpers/notify";
 import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "./LookMusics";
+import LookLocations from "./LookLocations";
 
 type TableRowProps = {
     item: any,
@@ -519,7 +520,15 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                 bgColor='gray.50'
             >
                 <Td colSpan={20}>
-                    {/* <LookMusics data={[]} /> */}
+                    <LookLocations
+                        data={item?.locations?.map((location: any) => location?.location)}
+                        lookId={item?.id}
+                        onSave={() => {
+                            setIsLocationsExpanded(false)
+                            window?.dispatchEvent(new CustomEvent('refresh:data'))
+                            window?.dispatchEvent(new CustomEvent('refresh:looks'))
+                        }}
+                    />
                 </Td>
             </Tr>
 

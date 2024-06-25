@@ -17,6 +17,7 @@ import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "@/components/looks/LookMusics";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
+import LookLocations from "@/components/looks/LookLocations";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -703,6 +704,23 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                     data={item?.musics?.map((music: any) => music?.music)}
                     onSave={() => {
                         setIsMusicsExpanded(false)
+                        window?.dispatchEvent(new CustomEvent('refresh:data'))
+                        window?.dispatchEvent(new CustomEvent('refresh:looks'))
+                    }}
+                />
+            </Box>
+
+            {/* Locations */}
+            <Box
+                bgColor='gray.50'
+                display={isLocationsExpanded ? 'block' : 'none'}
+                p={4}
+            >
+                <LookLocations
+                    data={item?.locations?.map((location: any) => location?.location)}
+                    lookId={item?.id}
+                    onSave={() => {
+                        setIsLocationsExpanded(false)
                         window?.dispatchEvent(new CustomEvent('refresh:data'))
                         window?.dispatchEvent(new CustomEvent('refresh:looks'))
                     }}

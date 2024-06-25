@@ -1,4 +1,4 @@
-import {Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay} from '@chakra-ui/react';
+import {Button, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerProps} from '@chakra-ui/react';
 
 type CustomDrawerProps = {
     isOpen: boolean;
@@ -8,6 +8,7 @@ type CustomDrawerProps = {
     submitText?: string;
     isProcessing?: boolean;
     processingText?: string;
+    placement?: DrawerProps['placement'];
     onSubmit?: () => void;
     onClose: () => void;
 }
@@ -21,6 +22,7 @@ const CustomDrawer = (props: CustomDrawerProps) => {
         submitText = 'Save',
         isProcessing = false,
         processingText = 'Saving...',
+        placement = 'right',
         onSubmit,
         onClose,
     } = props;
@@ -29,7 +31,7 @@ const CustomDrawer = (props: CustomDrawerProps) => {
         <Drawer
             size='lg'
             isOpen={isOpen}
-            placement='right'
+            placement={placement}
             onClose={() => {if (!isProcessing) onClose()}}
             closeOnEsc={!isProcessing}
             // closeOnOverlayClick={!isProcessing}
@@ -54,13 +56,16 @@ const CustomDrawer = (props: CustomDrawerProps) => {
                         isDisabled={isProcessing}
                         onClick={onClose}
                     >{cancelText}</Button>
-                    <Button
-                        size='md'
-                        colorScheme='green'
-                        isLoading={isProcessing}
-                        loadingText={processingText}
-                        onClick={onSubmit}
-                    >{submitText}</Button>
+
+                    {
+                        typeof onSubmit === 'function' && <Button
+                            size='md'
+                            colorScheme='green'
+                            isLoading={isProcessing}
+                            loadingText={processingText}
+                            onClick={onSubmit}
+                        >{submitText}</Button>
+                    }
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>

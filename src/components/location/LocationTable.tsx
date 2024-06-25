@@ -10,12 +10,14 @@ import { Link } from "react-router-dom";
 
 type LocationTableProps = {
     data: any,
-    isLoading: boolean,
+    isLoading?: boolean,
     pagination?: any,
+    isSelectable?: boolean,
+    onSelect?: (item: any) => void,
     onPaginate?: (page: number) => void,
-    onDelete: (item: any) => void,
+    onDelete?: (item: any) => void,
 }
-const LocationTable = ({ data, isLoading, pagination, onPaginate, onDelete }: LocationTableProps) => {
+const LocationTable = ({ data, isLoading = false, pagination, isSelectable = false, onSelect, onPaginate, onDelete }: LocationTableProps) => {
     const [deletingData, setDeletingData] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [editingData, setEditingData] = useState<any>({});
@@ -112,6 +114,8 @@ const LocationTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Lo
                                     : data.map((item: any) => <TableRow
                                         key={item?.id}
                                         item={item}
+                                        isSelectable={isSelectable}
+                                        onSelect={onSelect}
                                         onEdit={(item: any) => setEditingData(item)}
                                         onDelete={(item: any) => setDeletingData(item)}
                                     />)
@@ -131,7 +135,7 @@ const LocationTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Lo
             {/* Delete Dialog */}
             <Confirmation
                 isOpen={!!deletingData?.id}
-                text={`Are you sure you want to delete <strong>${deletingData?.name}</strong> by <strong>${deletingData?.artistNames}</strong>? You can't undo this action afterwards.`}
+                text={`Are you sure you want to delete the place <strong>${deletingData?.place}</strong>? You can't undo this action afterwards.`}
                 isProcessing={isDeleting}
                 onConfirm={handleDelete}
                 onCancel={() => setDeletingData({})}
@@ -152,10 +156,12 @@ const LocationTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Lo
 
 type TableRowProps = {
     item: any,
+    isSelectable?: boolean,
+    onSelect?: (item: any) => void,
     onEdit: (item: any) => void,
     onDelete: (item: any) => void,
 }
-const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+export const TableRow = ({ item, isSelectable = false, onSelect, onEdit, onDelete }: TableRowProps) => {
     const [links, setLinks] = useState<any>(null);
 
     const handleOpenImage = (link: string) => {
@@ -210,25 +216,39 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
-                    <IconButton
-                        aria-label="Edit"
-                        variant='ghost'
-                        rounded='full'
-                        size='sm'
-                        icon={<IconEdit size={22} />}
-                        onClick={() => onEdit(item)}
-                    />
+                    {
+                        isSelectable
+                            ? <>
+                                <Button
+                                    variant={item?.isSelected ? 'solid' : 'outline'}
+                                    colorScheme='green'
+                                    size='sm'
+                                    rounded='full'
+                                    onClick={() => onSelect?.(item)}
+                                >{item?.isSelected ? 'Selected' : 'Select'}</Button>
+                            </>
+                            : <>
+                                <IconButton
+                                    aria-label="Edit"
+                                    variant='ghost'
+                                    rounded='full'
+                                    size='sm'
+                                    icon={<IconEdit size={22} />}
+                                    onClick={() => onEdit(item)}
+                                />
 
-                    <IconButton
-                        aria-label='Delete'
-                        variant='ghost'
-                        colorScheme='red'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconTrash size={22} />}
-                        onClick={() => onDelete?.(item)}
-                    />
+                                <IconButton
+                                    aria-label='Delete'
+                                    variant='ghost'
+                                    colorScheme='red'
+                                    rounded='full'
+                                    size='sm'
+                                    ml={4}
+                                    icon={<IconTrash size={22} />}
+                                    onClick={() => onDelete?.(item)}
+                                />
+                            </>
+                    }
                 </Td>
             </Tr>
 
