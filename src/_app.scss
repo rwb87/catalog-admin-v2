@@ -85,6 +85,16 @@ $table-style: (
     }
 }
 
+/* Lightcase */
+.yarl__container {
+    backdrop-filter: blur(4px) !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+
+    img {
+        border-radius: 0.375rem;
+    }
+}
+
 .nil {
     font-style: italic;
     opacity: 0.5;

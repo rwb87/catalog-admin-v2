@@ -3,9 +3,10 @@ import CustomDrawer from "@/components/Drawer";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { encodeAmpersand } from "@/helpers/utils";
-import { Avatar, Button, Flex, Grid, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Grid, Input, Text } from "@chakra-ui/react";
 import { IconLoader2 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 const ChangeCreatorDrawer = () => {
     const [creators, setCreators] = useState<any[]>([]);
@@ -126,11 +127,11 @@ const ChangeCreatorDrawer = () => {
                                 >
                                     <Flex alignItems='center' gap={2}>
                                         <Avatar
-                                            size='sm'
-                                            name={creator?.username || '-'}
                                             src={creator?.smallPictureURL}
+                                            name={creator?.username || '-'}
+                                            showName={true}
+                                            size="2rem"
                                         />
-                                        <Text>{creator?.username || '-'}</Text>
                                     </Flex>
 
                                     <Button

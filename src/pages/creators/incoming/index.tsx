@@ -1,7 +1,7 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Avatar, Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { IconLoader2, IconMail, IconPhoto, IconSearch } from "@tabler/icons-react";
 import { encodeAmpersand } from "@/helpers/utils";
@@ -10,6 +10,7 @@ import { Content } from "@/layouts/app.layout";
 import Pagination from "@/components/Pagination";
 import moment from "moment";
 import Confirmation from "@/components/Confirmation";
+import Avatar from "@/components/Avatar";
 
 const IncomingCreatorsView = () => {
     const routeTo = useNavigate();
@@ -225,7 +226,6 @@ type UsersTableProps = {
     isLoading: boolean,
 }
 const UsersTable = ({ data, pagination, onPaginate, isLoading }: UsersTableProps) => {
-    console.log(data);
     return (
         <>
             <Box className='table-responsive'>
@@ -370,12 +370,10 @@ const TableRow = ({ item }: TableRowProps) => {
                     <Tooltip label={item?.user?.description || null} aria-label='Username' placement='bottom'>
                         <Flex alignItems='center'>
                             <Avatar
-                                size='sm'
-                                mr={2}
-                                name={item?.user?.username}
                                 src={item?.user?.smallPictureURL}
+                                name={item?.user?.username}
+                                showName={true}
                             />
-                            {item?.user?.username || '-'}
                         </Flex>
                     </Tooltip>
                 </Td>

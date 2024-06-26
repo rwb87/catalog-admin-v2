@@ -1,4 +1,4 @@
-import { Avatar, Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text, Textarea } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text, Textarea } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
@@ -6,6 +6,7 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import moment from "moment";
 import { ROLES } from "@/_config";
+import Avatar from "@/components/Avatar";
 
 type UpdateUserDrawerProps = {
     user: any;
@@ -141,10 +142,12 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         transform='translateX(-50%)'
                     >
                         <Avatar
-                            size='2xl'
-                            name={editingUser?.name}
                             src={editingUser?.smallPictureURL}
-                            border='4px solid white'
+                            name={editingUser?.name}
+                            size='8rem'
+                            style={{
+                                border: '4px solid white'
+                            }}
                         />
 
                         {/* Edit Profile Picture */}

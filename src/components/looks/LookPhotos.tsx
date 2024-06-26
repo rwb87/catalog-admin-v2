@@ -1,5 +1,5 @@
 import fetch from '@/helpers/fetch';
-import { Box, Button, Flex, Grid, IconButton, Image } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, IconButton } from '@chakra-ui/react';
 import { IconTrash, IconUpload } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -134,8 +134,10 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
         }
     }
 
-    const handleOnOpenImage = (link: string) => {
-        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    const handleOnOpenImage = (index: number = 0) => {
+        const photos = list.map((image: any) => image?.originalImageLink || image?.mobileImageLink);
+
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: photos, index: index } }));
     }
 
     return (
@@ -216,18 +218,20 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 onDragStart={onDragStart}
                                 onDragOver={onDragOver}
                                 onDrop={onDrop}
-                                onClick={() => handleOnOpenImage(image?.mobileImageLink)}
+                                onClick={() => handleOnOpenImage(index)}
                             >
-                                <Image
+                                <img
                                     src={image?.backOfficeImageLink}
                                     alt={`Image ${index}`}
-                                    height='full'
-                                    width='full'
-                                    objectFit='cover'
-                                    rounded='md'
-                                    pointerEvents='none'
-                                    zIndex={5}
                                     loading='eager'
+                                    style={{
+                                        height: '100%',
+                                        width: '100%',
+                                        objectFit: 'cover',
+                                        borderRadius: '0.375rem',
+                                        pointerEvents: 'none',
+                                        zIndex: 5,
+                                    }}
                                 />
 
                                 {

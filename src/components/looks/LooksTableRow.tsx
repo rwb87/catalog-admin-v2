@@ -1,5 +1,5 @@
 import formatDateTime from "@/helpers/formatDateTime";
-import { Avatar, Box, Button, IconButton, Image, Input, Switch, Td, Text, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Button, IconButton, Input, Switch, Td, Tooltip, Tr } from "@chakra-ui/react";
 import { IconMapPin, IconMusic, IconPhoto, IconTrash, IconUpload } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import LookPhotos from "./LookPhotos";
@@ -11,6 +11,7 @@ import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "./LookMusics";
 import LookLocations from "./LookLocations";
+import Avatar from "@/components/Avatar";
 
 type TableRowProps = {
     item: any,
@@ -214,15 +215,17 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                             height={28}
                             position='relative'
                         >
-                            <Image
+                            <img
                                 src={thumbnailImage}
-                                width='full'
-                                height='full'
-                                objectFit='cover'
                                 alt={item?.name}
-                                rounded='md'
-                                cursor='pointer'
                                 loading="lazy"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    borderRadius: '0.375rem',
+                                    cursor: 'pointer',
+                                }}
                                 onClick={handleExpandImages}
                                 onError={(e: any) => {
                                     e.target.src = '/images/cover-placeholder.webp';
@@ -248,11 +251,10 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         onClick={() => isUserChangeAllowed ? handleOpenChangeCreatorDrawer(item) : {}}
                     >
                         <Avatar
-                            size='sm'
-                            name={item?.user?.username || '-'}
                             src={item?.user?.smallPictureURL}
+                            name={item?.user?.username || '-'}
+                            showName={true}
                         />
-                        <Text>{item?.user?.username || '-'}</Text>
                     </Button>
                 </Td>
                 <Td textAlign='center' minWidth='150px' dangerouslySetInnerHTML={{ __html: dateTime }} />

@@ -1,13 +1,13 @@
-import { Box, IconButton, Image } from "@chakra-ui/react"
-import { IconLoader2, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { MdBrokenImage } from "react-icons/md";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 
 const Lightcase = () => {
     const [lightcase, setLightcase] = useState<any>({
         open: false,
         isLoading: true,
-        src: null,
+        srcset: null,
+        index: 0,
         error: false,
     });
 
@@ -18,7 +18,14 @@ const Lightcase = () => {
             setLightcase({
                 open: true,
                 isLoading: true,
-                src: event?.detail?.image,
+                srcset: typeof event?.detail?.image === 'string'
+                    ? [
+                        { src: event?.detail?.image },
+                    ]
+                    : event?.detail?.image.map((image: any) => ({
+                        src: image,
+                    })),
+                index: event?.detail?.index || 0,
                 error: false,
             });
         }
@@ -40,69 +47,15 @@ const Lightcase = () => {
     }
 
     return (
-        <Box
-            id='lightcase'
-            position='fixed'
-            zIndex={1000}
-            top={0}
-            left={0}
-            width='100vw'
-            height='100vh'
-            bgColor='rgba(0, 0, 0, 0.5)'
-            backdropFilter='blur(4px)'
-            p={4}
-            display={lightcase.open ? 'grid' : 'none'}
-            placeItems='center'
-            onClick={handleCloseLightcase}
-        >
-            <IconButton
-                aria-label='Close Lightcase'
-                variant='ghost'
-                position='fixed'
-                colorScheme="whiteAlpha"
-                color='white'
-                top={2}
-                right={2}
-                size='sm'
-                icon={<IconX size={22} />}
-                onClick={handleCloseLightcase}
-            />
-
-            <Box
-                display={lightcase.isLoading || lightcase.error ? 'grid' : 'none'}
-                placeSelf='center'
-                position='absolute'
-                zIndex={1001}
-                className={!lightcase?.error ? "animate-spin" : ""}
-                onClick={handleCloseLightcase}
-            >
-                {
-                    lightcase?.error
-                        ? <MdBrokenImage size={64} color='white' />
-                        : <IconLoader2 size={64} color='white' />
-                }
-            </Box>
-
-            <Image
-                src={typeof lightcase.src === 'string' ? lightcase.src : ''}
-                alt='Lightcase'
-                width='auto'
-                height='auto'
-                maxWidth='calc(100vw - 2rem)'
-                maxHeight='calc(100dvh - 2rem)'
-                objectFit='contain'
-                rounded='10px'
-                display={lightcase.isLoading || lightcase.error ? 'none' : 'block'}
-                onLoad={() => setLightcase({ ...lightcase, isLoading: false })}
-                onError={() => {
-                    setLightcase({
-                        ...lightcase,
-                        isLoading: false,
-                        error: true,
-                    });
-                }}
-            />
-        </Box>
+        <Lightbox
+            open={lightcase.open}
+            close={handleCloseLightcase}
+            slides={lightcase.srcset}
+            index={lightcase.index}
+            carousel={{
+                preload: 2,
+            }}
+        />
     )
 }
 

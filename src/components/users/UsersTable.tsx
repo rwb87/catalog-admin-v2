@@ -1,5 +1,5 @@
 import formatDateTime from "@/helpers/formatDateTime";
-import { Avatar, Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react"
+import { Box, Flex, IconButton, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react"
 import { IconEdit, IconLoader2, IconMail, IconTrash } from "@tabler/icons-react";
 import Pagination from "@/components/Pagination";
 import moment from "moment";
@@ -12,6 +12,7 @@ import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import UpdateUserDrawer from "./UpdateUserDrawer";
 import Confirmation from "@/components/Confirmation";
 import ProductsTable from "@/components/products/ProductsTable";
+import Avatar from "@/components/Avatar";
 
 const SSO_PROVIDERS = {
     apple: {
@@ -286,12 +287,10 @@ const TableRow = (props: UsersTableRowProps) => {
                     <Tooltip label={user?.description || null} aria-label='Username' placement='bottom'>
                         <Flex alignItems='center'>
                             <Avatar
-                                size='sm'
-                                mr={2}
-                                name={user?.username}
                                 src={user?.smallPictureURL}
+                                name={user?.username}
+                                showName={true}
                             />
-                            {user?.username || '-'}
                         </Flex>
                     </Tooltip>
                 </Td>

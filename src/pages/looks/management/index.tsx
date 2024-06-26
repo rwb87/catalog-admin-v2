@@ -9,7 +9,7 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Avatar, Box, Button, Divider, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
 import { IconLoader2, IconMapPin, IconMessage, IconMusic, IconPhoto, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
@@ -18,6 +18,7 @@ import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "@/components/looks/LookMusics";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import LookLocations from "@/components/looks/LookLocations";
+import Avatar from "@/components/Avatar";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -496,11 +497,10 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                             onClick={() => handleOpenChangeCreatorDrawer(item)}
                         >
                             <Avatar
-                                size='sm'
-                                name={item?.user?.username || '-'}
                                 src={item?.user?.smallPictureURL}
+                                name={item?.user?.username || '-'}
+                                showName={true}
                             />
-                            <Text>{item?.user?.username || '-'}</Text>
                         </Button>
                     </Flex>
                 </Flex>

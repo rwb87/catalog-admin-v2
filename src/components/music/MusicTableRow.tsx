@@ -1,7 +1,8 @@
 import { MUSIC_PROVIDERS } from "@/_config";
-import { Avatar, Flex, IconButton, Image, Td, Text, Tooltip, Tr } from "@chakra-ui/react";
+import { Flex, IconButton, Image, Td, Tooltip, Tr } from "@chakra-ui/react";
 import { IconExternalLink, IconPlayerPlay, IconPlayerStop, IconSwitch, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useRef, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 type TableRowProps = {
     item: any,
@@ -33,21 +34,26 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
         window.dispatchEvent(new CustomEvent('modal:add-music', { detail: { music: item } }));
     }
 
+    const handleOnOpenImage = (link: string) => {
+        window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
+    }
+
     return (
         <>
             <Tr key={item?.id}>
                 <Td>
-                    <Image
+                    <img
                         src={item?.smallAlbumImage}
                         alt={item?.name}
-                        rounded='lg'
-                        width={28}
-                        height={28}
-                        loading='lazy'
-                        objectFit='cover'
-                        borderWidth={1}
-                        borderStyle='solid'
-                        borderColor='gray.100'
+                        style={{
+                            cursor: 'pointer',
+                            borderRadius: '0.5rem',
+                            width: '7rem',
+                            height: '7rem',
+                            objectFit: 'cover',
+                            borderWidth: 1,
+                        }}
+                        onClick={() => handleOnOpenImage(item?.largeAlbumImage)}
                     />
                 </Td>
                 <Td>{item?.artistNames || '-'}</Td>
@@ -121,11 +127,11 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
                         ? <Td textAlign='center'>
                             <Flex alignItems='center' gap={2} justifyContent='center'>
                                 <Avatar
-                                    size='sm'
-                                    name={item?.user?.username || '-'}
                                     src={item?.user?.smallPictureURL}
+                                    name={item?.user?.username || '-'}
+                                    showName={true}
+                                    size="2rem"
                                 />
-                                <Text>{item?.user?.username || '-'}</Text>
                             </Flex>
                         </Td>
                         : null
