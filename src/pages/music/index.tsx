@@ -184,7 +184,6 @@ const MusicView = () => {
                     page: pageNumber,
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
-                onEdit={(id) => console.log('Edit', id)}
                 onDelete={getData}
             />
         </Content>

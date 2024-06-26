@@ -54,11 +54,6 @@ const SettingsViewGeneral = () => {
             ...settings,
             newSetting,
         ]);
-
-        console.log([
-            ...settings,
-            newSetting,
-        ])
     }
 
     const handleSubmit = async (e: any) => {

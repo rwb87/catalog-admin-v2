@@ -13,7 +13,6 @@ type MusicsTableProps = {
     isLoading: boolean,
     pagination?: any,
     onPaginate?: (page: number) => void,
-    onEdit: (item: any) => void,
     onDelete: (item: any) => void,
 }
 const MusicsTable = ({ data, isLoading, pagination, onPaginate, onDelete }: MusicsTableProps) => {

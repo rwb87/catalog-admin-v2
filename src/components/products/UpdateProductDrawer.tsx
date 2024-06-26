@@ -90,8 +90,6 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             return setStyles(globalStyles);
         }
 
-        console.log('Searching styles...', styleSearchTerm);
-
         try {
             const response = await fetch({
                 endpoint: `/items/styles?search=${encodeAmpersand(styleSearchTerm)}`,

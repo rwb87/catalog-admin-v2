@@ -122,7 +122,6 @@ type TableRowProps = {
     onDelete: (id: string) => void,
 }
 const TableRow = ({ item, onDelete }: TableRowProps) => {
-    console.log('rendered');
     const [links, setLinks] = useState<any[] | null>(null);
     const [looks, setLooks] = useState<any[] | null>(null);
     const [isCreatorsVisible, setIsCreatorsVisible] = useState<boolean>(false);
