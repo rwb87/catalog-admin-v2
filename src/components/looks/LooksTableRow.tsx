@@ -191,8 +191,8 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
 
         // Sort the images with orderIndex
         if(item?.photos?.length) {
-            const sortedImages = item?.photos.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
-            return sortedImages?.find((image: any) => image.backOfficeImageLink)?.backOfficeImageLink || '/images/cover-placeholder.webp';
+            // const sortedImages = item?.photos.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+            return item?.photos?.find((image: any) => image.backOfficeImageLink)?.backOfficeImageLink || '/images/cover-placeholder.webp';
         }
 
         // Return a placeholder image

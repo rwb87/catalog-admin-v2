@@ -3,7 +3,6 @@ import notify from "@/helpers/notify";
 import { Box, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconEdit, IconHanger, IconLink, IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import UpdateProductDrawer from "./UpdateProductDrawer";
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
 import ProductLinks from "./ProductLinks";
@@ -20,30 +19,8 @@ type ProductsTableProps = {
     noUi?: boolean,
 }
 const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }: ProductsTableProps) => {
-    const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-    useEffect(() => {
-        const handleOpenProductDrawer = () => {
-            setEditingData({
-                id: Math.random().toString(36).substring(7),
-                name: '',
-                link: '',
-                brand: null,
-                brandId: null,
-                price: 0,
-                dealPrice: 0,
-                originalImageLink: '',
-                squareImageLink: '',
-                isNew: true,
-            });
-        }
-
-        window?.addEventListener('action:new-product', handleOpenProductDrawer);
-
-        return () => window?.removeEventListener('action:new-product', handleOpenProductDrawer);
-    }, []);
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -113,20 +90,12 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }
                                     : data.map((item: any) => <TableRow
                                         key={item?.id}
                                         item={item}
-                                        onEdit={(data: any) => setEditingData(data)}
                                         onDelete={(id: string) => setDeletingData(id)}
                                     />)
                         }
                     </Tbody>
                 </Table>
             </Box>
-
-            {/* Update Product */}
-            <UpdateProductDrawer
-                data={editingData}
-                onClose={() => setEditingData({})}
-                onSave={() => window?.dispatchEvent(new CustomEvent('refresh:data'))}
-            />
 
             {/* Delete Dialog */}
             <Confirmation
@@ -150,10 +119,10 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }
 
 type TableRowProps = {
     item: any,
-    onEdit: (id: string) => void,
     onDelete: (id: string) => void,
 }
-const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+const TableRow = ({ item, onDelete }: TableRowProps) => {
+    console.log('rendered');
     const [links, setLinks] = useState<any[] | null>(null);
     const [looks, setLooks] = useState<any[] | null>(null);
     const [isCreatorsVisible, setIsCreatorsVisible] = useState<boolean>(false);
@@ -312,7 +281,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                         size='sm'
                         ml={4}
                         icon={<IconEdit size={22} />}
-                        onClick={() => onEdit(item)}
+                        onClick={() => window.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: item } }))}
                     />
 
                     <IconButton

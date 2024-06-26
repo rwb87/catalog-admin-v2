@@ -70,7 +70,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
 
         const productsInSelectedBrand = selectedBrand ? selectedBrand?.items?.filter((product: any) => product?.brandId === selectedBrand?.id) : selectedBrand?.items || [];
 
-        return productsInSelectedBrand.filter((product: any) => {
+        return productsInSelectedBrand?.filter((product: any) => {
             return !editedProducts?.some((editedProduct: any) => editedProduct?.id === product?.id);
         });
     }, [selectedBrand, editedProducts]);

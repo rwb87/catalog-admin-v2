@@ -7,6 +7,7 @@ import { RiMenu5Line } from "react-icons/ri";
 import Lightcase from "@/components/Lightcase";
 import { Config, ROLES } from "@/_config";
 import fetch from "@/helpers/fetch";
+import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -217,7 +218,11 @@ const Content = ({ children, activePage }: { children: ReactElement | ReactEleme
                 base: '100vw',
                 md: `calc(100vw - ${(isSidebarCollapsed ? '3rem' : '16rem')})`
             }}
-        >{children}</Box>
+        >
+            {children}
+
+            <GlobalPopups />
+        </Box>
     )
 }
 
@@ -592,6 +597,62 @@ const TopBar = ({ sidebarItems, activePage, extraPages }: SidebarProps) => {
                 />
             </Flex>
         </Flex>
+    )
+}
+
+const GlobalPopups = () => {
+    const [product, setProduct] = useState<any>({});
+    const [brand, setBrand] = useState<any>({});
+
+    useEffect(() => {
+
+        // Product
+        const openProductEditDrawer = (event: any) => {
+            const { product = null, brand = null } = event.detail;
+
+            if(!product) return;
+            setBrand(brand);
+
+            if(product?.id) {
+                setProduct(product);
+            } else {
+                setProduct({
+                    id: Math.random().toString(36).substring(7),
+                    name: '',
+                    link: '',
+                    brand: null,
+                    brandId: null,
+                    price: 0,
+                    dealPrice: 0,
+                    originalImageLink: '',
+                    squareImageLink: '',
+                    isNew: true,
+                })
+            }
+        }
+
+        window.addEventListener('action:product-drawer', openProductEditDrawer);
+
+        return () => {
+            window.removeEventListener('action:product-drawer', openProductEditDrawer);
+        }
+    }, []);
+
+    return (
+        <>
+            <UpdateProductDrawer
+                data={{
+                    ...product,
+                    brandId: brand?.id || product?.brand?.id,
+                    brand: brand || product?.brand,
+                }}
+                onClose={() => setProduct({})}
+                onSave={() => {
+                    setProduct({});
+                    window?.dispatchEvent(new CustomEvent('refresh:data'))
+                }}
+            />
+        </>
     )
 }
 
