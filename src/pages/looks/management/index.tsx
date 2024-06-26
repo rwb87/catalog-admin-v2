@@ -614,7 +614,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         variant='ghost'
                         rounded='full'
                         size='sm'
-                        backgroundColor='black'
+                        backgroundColor={item?.musics?.length ? 'black' : 'blackAlpha.600'}
                         color='white'
                         _hover={{
                             backgroundColor: 'blackAlpha.700',
@@ -632,7 +632,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         variant='ghost'
                         rounded='full'
                         size='sm'
-                        backgroundColor='black'
+                        backgroundColor={item?.locations?.length ? 'black' : 'blackAlpha.600'}
                         color='white'
                         _hover={{
                             backgroundColor: 'blackAlpha.700',

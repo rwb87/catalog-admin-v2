@@ -413,7 +413,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         variant='ghost'
                         rounded='full'
                         size='sm'
-                        backgroundColor='black'
+                        backgroundColor={item?.musics?.length ? 'black' : 'blackAlpha.600'}
                         color='white'
                         ml={4}
                         _hover={{
@@ -432,7 +432,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                         variant='ghost'
                         rounded='full'
                         size='sm'
-                        backgroundColor='black'
+                        backgroundColor={item?.locations?.length ? 'black' : 'blackAlpha.600'}
                         color='white'
                         ml={4}
                         _hover={{
