@@ -258,7 +258,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                     <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
                         <FormLabel>{user?.type === ROLES.CREATOR ? 'Gender' : 'Shopping'} <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
-                            placeholder='Select Shopping...'
+                            placeholder={user?.type === ROLES.CREATOR ? 'Select gender...' : 'Select shopping preference...'}
                             value={editingUser?.gender}
                             onChange={(e) => setEditingUser({ ...editingUser, gender: e.target.value })}
                         >
