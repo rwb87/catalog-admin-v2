@@ -256,7 +256,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                     </FormControl>
 
                     <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
-                        <FormLabel>Shopping <Text as='span' color='red.500'>*</Text></FormLabel>
+                        <FormLabel>{user?.type === ROLES.CREATOR ? 'Gender' : 'Shopping'} <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
                             placeholder='Select Shopping...'
                             value={editingUser?.gender}
