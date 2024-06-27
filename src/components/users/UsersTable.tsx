@@ -329,7 +329,7 @@ const TableRow = (props: UsersTableRowProps) => {
                     (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                         <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                         <Td textTransform='capitalize'>{user?.location || '-'}</Td>
-                        <Td textAlign='center'>{ (typeof user?.heightFeet !== 'undefined' && user?.heightFeet !== null && user?.heightFeet !== '') ? user?.heightFeet + '.' + user?.heightInch + 'ft' : '-'}</Td>
+                        <Td textAlign='center'>{ user?.height || '-'}</Td>
                     </>
                 }
                 {
