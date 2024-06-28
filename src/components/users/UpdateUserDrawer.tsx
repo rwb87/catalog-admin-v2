@@ -29,7 +29,6 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         if(isProcessing) return;
 
         if(editingUser?.name?.trim() === '') return notify('First Name is required', 3000);
-        if(editingUser?.lastName?.trim() === '') return notify('Last Name is required', 3000);
         if(editingUser?.email?.trim() === '') return notify('Email is required', 3000);
         if(editingUser?.username?.trim() === '') return notify('Username is required', 3000);
         if(editingUser?.type?.trim() === '') return notify('Role is required', 3000);
@@ -54,7 +53,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
 
         // Common Fields
         payload.append('name', editingUser?.name);
-        payload.append('lastName', editingUser?.lastName);
+        payload.append('lastName', editingUser?.lastName || '');
         if(user?.email !== editingUser?.email) payload.append('email', editingUser?.email?.toLowerCase());
         if(user?.username !== editingUser?.username) payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
@@ -185,11 +184,11 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                     </FormControl>
 
                     <FormControl id="lastName">
-                        <FormLabel >Last Name <Text as='span' color='red.500'>*</Text></FormLabel>
+                        <FormLabel >Last Name</FormLabel>
                         <Input
                             type="text"
                             autoComplete="lastName"
-                            value={editingUser?.lastName}
+                            value={editingUser?.lastName || ''}
                             onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
                         />
                     </FormControl>
