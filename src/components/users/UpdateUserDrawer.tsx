@@ -59,6 +59,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         if(user?.username !== editingUser?.username) payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
         payload.append('gender', editingUser?.gender);
+        payload.append('creatorGender', editingUser?.creatorGender || '');
         if(editingUser?.birthDate) payload.append('birthDate', moment(editingUser?.birthDate).format('YYYY-MM-DD'));
         payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : '');
 
@@ -229,10 +230,12 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                     mt={4}
                     templateColumns={{
                         base: '1fr',
-                        md: `repeat(${isCategoryAdmin ? 1 : 2}, 1fr)`,
+                        md: `repeat(${user?.type === ROLES.CREATOR ? 3 : isCategoryAdmin ? 1 : 2}, 1fr)`,
                     }}
                     gap={4}
                 >
+
+                    {/* Role */}
                     <FormControl id="role">
                         <FormLabel>Role <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
@@ -255,16 +258,31 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         </Select>
                     </FormControl>
 
-                    <FormControl id="gender" display={isCategoryAdmin ? 'none' : 'block'}>
-                        <FormLabel>{user?.type === ROLES.CREATOR ? 'Gender' : 'Shopping'} <Text as='span' color='red.500'>*</Text></FormLabel>
+                    {/* Shopping */}
+                    <FormControl id="shopping" display={isCategoryAdmin ? 'none' : 'block'}>
+                        <FormLabel>Shopping <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Select
-                            placeholder={user?.type === ROLES.CREATOR ? 'Select gender...' : 'Select shopping preference...'}
+                            placeholder='Select shopping preference...'
                             value={editingUser?.gender}
                             onChange={(e) => setEditingUser({ ...editingUser, gender: e.target.value })}
                         >
                             <option value="men">Men</option>
                             <option value="women">Women</option>
                             <option value="all">All</option>
+                        </Select>
+                    </FormControl>
+
+                    {/* Gender for Creator */}
+                    <FormControl id="gender" display={user?.type === ROLES.CREATOR ? 'block' : 'none'}>
+                        <FormLabel>Gender</FormLabel>
+                        <Select
+                            placeholder='Select gender...'
+                            value={editingUser?.creatorGender || ''}
+                            onChange={(e) => setEditingUser({ ...editingUser, creatorGender: e.target.value })}
+                        >
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            {/* <option value="all">All</option> */}
                         </Select>
                     </FormControl>
                 </Grid>

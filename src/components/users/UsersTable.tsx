@@ -146,6 +146,15 @@ const UsersTable = (props: UsersTableProps) => {
                             {
                                 (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                                     <Th>Shopping</Th>
+                                </>
+                            }
+                            {
+                                (userType === ROLES.CREATOR) && <>
+                                    <Th>Gender</Th>
+                                </>
+                            }
+                            {
+                                (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                                     <Th>Location</Th>
                                     <Th textAlign='center'>Height</Th>
                                 </>
@@ -328,6 +337,15 @@ const TableRow = (props: UsersTableRowProps) => {
                 {
                     (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                         <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
+                    </>
+                }
+                {
+                    (userType === ROLES.CREATOR) && <>
+                        <Td textTransform='capitalize'>{user?.creatorGender || '-'}</Td>
+                    </>
+                }
+                {
+                    (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
                         <Td textTransform='capitalize'>{user?.location || '-'}</Td>
                         <Td textAlign='center'>{ user?.height || '-'}</Td>
                     </>
