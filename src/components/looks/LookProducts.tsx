@@ -43,7 +43,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
         const sortedTags = tags?.sort((a: any, b: any) => a?.orderIndex - b?.orderIndex);
 
         setEditedProducts(sortedTags?.map((tag: any) => tag?.item));
-    },  [look?.tags]);
+    }, [look?.tags]);
 
     const getBrands = async () => {
         if(brandSearchTerm?.trim() === '') {
@@ -206,14 +206,20 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                     </Thead>
                     <Tbody>
                         {
-                            editedProducts?.map((item: any, index: number) => <Product
-                                key={item?.id || index}
-                                item={item}
-                                index={index}
-                                handleMoveUp={handleMoveUp}
-                                handleMoveDown={handleMoveDown}
-                                handleRemove={handleRemove}
-                            />
+                            !editedProducts?.length
+                                ? <Tr>
+                                    <Td colSpan={20} textAlign='center'>
+                                        <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
+                                    </Td>
+                                </Tr>
+                                : editedProducts?.map((item: any, index: number) => <Product
+                                    key={item?.id || index}
+                                    item={item}
+                                    index={index}
+                                    handleMoveUp={handleMoveUp}
+                                    handleMoveDown={handleMoveDown}
+                                    handleRemove={handleRemove}
+                                />
                         )}
                     </Tbody>
                 </Table>
