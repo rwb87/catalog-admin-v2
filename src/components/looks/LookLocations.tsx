@@ -65,7 +65,6 @@ export default function LookLocations({ lookId, data, onSave }: LookLocationsPro
             if(response) {
                 notify('Locations list saved successfully');
                 onSave?.(editedData);
-                setEditedData([]);
             } else {
                 notify('Error saving locations list');
             }
@@ -139,7 +138,7 @@ export default function LookLocations({ lookId, data, onSave }: LookLocationsPro
                     isDisabled={isProcessing}
                     loadingText='Saving...'
                     onClick={handleSave}
-                >Save List</Button>
+                >Save Locations</Button>
             </Flex>
 
             {/* Search and add location */}

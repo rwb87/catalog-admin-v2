@@ -54,7 +54,6 @@ export default function LookMusics({ data, lookId, onSave }: LookMusicsProps) {
             if(response) {
                 notify('Musics list saved successfully');
                 onSave?.(editedData);
-                setEditedData([]);
             } else {
                 notify('Error saving musics list');
             }
@@ -127,7 +126,7 @@ export default function LookMusics({ data, lookId, onSave }: LookMusicsProps) {
                     isDisabled={isProcessing}
                     loadingText='Saving...'
                     onClick={handleSave}
-                >Save List</Button>
+                >Save Musics</Button>
             </Flex>
         </>
     )
