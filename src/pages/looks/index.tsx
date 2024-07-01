@@ -7,8 +7,9 @@ import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { IconLoader2, IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
@@ -338,6 +339,7 @@ const LooksView = () => {
                         offset: (page - 1) * pagination.limit,
                     })
                 }}
+                setSortBy={setSortBy}
                 isLoading={isLoading}
             />
 
@@ -389,11 +391,15 @@ type LooksTableProps = {
     pagination: any,
     onPaginate: (page: number) => void,
     isLoading: boolean,
+    setSortBy: (field: string) => void
 }
-const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps) => {
+const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: LooksTableProps) => {
     const isLive = data?.[0]?.status === LOOK_STATUSES.LIVE;
     const [editingData, setEditingData] = useState<any>({});
     const [brand, setBrand] = useState<any>({});
+    const [sortByPriority, setSortByPriority] = useState<string>('');
+    const [sortByCreateAt, setSortByCreateAt] = useState<string>('');
+    const [sortByFeatured, setSortByFeatured] = useState<string>('');
 
     useEffect(() => {
         const openProductToModify = (event: any) => {
@@ -410,6 +416,45 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps
         return () => window?.removeEventListener('action:edit-product', openProductToModify);
     }, []);
 
+    const sortByCreateAtHandler = () => {
+        if (sortByCreateAt === "desc"){
+            setSortBy('createdAt:asc');
+            setSortByCreateAt('asc');
+        }
+        if (sortByCreateAt === "" || sortByCreateAt === "asc"){ 
+            setSortBy('createdAt:desc');
+            setSortByCreateAt('desc');
+        }
+        setSortByPriority('');
+        setSortByFeatured('');
+    };
+
+    const sortByPriorityHandler = () => {
+        if (sortByPriority === "desc"){
+            setSortBy('priority:asc');
+            setSortByPriority('asc');
+        }
+        if (sortByPriority === "" || sortByPriority === "asc"){ 
+            setSortBy('priority:desc');
+            setSortByPriority('desc');
+        }
+        setSortByCreateAt('');
+        setSortByFeatured('');
+    };
+
+    const sortByFeaturedHandler = () => {
+        if (sortByFeatured === "desc"){
+            setSortBy('carouselEnabled:asc');
+            setSortByFeatured('asc');
+        }
+        if (sortByFeatured === "" || sortByFeatured === "asc"){ 
+            setSortBy('carouselEnabled:desc');
+            setSortByFeatured('desc');
+        }
+        setSortByCreateAt('');
+        setSortByPriority('');
+    };
+
     return (
         <>
 
@@ -423,12 +468,21 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading }: LooksTableProps
                         <Tr>
                             <Th>Thumbnail</Th>
                             <Th>Creator</Th>
-                            <Th textAlign='center'>Created At</Th>
+                            <Th textAlign='center' onClick={() => sortByCreateAtHandler()} cursor="pointer">
+                                Created At 
+                                {sortByCreateAt ? sortByCreateAt === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
+                            </Th>
                             {
                                 isLive && <>
                                     <Th textAlign='center'>Platform</Th>
-                                    <Th textAlign='center'>Featured</Th>
-                                    <Th textAlign='center'>Priority</Th>
+                                    <Th textAlign='center' onClick={() => sortByFeaturedHandler()} cursor="pointer">
+                                        Featured
+                                        {sortByFeatured ? sortByFeatured === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
+                                    </Th>
+                                    <Th textAlign='center' onClick={() => sortByPriorityHandler()} cursor="pointer">
+                                        Priority 
+                                        {sortByPriority ? sortByPriority === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
+                                    </Th>
                                     <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                 </>
                             }
