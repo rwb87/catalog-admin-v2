@@ -9,7 +9,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { IconLoader2, IconPlus, IconSearch } from "@tabler/icons-react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
