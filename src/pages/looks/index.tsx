@@ -421,7 +421,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
             setSortBy('createdAt:asc');
             setSortByCreateAt('asc');
         }
-        if (sortByCreateAt === "" || sortByCreateAt === "asc"){ 
+        if (sortByCreateAt === "" || sortByCreateAt === "asc"){
             setSortBy('createdAt:desc');
             setSortByCreateAt('desc');
         }
@@ -434,7 +434,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
             setSortBy('priority:asc');
             setSortByPriority('asc');
         }
-        if (sortByPriority === "" || sortByPriority === "asc"){ 
+        if (sortByPriority === "" || sortByPriority === "asc"){
             setSortBy('priority:desc');
             setSortByPriority('desc');
         }
@@ -447,7 +447,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
             setSortBy('carouselEnabled:asc');
             setSortByFeatured('asc');
         }
-        if (sortByFeatured === "" || sortByFeatured === "asc"){ 
+        if (sortByFeatured === "" || sortByFeatured === "asc"){
             setSortBy('carouselEnabled:desc');
             setSortByFeatured('desc');
         }
@@ -469,19 +469,23 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
                             <Th>Thumbnail</Th>
                             <Th>Creator</Th>
                             <Th textAlign='center' onClick={() => sortByCreateAtHandler()} cursor="pointer">
-                                Created At 
+                                Created At
                                 {sortByCreateAt ? sortByCreateAt === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
                             </Th>
-                            <Th textAlign='center'>Platform</Th>
-                            <Th textAlign='center' onClick={() => sortByFeaturedHandler()} cursor="pointer">
-                                Featured
-                                {sortByFeatured ? sortByFeatured === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
-                            </Th>
-                            <Th textAlign='center' onClick={() => sortByPriorityHandler()} cursor="pointer">
-                                Priority 
-                                {sortByPriority ? sortByPriority === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
-                            </Th>
-                            <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
+                            {
+                                isLive && <>
+                                    <Th textAlign='center'>Platform</Th>
+                                    <Th textAlign='center' onClick={() => sortByFeaturedHandler()} cursor="pointer">
+                                        Featured
+                                        {sortByFeatured ? sortByFeatured === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
+                                    </Th>
+                                    <Th textAlign='center' onClick={() => sortByPriorityHandler()} cursor="pointer">
+                                        Priority
+                                        {sortByPriority ? sortByPriority === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
+                                    </Th>
+                                    <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
+                                </>
+                            }
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
                     </Thead>
