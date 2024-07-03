@@ -5,6 +5,7 @@ import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Text, Th, Th
 import { IconAlertTriangle, IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconError404, IconPlus, IconShoppingCartExclamation, IconTrash, IconUnlink } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
+import Avatar from "@/components/Avatar";
 
 type LookProductsProps = {
     links: any;
@@ -187,6 +188,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                         <Th>Price</Th>
                         <Th>Discount Price</Th>
                         <Th>Status</Th>
+                        <Th>Added By</Th>
                         <Th textAlign='center'>Link Status</Th>
                         <Th textAlign='right'>Actions</Th>
                     </Tr>
@@ -294,6 +296,17 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                             <option value='active'>Active</option>
                                             <option value='inactive'>Inactive</option>
                                         </Select>
+                                    </Td>
+                                    <Td>
+                                        {
+                                            link?.user
+                                                ? <Avatar
+                                                    src={link?.user?.smallPictureURL}
+                                                    name={link?.user?.username || '-'}
+                                                    showName={true}
+                                                />
+                                                : <Text fontStyle='italic' opacity={0.5}>NIL</Text>
+                                        }
                                     </Td>
                                     <Td textAlign='center'>{renderLinkStatus(link)}</Td>
                                     <Td
