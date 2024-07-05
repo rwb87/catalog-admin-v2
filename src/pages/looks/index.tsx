@@ -236,7 +236,10 @@ const LooksView = () => {
                         fontWeight='medium'
                         textTransform='capitalize'
                         value={filter}
-                        onChange={(event: any) => setFilter(event.target.value)}
+                        onChange={(event: any) => {
+                            setIsLoading(true);
+                            setFilter(event.target.value)
+                        }}
                     >
                         <option value={LOOK_STATUSES.LIVE}>Live</option>
                         <option value={LOOK_STATUSES.SUBMITTED_FOR_APPROVAL}>Incoming</option>
@@ -395,26 +398,9 @@ type LooksTableProps = {
 }
 const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: LooksTableProps) => {
     const isLive = data?.[0]?.status === LOOK_STATUSES.LIVE;
-    const [editingData, setEditingData] = useState<any>({});
-    const [brand, setBrand] = useState<any>({});
     const [sortByPriority, setSortByPriority] = useState<string>('');
     const [sortByCreateAt, setSortByCreateAt] = useState<string>('');
     const [sortByFeatured, setSortByFeatured] = useState<string>('');
-
-    useEffect(() => {
-        const openProductToModify = (event: any) => {
-            const { product = null, brand = null } = event.detail;
-
-            if(!product) return;
-
-            setEditingData(product);
-            setBrand(brand);
-        }
-
-        window?.addEventListener('action:edit-product', openProductToModify);
-
-        return () => window?.removeEventListener('action:edit-product', openProductToModify);
-    }, []);
 
     const sortByCreateAtHandler = () => {
         if (sortByCreateAt === "desc"){
@@ -518,20 +504,8 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
                 </Table>
             </Box>
 
-            {/* Update Product */}
-            <UpdateProductDrawer
-                data={{
-                    ...editingData,
-                    brand: brand,
-                    brandId: brand?.id,
-                }}
-                onClose={() => setEditingData({})}
-                onSave={() => {
-                    window?.dispatchEvent(new CustomEvent('refresh:data'));
-                    setEditingData({});
-                    setBrand({});
-                }}
-            />
+            {/* Update product drawer */}
+            <UpdateProduct />
 
             {/* Look Creator Change */}
             <ChangeCreatorDrawer />
@@ -549,6 +523,42 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
                 setPage={onPaginate}
             />
         </>
+    )
+}
+
+const UpdateProduct = () => {
+    const [editingData, setEditingData] = useState<any>({});
+    const [brand, setBrand] = useState<any>({});
+
+    useEffect(() => {
+        const openProductToModify = (event: any) => {
+            const { product = null, brand = null } = event.detail;
+
+            if(!product) return;
+
+            setEditingData(product);
+            setBrand(brand);
+        }
+
+        window?.addEventListener('action:edit-product', openProductToModify);
+
+        return () => window?.removeEventListener('action:edit-product', openProductToModify);
+    }, []);
+
+    return (
+        <UpdateProductDrawer
+            data={{
+                ...editingData,
+                brand: brand,
+                brandId: brand?.id,
+            }}
+            onClose={() => setEditingData({})}
+            onSave={() => {
+                window?.dispatchEvent(new CustomEvent('refresh:data'));
+                setEditingData({});
+                setBrand({});
+            }}
+        />
     )
 }
 

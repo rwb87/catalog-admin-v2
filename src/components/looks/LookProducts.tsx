@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Grid, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, IconButton, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ProductLinks from "../products/ProductLinks";
@@ -381,15 +381,17 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                 textAlign='center'
                                 width={28}
                             >
-                                <Image
+                                <img
                                     src={item?.squareImageLink}
-                                    width={28}
+                                    width='full'
                                     height='auto'
-                                    objectFit='cover'
                                     alt={item?.name}
-                                    rounded='md'
-                                    cursor='pointer'
                                     loading="lazy"
+                                    style={{
+                                        objectFit: 'cover',
+                                        borderRadius: '0.375rem',
+                                        cursor: 'pointer',
+                                    }}
                                     onClick={() => handleOpenImage(item?.originalImageLink)}
                                     onError={(e: any) => {
                                         e.target.src = '/images/cover-placeholder.webp';
@@ -430,21 +432,26 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                     {
                         item?.brand
                         ? item?.brand?.pictureURL
-                            ? <Image
-                                src={item?.brand?.smallPictureURL}
-                                alt={item?.brand?.name}
-                                width={28}
-                                height={28}
-                                objectFit='contain'
-                                rounded='md'
-                                cursor='pointer'
-                                loading="lazy"
-                                onError={(e: any) => {
-                                    e.target.src = '/images/cover-placeholder.webp';
-                                    e.target.onerror = null;
-                                }}
-                                onClick={() => handleOpenImage(item?.brand?.pictureURL)}
-                            />
+                            ?  <Box width={28}>
+                                <img
+                                    src={item?.brand?.smallPictureURL}
+                                    alt={item?.brand?.name}
+                                    width='full'
+                                    height='full'
+                                    loading="lazy"
+                                    style={{
+                                        objectFit: 'contain',
+                                        borderRadius: '0.375rem',
+                                        cursor: 'pointer',
+                                        aspectRatio: '1/1',
+                                    }}
+                                    onError={(e: any) => {
+                                        e.target.src = '/images/cover-placeholder.webp';
+                                        e.target.onerror = null;
+                                    }}
+                                    onClick={() => handleOpenImage(item?.brand?.pictureURL)}
+                                />
+                            </Box>
                             : item?.brand?.name
                         : '-'
                     }
