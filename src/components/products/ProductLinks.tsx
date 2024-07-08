@@ -188,7 +188,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                         <Th>Price</Th>
                         <Th>Discount Price</Th>
                         <Th>Status</Th>
-                        <Th>Added By</Th>
+                        <Th>Link For</Th>
                         <Th textAlign='center'>Link Status</Th>
                         <Th textAlign='right'>Actions</Th>
                     </Tr>

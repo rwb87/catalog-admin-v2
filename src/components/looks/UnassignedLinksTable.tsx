@@ -342,7 +342,7 @@ const SearchAndMergeProductDrawer = ({ isOpen = false, onSelect, onClose }: Sear
             >
                 <Input
                     type="text"
-                    placeholder='Search products...'
+                    placeholder='Search products by product or brand name...'
                     onChange={(e: any) => setSearchTerm(e?.target?.value)}
                 />
             </Flex>
