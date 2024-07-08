@@ -12,6 +12,7 @@ import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "./LookMusics";
 import LookLocations from "./LookLocations";
 import Avatar from "@/components/Avatar";
+import UnassignedLinksTable from "./UnassignedLinksTable";
 
 type TableRowProps = {
     item: any,
@@ -436,6 +437,25 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
             >
                 <Td colSpan={20} padding={4}>
 
+                    {/* Unassigned Links */}
+                    {
+                        item?.parsedUnassignedLinks?.length
+                            ? <Box
+                                backgroundColor='white'
+                                p={4}
+                                rounded='lg'
+                                borderWidth={1}
+                                borderColor='gray.100'
+                            >
+                                <Heading as='h3' size='md' mb={4} fontWeight='bold'>Unassigned Links</Heading>
+                                <UnassignedLinksTable
+                                    look={item}
+                                    links={item?.parsedUnassignedLinks}
+                                />
+                            </Box>
+                            : null
+                    }
+
                     {/* Products */}
                     {
                         isProductExpandAllowed
@@ -445,6 +465,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                                 rounded='lg'
                                 borderWidth={1}
                                 borderColor='gray.100'
+                                mt={item?.parsedUnassignedLinks?.length ? 4 : 0}
                             >
                                 <Heading as='h3' size='md' mb={4} fontWeight='bold'>Products</Heading>
                                 <LookProducts

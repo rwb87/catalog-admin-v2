@@ -156,7 +156,7 @@ const ProductsView = () => {
                             }}
                             size='sm'
                             icon={<IconPlus size={20} />}
-                            onClick={() => window?.dispatchEvent(new CustomEvent('action:product-drawer'))}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: {} } }))}
                         />
                     </Flex>
 
@@ -363,7 +363,7 @@ const ProductsView = () => {
                             }}
                             size='sm'
                             icon={<IconPlus size={20} />}
-                            onClick={() => window?.dispatchEvent(new CustomEvent('action:product-drawer'))}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: {} } }))}
                         />
                     </Tooltip>
                 </Flex>

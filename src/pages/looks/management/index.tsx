@@ -19,6 +19,7 @@ import LookMusics from "@/components/looks/LookMusics";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import LookLocations from "@/components/looks/LookLocations";
 import Avatar from "@/components/Avatar";
+import UnassignedLinksTable from "@/components/looks/UnassignedLinksTable";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -389,7 +390,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
     const handleExpandImages = () => {
         setIsResourcesExpanded(false);
 
-        setImages(isImagesExpanded ? [] : item?.images);
+        setImages(isImagesExpanded ? [] : item?.photos);
         setIsImagesExpanded(!isImagesExpanded);
     }
 
@@ -627,6 +628,25 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                 display={isResourcesExpanded ? 'block' : 'none'}
                 p={4}
             >
+                {/* Unassigned Links */}
+                {
+                    item?.parsedUnassignedLinks?.length
+                        ? <Box
+                            backgroundColor='white'
+                            p={4}
+                            rounded='lg'
+                            borderWidth={1}
+                            borderColor='gray.100'
+                        >
+                            <Heading as='h3' size='md' mb={4} fontWeight='bold'>Unassigned Links</Heading>
+                            <UnassignedLinksTable
+                                look={item}
+                                links={item?.parsedUnassignedLinks}
+                            />
+                        </Box>
+                        : null
+                }
+
                 {/* Products */}
                 <Box
                     backgroundColor='white'
@@ -634,6 +654,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                     rounded='lg'
                     borderWidth={1}
                     borderColor='gray.100'
+                    mt={item?.parsedUnassignedLinks?.length ? 4 : 0}
                 >
                     <Heading as='h3' size='md' mb={4} fontWeight='bold'>Products</Heading>
                     <LookProducts

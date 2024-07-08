@@ -3,7 +3,11 @@ import { IconHash } from "@tabler/icons-react";
 
 export default function KeywordsPopover({ keywords }: { keywords: any[] }) {
     return (
-        <Popover direction="ltr" isLazy={true}>
+        <Popover
+            direction="ltr"
+            isLazy={true}
+            closeOnBlur={true}
+        >
             <PopoverTrigger>
                 <IconButton
                     aria-label='Hashtags'

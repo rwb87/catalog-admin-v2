@@ -613,19 +613,18 @@ const GlobalPopups = () => {
             if(!product) return;
             setBrand(brand);
 
-            if(product?.id) {
-                setProduct(product);
-            } else {
+            if(product?.id) setProduct(product);
+            else {
                 setProduct({
                     id: Math.random().toString(36).substring(7),
-                    name: '',
-                    link: '',
-                    brand: null,
-                    brandId: null,
-                    price: 0,
-                    dealPrice: 0,
-                    originalImageLink: '',
-                    squareImageLink: '',
+                    name: product?.name || '',
+                    link: product?.link || '',
+                    brand: product?.brand || null,
+                    brandId: product?.brandId || null,
+                    price: product?.price || 0,
+                    dealPrice: product?.dealPrice || 0,
+                    originalImageLink: product?.originalImageLink || '',
+                    squareImageLink: product?.squareImageLink || '',
                     isNew: true,
                 })
             }

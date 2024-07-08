@@ -1,6 +1,6 @@
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Button, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconEdit, IconHanger, IconLink, IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Confirmation from "@/components/Confirmation";
@@ -17,8 +17,10 @@ type ProductsTableProps = {
     pagination?: any,
     onPaginate?: (page: number) => void,
     noUi?: boolean,
+    isSelectable?: boolean,
+    onSelect?: (product: any) => void,
 }
-const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }: ProductsTableProps) => {
+const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false, isSelectable = false, onSelect }: ProductsTableProps) => {
     const [deletingData, setDeletingData] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
@@ -91,6 +93,8 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }
                                         key={item?.id}
                                         item={item}
                                         onDelete={(id: string) => setDeletingData(id)}
+                                        isSelectable={isSelectable}
+                                        onSelect={onSelect}
                                     />)
                         }
                     </Tbody>
@@ -119,9 +123,11 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false }
 
 type TableRowProps = {
     item: any,
+    isSelectable?: boolean,
+    onSelect?: (product: any) => void,
     onDelete: (id: string) => void,
 }
-const TableRow = ({ item, onDelete }: TableRowProps) => {
+const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
     const [looks, setLooks] = useState<any[] | null>(null);
     const [isCreatorsVisible, setIsCreatorsVisible] = useState<boolean>(false);
@@ -271,28 +277,42 @@ const TableRow = ({ item, onDelete }: TableRowProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
-                    <KeywordsPopover keywords={item?.keywords} />
+                    {
+                        isSelectable
+                            ? <>
+                                <Button
+                                    variant={item?.isSelected ? 'solid' : 'outline'}
+                                    colorScheme='green'
+                                    size='sm'
+                                    rounded='full'
+                                    onClick={() => onSelect?.(item)}
+                                >{item?.isSelected ? 'Selected' : 'Select'}</Button>
+                            </>
+                            : <>
+                                <KeywordsPopover keywords={item?.keywords} />
 
-                    <IconButton
-                        aria-label="Edit"
-                        variant='ghost'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconEdit size={22} />}
-                        onClick={() => window.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: item } }))}
-                    />
+                                <IconButton
+                                    aria-label="Edit"
+                                    variant='ghost'
+                                    rounded='full'
+                                    size='sm'
+                                    ml={4}
+                                    icon={<IconEdit size={22} />}
+                                    onClick={() => window.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: item } }))}
+                                />
 
-                    <IconButton
-                        aria-label='Delete'
-                        variant='ghost'
-                        colorScheme='red'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconTrash size={22} />}
-                        onClick={() => onDelete(item)}
-                    />
+                                <IconButton
+                                    aria-label='Delete'
+                                    variant='ghost'
+                                    colorScheme='red'
+                                    rounded='full'
+                                    size='sm'
+                                    ml={4}
+                                    icon={<IconTrash size={22} />}
+                                    onClick={() => onDelete(item)}
+                                />
+                            </>
+                        }
                 </Td>
             </Tr>
 
