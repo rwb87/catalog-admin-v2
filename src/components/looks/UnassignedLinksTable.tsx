@@ -289,12 +289,6 @@ const SearchAndMergeProductDrawer = ({ isOpen = false, onSelect, onClose }: Sear
     useEffect(() => {
         if(!isOpen) return;
 
-        setSearchTerm('');
-    }, [isOpen]);
-
-    useEffect(() => {
-        if(!isOpen) return;
-
         setIsLoading(true);
 
         const debounce = setTimeout(() => getData(), 500);
