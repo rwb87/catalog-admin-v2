@@ -296,7 +296,7 @@ const SearchAndMergeProductDrawer = ({ isOpen = false, onSelect, onClose }: Sear
     }, [searchTerm, isOpen]);
 
     const getData = async () => {
-        if(!isOpen || isLoading) return;
+        if(!isOpen) return;
 
         setIsLoading(true);
 
