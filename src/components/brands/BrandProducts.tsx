@@ -156,9 +156,9 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                 <Td>
 
                     {
-                        product?.pictureURL
+                        product?.originalImageLink
                             ? <Image
-                                src={product?.smallPictureURL}
+                                src={product?.squareImageLink}
                                 alt={product?.name}
                                 width={20}
                                 height={28}
@@ -166,7 +166,7 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                                 rounded='md'
                                 cursor='pointer'
                                 loading="lazy"
-                                onClick={() => handleOnOpenImage(product?.pictureURL)}
+                                onClick={() => handleOnOpenImage(product?.originalImageLink)}
                                 onError={(e: any) => {
                                     e.target.src = '/images/cover-placeholder.webp';
                                     e.target.onerror = null;
