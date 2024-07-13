@@ -80,7 +80,6 @@ const UsersTable = (props: UsersTableProps) => {
             setEditingUser({
                 id: Math.random().toString(36).substring(7),
                 name: '',
-                lastName: '',
                 username: '',
                 email: '',
                 password: '',

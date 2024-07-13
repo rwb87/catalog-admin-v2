@@ -53,7 +53,6 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
 
         // Common Fields
         payload.append('name', editingUser?.name);
-        payload.append('lastName', editingUser?.lastName || '');
         if(user?.email !== editingUser?.email) payload.append('email', editingUser?.email?.toLowerCase());
         if(user?.username !== editingUser?.username) payload.append('username', editingUser?.username);
         payload.append('type', editingUser?.type);
@@ -167,23 +166,20 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                 {/* Name */}
                 <Grid
                     mt={20}
-                    templateColumns={{
-                        base: '1fr',
-                        md: 'repeat(2, 1fr)',
-                    }}
+                    templateColumns='1fr'
                     gap={4}
                 >
-                    <FormControl id="firstName">
-                        <FormLabel>First Name <Text as='span' color='red.500'>*</Text></FormLabel>
+                    <FormControl id="name">
+                        <FormLabel>Full Name <Text as='span' color='red.500'>*</Text></FormLabel>
                         <Input
                             type="text"
-                            autoComplete="firstName"
+                            autoComplete="name"
                             value={editingUser?.name}
                             onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                         />
                     </FormControl>
 
-                    <FormControl id="lastName">
+                    {/* <FormControl id="lastName">
                         <FormLabel >Last Name</FormLabel>
                         <Input
                             type="text"
@@ -191,7 +187,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                             value={editingUser?.lastName || ''}
                             onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
                         />
-                    </FormControl>
+                    </FormControl> */}
                 </Grid>
 
                 {/* Email and Username */}
