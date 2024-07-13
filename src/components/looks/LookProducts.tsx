@@ -425,6 +425,22 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                         >{productDiscountPercentage}%</Tag>
                                         : null
                                 }
+                                <br />
+                                {
+                                    item?.isShopify
+                                        ? <img
+                                            src='/icons/icon-shopify.webp'
+                                            alt='Shopify'
+                                            title='Shopify'
+                                            loading='lazy'
+                                            style={{
+                                                width: 30,
+                                                height: 30,
+                                                marginTop: 2
+                                            }}
+                                        />
+                                        : null
+                                }
                             </>
                     }
                 </Td>

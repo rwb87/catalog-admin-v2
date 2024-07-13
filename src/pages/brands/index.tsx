@@ -427,7 +427,25 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
     return (
         <>
             <Tr key={item?.id}>
-                <Td>{item?.name || '-'}</Td>
+                <Td>
+                    {item?.name || '-'}
+                    <br />
+                    {
+                        item?.isShopify
+                            ? <img
+                                src='/icons/icon-shopify.webp'
+                                alt='Shopify'
+                                title='Shopify'
+                                loading='lazy'
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    marginTop: 4
+                                }}
+                            />
+                            : null
+                    }
+                </Td>
                 <Td>
                     {
                         item?.pictureURL

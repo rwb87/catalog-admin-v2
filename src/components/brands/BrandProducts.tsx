@@ -176,7 +176,25 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                     }
                 </Td>
                 <Td width={40}>{brand?.name || '-'}</Td>
-                <Td>{product?.name || '-'}</Td>
+                <Td>
+                    {product?.name || '-'}
+                    <br />
+                    {
+                        product?.isShopify
+                            ? <img
+                                src='/icons/icon-shopify.webp'
+                                alt='Shopify'
+                                title='Shopify'
+                                loading='lazy'
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    marginTop: 4
+                                }}
+                            />
+                            : null
+                    }
+                </Td>
                 <Td>{product?.style?.label || '-'}</Td>
                 <Td textAlign='center'>
                     {
