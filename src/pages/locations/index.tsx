@@ -38,7 +38,7 @@ const LocationView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/locations?search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
+                endpoint: `/locations?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 

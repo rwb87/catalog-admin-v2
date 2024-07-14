@@ -1,4 +1,5 @@
-import LocationTable, { TableRow as LocationTableRow } from "@/components/location/LocationTable";
+import LocationTable from "@/components/location/LocationTable";
+import LocationsTableRow from "@/components/location/LocationTableRow";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Box, Button, Flex, Input, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
@@ -105,9 +106,10 @@ export default function LookLocations({ lookId, data, onSave }: LookLocationsPro
                                     <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                 </Td>
                             </Tr>
-                            : editedData.map((item: any) => <LocationTableRow
+                            : editedData.map((item: any) => <LocationsTableRow
                                 key={item?.id}
                                 item={item}
+                                isLookLocation={true}
                                 onEdit={(item: any) => setEditingData(item)}
                                 onDelete={(item: any) => setEditedData(editedData.filter((location: any) => location?.id !== item?.id))}
                             />)
