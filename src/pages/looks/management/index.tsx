@@ -710,9 +710,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
             </Box>
 
             {/* Add music popup */}
-            <AddMusicPopup
-                onComplete={(music: any) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music } }))}
-            />
+            <AddMusicPopup onComplete={(music: any, lookId: number) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music, lookId } }))} />
         </Box>
     )
 }

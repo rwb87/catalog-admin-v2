@@ -495,8 +495,8 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
                                             <Text fontStyle='italic' opacity={0.5}>NO RESULT</Text>
                                         </Td>
                                     </Tr>
-                                    : data.map((item: any) => <LooksTableRow
-                                        key={item?.id}
+                                    : data.map((item: any, index: number) => <LooksTableRow
+                                        key={item?.id || index}
                                         item={item}
                                     />)
                         }
@@ -511,9 +511,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
             <ChangeCreatorDrawer />
 
             {/* Add music popup */}
-            <AddMusicPopup
-                onComplete={(music: any) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music } }))}
-            />
+            <AddMusicPopup onComplete={(music: any, lookId: number) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music, lookId } }))} />
 
             {/* Pagination */}
             <Pagination

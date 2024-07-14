@@ -175,9 +175,7 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
             </Tr>
 
             {/* Looks */}
-            <Tr
-                display={isLooksExpanded? 'table-row' : 'none'}
-            >
+            <Tr display={isLooksExpanded? 'table-row' : 'none'}>
                 <Td colSpan={20} p={4} bgColor='gray.50'>
                     <Table>
                         <Thead>
@@ -195,7 +193,7 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
                         </Thead>
                         <Tbody>
                             {
-                                item?.tags?.length
+                                item?.tags?.length && item?.tags?.filter((tag: any) => tag?.look).length
                                     ? item?.tags?.map((tag: any, index: number) => <LooksTableRow
                                         key={index}
                                         item={tag?.look}

@@ -22,9 +22,9 @@ export default function LookMusics({ data, lookId, onSave }: LookMusicsProps) {
 
     useEffect(() => {
         const addNewMusic = (event: any) => {
-            const newMusic = event.detail.music;
+            const { music, lookId: musicLookId } = event.detail;
 
-            setEditedData([...editedData, newMusic]);
+            if(musicLookId && lookId === musicLookId) setEditedData([...editedData, music]);
         }
 
         window.addEventListener('action:add-music-to-look', addNewMusic);
@@ -114,7 +114,7 @@ export default function LookMusics({ data, lookId, onSave }: LookMusicsProps) {
                     colorScheme='green'
                     size='sm'
                     leftIcon={<IconPlus size={20} />}
-                    onClick={() => window.dispatchEvent(new CustomEvent('modal:add-music'))}
+                    onClick={() => window.dispatchEvent(new CustomEvent('modal:add-music', { detail: { lookId: lookId } }))}
                 >Add Music</Button>
 
                 <Button

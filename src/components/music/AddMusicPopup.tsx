@@ -6,7 +6,7 @@ import { IconLoader2 } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 
 type AddMusicPopupProps = {
-    onComplete?: (music: any) => void,
+    onComplete?: (music: any, lookId?: number) => void,
 }
 export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
     const audioPlayerRef = useRef<HTMLAudioElement>(null);
@@ -18,10 +18,11 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
     const [isAddingMusic, setIsAddingMusic] = useState(false);
     const [switchingTrack, setSwitchingTrack] = useState<any>({});
     const [isPlaying, setIsPlaying] = useState(false);
+    const [lookId, setLookId] = useState<number | null>(null);
 
     useEffect(() => {
         const togglePopup = (event?: any) => {
-            const { music } = event?.detail || {};
+            const { music, lookId } = event?.detail || {};
 
             setIsOpen(!isOpen);
             setLink('');
@@ -31,6 +32,9 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
 
             if(music) setSwitchingTrack(music);
             else setSwitchingTrack({});
+
+            if(lookId) setLookId(lookId);
+            else setLookId(null);
         }
 
         window.addEventListener('modal:add-music', togglePopup);
@@ -76,7 +80,7 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
 
                 setIsOpen(false);
                 setLink('');
-                onComplete?.(response);
+                onComplete?.(response, lookId || null);
                 setMusicDetails({});
                 setIsLoading(false);
                 setIsAddingMusic(false);
