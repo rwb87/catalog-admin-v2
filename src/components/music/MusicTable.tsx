@@ -56,7 +56,7 @@ const MusicsTable = ({ data, isLoading, pagination, onPaginate, onDelete }: Musi
                             <Th>Name</Th>
                             <Th textAlign='center'>Preview</Th>
                             <Th textAlign='center'>Link</Th>
-                            <Th textAlign='center'>Products</Th>
+                            <Th textAlign='center'>Looks</Th>
                             <Th textAlign='center'>Provider</Th>
                             <Th textAlign='center'>Added By</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>

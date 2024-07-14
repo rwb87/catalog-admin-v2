@@ -38,7 +38,7 @@ const MusicView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/musics?search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
+                endpoint: `/musics?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
                 method: 'GET',
             });
 
