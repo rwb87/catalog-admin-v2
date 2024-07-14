@@ -18,9 +18,20 @@ type TableRowProps = {
     item: any,
     isUserChangeAllowed?: boolean,
     isProductExpandAllowed?: boolean,
+    isAdminActionsAllowed?: boolean,
+    isResourcesExpandable?: boolean,
     showStatus?: boolean,
 }
-const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowed = true, showStatus = false }: TableRowProps) => {
+const LooksTableRow = (props: TableRowProps) => {
+    const {
+        item,
+        isUserChangeAllowed = true,
+        isProductExpandAllowed = true,
+        isAdminActionsAllowed = true,
+        isResourcesExpandable = true,
+        showStatus = false
+    } = props;
+
     const [isResourcesExpanded, setIsResourcesExpanded] = useState<boolean>(false);
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -316,6 +327,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                 <Td
                     textAlign='right'
                     whiteSpace='nowrap'
+                    display={isAdminActionsAllowed? 'table-cell' : 'none'}
                 >
                     <Box display='inline-block'>
                         <KeywordsPopover keywords={item?.keywordLooks} />
@@ -366,30 +378,32 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                     }
 
                     {/* Expand Products, Musics and Locations */}
-                    <Tooltip label="Resources" placement="bottom">
-                        <IconButton
-                            display='inline-flex'
-                            aria-label='Expand'
-                            variant='ghost'
-                            rounded='full'
-                            size='sm'
-                            backgroundColor='black'
-                            color='white'
-                            ml={4}
-                            _hover={{
-                                backgroundColor: 'blackAlpha.700',
-                            }}
-                            _focusVisible={{
-                                backgroundColor: 'blackAlpha.800',
-                            }}
-                            icon={<IconChevronDown size={22} />}
-                            style={{
-                                transition: 'transform 0.2s ease-in-out',
-                                transform: `rotate(${isResourcesExpanded ? 180 : 0}deg)`
-                            }}
-                            onClick={() => setIsResourcesExpanded(!isResourcesExpanded)}
-                        />
-                    </Tooltip>
+                    {
+                        isResourcesExpandable && <Tooltip label="Resources" placement="bottom">
+                            <IconButton
+                                display='inline-flex'
+                                aria-label='Expand'
+                                variant='ghost'
+                                rounded='full'
+                                size='sm'
+                                backgroundColor='black'
+                                color='white'
+                                ml={4}
+                                _hover={{
+                                    backgroundColor: 'blackAlpha.700',
+                                }}
+                                _focusVisible={{
+                                    backgroundColor: 'blackAlpha.800',
+                                }}
+                                icon={<IconChevronDown size={22} />}
+                                style={{
+                                    transition: 'transform 0.2s ease-in-out',
+                                    transform: `rotate(${isResourcesExpanded ? 180 : 0}deg)`
+                                }}
+                                onClick={() => setIsResourcesExpanded(!isResourcesExpanded)}
+                            />
+                        </Tooltip>
+                    }
 
                     {/* Delete */}
                     <IconButton
@@ -414,6 +428,7 @@ const LooksTableRow = ({ item, isUserChangeAllowed = true, isProductExpandAllowe
                     <LookPhotos
                         lookId={item?.id}
                         images={images}
+                        isAdminActionsAllowed={isAdminActionsAllowed}
                         onSave={async (list: any) => {
                             await handleUpdateData({ photos: list }, item?.id);
                             setIsImagesExpanded(false);

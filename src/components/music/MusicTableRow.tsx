@@ -198,6 +198,7 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
                                         key={index}
                                         item={tag?.look}
                                         isUserChangeAllowed={false}
+                                        isResourcesExpandable={false}
                                         showStatus={true}
                                     />)
                                     : <Tr>

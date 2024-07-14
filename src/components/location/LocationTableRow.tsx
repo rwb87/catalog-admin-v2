@@ -4,7 +4,7 @@ import { Button, Flex, IconButton, Image, Input, Table, Tbody, Td, Text, Th, The
 import { IconCornerDownRight, IconDeviceFloppy, IconEdit, IconHanger, IconLink, IconTrash, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import LooksTableRow from "../looks/LooksTableRow";
+import LooksTableRow from "@/components/looks/LooksTableRow";
 
 type TableRowProps = {
     item: any,
@@ -60,11 +60,14 @@ export default function LocationsTableRow({ item, isSelectable = false, isLookLo
                         rounded='full'
                         icon={<IconLink size={20} />}
                         onClick={() => {
-                            setLinks({
-                                website: item?.website,
-                                google: item?.googleMapsUrl,
-                                apple: item?.appleMapsUrl,
-                            })
+                            if(links === null) {
+                                setLinks({
+                                    website: item?.website,
+                                    google: item?.googleMapsUrl,
+                                    apple: item?.appleMapsUrl,
+                                })
+                            } else setLinks(null);
+
                         }}
                     />
                 </Td>
@@ -153,7 +156,7 @@ export default function LocationsTableRow({ item, isSelectable = false, isLookLo
                                     <Th textAlign='center'>Priority</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                     <Th textAlign='center'>Status</Th>
-                                    <Th textAlign='right' color='blue.500'>Actions</Th>
+                                    <Th textAlign='right'>Actions</Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
@@ -163,6 +166,7 @@ export default function LocationsTableRow({ item, isSelectable = false, isLookLo
                                             key={index}
                                             item={tag?.look}
                                             isUserChangeAllowed={false}
+                                            isResourcesExpandable={false}
                                             showStatus={true}
                                         />)
                                         : <Tr>

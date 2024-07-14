@@ -5,7 +5,7 @@ import Pagination from "@/components/Pagination";
 import moment from "moment";
 import { ROLES } from "@/_config";
 import { useEffect, useState } from "react";
-import LooksTableRow from "../looks/LooksTableRow";
+import LooksTableRow from "@/components/looks/LooksTableRow";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";

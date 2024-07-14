@@ -14,10 +14,11 @@ const initialDnDState = {
 type LookPhotosProps = {
     lookId: number;
     images: any;
+    isAdminActionsAllowed?: boolean;
     onSave: (images: any) => void;
     onCancel: () => void;
 }
-const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
+const LookPhotos = ({ lookId, images, isAdminActionsAllowed = true, onSave, onCancel }: LookPhotosProps) => {
     const imagesInputRef = useRef<HTMLInputElement>(null);
 
     const [dragAndDrop, setDragAndDrop] = useState<any>(initialDnDState);
@@ -38,6 +39,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
     }, [images]);
 
     const onDragStart = (event: any) => {
+        if(!isAdminActionsAllowed) return;
+
         const initialPosition: number = parseInt(event?.currentTarget?.dataset?.position || 0);
 
         setDragAndDrop({
@@ -53,6 +56,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
 
     const onDragOver = (event: any) => {
         event.preventDefault();
+
+        if(!isAdminActionsAllowed) return;
 
         let newList = dragAndDrop.originalOrder;
 
@@ -82,6 +87,8 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
     }
 
     const onDrop = () => {
+        if(!isAdminActionsAllowed) return;
+
         setList(dragAndDrop.updatedOrder);
 
         setDragAndDrop({
@@ -177,7 +184,9 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                             width: '100%',
                             height: '100%',
                             opacity: 0,
+                            cursor: isAdminActionsAllowed? 'pointer' : 'not-allowed'
                         }}
+                        disabled={isProcessing || !isAdminActionsAllowed}
                         onChange={(e: any) => {
                             const files = e.target.files;
 
@@ -212,7 +221,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                 width={20}
                                 transform={dragAndDrop.isDragging && dragAndDrop?.draggedFrom === index ? 'scale(1.10)' : 'scale(1)'}
                                 transition='all .2s ease-in-out'
-                                cursor={image?.isUpload ? 'not-allowed' : dragAndDrop.isDragging ? 'grabbing' : 'grab'}
+                                cursor={image?.isUpload ? 'not-allowed' : dragAndDrop.isDragging ? 'grabbing' : isAdminActionsAllowed ? 'grab' : 'grab'}
                                 draggable="true"
                                 pointerEvents={image?.isUpload ? 'none' : 'auto'}
                                 onDragStart={onDragStart}
@@ -248,6 +257,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                                             right={-1}
                                             rounded='full'
                                             aspectRatio={1}
+                                            hidden={!isAdminActionsAllowed}
                                             onClick={(event: any) => {
                                                 event.stopPropagation();
 
@@ -272,6 +282,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                     isDisabled={isProcessing}
                     isLoading={isProcessing}
                     onClick={handleSaveList}
+                    hidden={!isAdminActionsAllowed}
                 >Save</Button>
 
                 <Button
@@ -280,7 +291,7 @@ const LookPhotos = ({ lookId, images, onSave, onCancel }: LookPhotosProps) => {
                     size='sm'
                     ml={2}
                     onClick={onCancel}
-                >Cancel</Button>
+                >{isAdminActionsAllowed ? 'Cancel' : 'Close'}</Button>
             </Box>
         </Flex>
     )

@@ -1,15 +1,15 @@
 import { Box, Button, Flex, Grid, IconButton, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import ProductLinks from "../products/ProductLinks";
-import CustomDrawer from "../Drawer";
-import SearchableInput from "../SearchableInput";
+import ProductLinks from "@/components/products/ProductLinks";
+import CustomDrawer from "@/components/Drawer";
+import SearchableInput from "@/components/SearchableInput";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useGlobalVolatileStorage } from "@/_store";
 import { encodeAmpersand } from "@/helpers/utils";
-import UpdateBrandDrawer from "../brands/UpdateBrandDrawer";
-import UpdateProductDrawer from "../products/UpdateProductDrawer";
+import UpdateBrandDrawer from "@/components/brands/UpdateBrandDrawer";
+import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import KeywordsPopover from "@/components/KeywordsPopover";
 
 type LookProductsProps = {
