@@ -360,6 +360,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                             <Th>Image</Th>
                             <Th>Image Size</Th>
                             <Th textAlign='center'>Website</Th>
+                            <Th textAlign='center'>Platform</Th>
                             <Th textAlign='center'># of Products</Th>
                             <Th textAlign='center'>Partnership</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
@@ -427,25 +428,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
     return (
         <>
             <Tr key={item?.id}>
-                <Td>
-                    {item?.name || '-'}
-                    <br />
-                    {
-                        item?.isShopify
-                            ? <img
-                                src='/icons/icon-shopify.webp'
-                                alt='Shopify'
-                                title='Shopify'
-                                loading='lazy'
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                    marginTop: 4
-                                }}
-                            />
-                            : null
-                    }
-                </Td>
+                <Td>{item?.name || '-'}</Td>
                 <Td>
                     {
                         item?.pictureURL
@@ -481,6 +464,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             : '-'
                     }
                 </Td>
+                <Td textAlign='center'>{item?.isShopify ? 'Shopify' : 'Catalog'}</Td>
                 <Td textAlign='center'>{item?.items?.length || 0}</Td>
                 <Td textAlign='center'>{item?.partnership || 'None'}</Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>

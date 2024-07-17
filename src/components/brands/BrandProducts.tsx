@@ -63,9 +63,9 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                     <Tr>
                         <Th>#</Th>
                         <Th>Image</Th>
-                        <Th>Brand</Th>
                         <Th>Name</Th>
                         <Th>Style</Th>
+                        <Th>Platform</Th>
                         <Th textAlign='center'>Links</Th>
                         <Th textAlign='center'>Price</Th>
                         <Th textAlign='center'>Clickouts</Th>
@@ -142,7 +142,7 @@ type ProductProps = {
     onEdit?: (product: any) => void;
     onRemove?: (product: any) => void;
 }
-const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) => {
+const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
     if(!product) return null;
@@ -175,27 +175,9 @@ const Product = ({ product, brand, handleOnOpenImage, onEdit }: ProductProps) =>
                             : '-'
                     }
                 </Td>
-                <Td width={40}>{brand?.name || '-'}</Td>
-                <Td>
-                    {product?.name || '-'}
-                    <br />
-                    {
-                        product?.isShopify
-                            ? <img
-                                src='/icons/icon-shopify.webp'
-                                alt='Shopify'
-                                title='Shopify'
-                                loading='lazy'
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                    marginTop: 4
-                                }}
-                            />
-                            : null
-                    }
-                </Td>
+                <Td>{product?.name || '-'}</Td>
                 <Td>{product?.style?.label || '-'}</Td>
+                <Td>{product?.isShopify ? 'Shopify' : 'Catalog'}</Td>
                 <Td textAlign='center'>
                     {
                         <IconButton

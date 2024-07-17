@@ -198,6 +198,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                             <Th>Brand</Th>
                             <Th>Name</Th>
                             <Th>Style</Th>
+                            <Th>Platform</Th>
                             <Th textAlign='center'>Links</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center'>Clickouts</Th>
@@ -425,22 +426,6 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                                         >{productDiscountPercentage}%</Tag>
                                         : null
                                 }
-                                <br />
-                                {
-                                    item?.isShopify
-                                        ? <img
-                                            src='/icons/icon-shopify.webp'
-                                            alt='Shopify'
-                                            title='Shopify'
-                                            loading='lazy'
-                                            style={{
-                                                width: 30,
-                                                height: 30,
-                                                marginTop: 2
-                                            }}
-                                        />
-                                        : null
-                                }
                             </>
                     }
                 </Td>
@@ -474,6 +459,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                 </Td>
                 <Td width='250px'>{item?.name || '-'}</Td>
                 <Td>{item?.style?.label || '-'}</Td>
+                <Td>{item?.isShopify ? 'Shopify' : 'Catalog'}</Td>
                 <Td textAlign='center'>
                     <IconButton
                         aria-label='View Links'
