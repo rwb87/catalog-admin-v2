@@ -323,6 +323,7 @@ const TableRow = ({ item }: TableRowProps) => {
             notify(message, 3000);
         }
 
+        setStatus(null);
         setIsProcessing(false);
     }
 
@@ -420,22 +421,29 @@ const TableRow = ({ item }: TableRowProps) => {
             </Tr>
 
             {/* Confirm status */}
-            <Confirmation
-                isOpen={status !== null && status !== 'pending'}
-                isProcessing={isProcessing}
-                title='Confirmation'
-                html={
-                    <Text>
-                        Are you sure you want to <b>{status === 'approved' ? 'approve' : 'reject'}</b> this request?
-                    </Text>
-                }
-                cancelText='Nevermind'
-                confirmText='Yes, update'
-                processingConfirmText='Saving...'
-                isDangerous={status === 'rejected'}
-                onConfirm={handleUpdateStatus}
-                onCancel={() => setStatus(null)}
-            />
+            <Tr
+                display={isImagesExpanded ? 'table-row' : 'none'}
+                bgColor='gray.50'
+            >
+                <Td colSpan={20}>
+                    <Confirmation
+                        isOpen={status !== null && status !== 'pending'}
+                        isProcessing={isProcessing}
+                        title='Confirmation'
+                        html={
+                            <Text>
+                                Are you sure you want to <b>{status === 'approved' ? 'approve' : 'reject'}</b> this request?
+                            </Text>
+                        }
+                        cancelText='Nevermind'
+                        confirmText='Yes, update'
+                        processingConfirmText='Saving...'
+                        isDangerous={status === 'rejected'}
+                        onConfirm={handleUpdateStatus}
+                        onCancel={() => setStatus(null)}
+                    />
+                </Td>
+            </Tr>
         </>
     )
 }
