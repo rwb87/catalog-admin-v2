@@ -295,9 +295,8 @@ const TableRow = (props: UsersTableRowProps) => {
                     <Tooltip label={user?.description || null} aria-label='Username' placement='bottom'>
                         <Flex alignItems='center'>
                             <Avatar
-                                src={user?.smallPictureURL}
+                                user={user}
                                 name={user?.username}
-                                showName={true}
                             />
                         </Flex>
                     </Tooltip>

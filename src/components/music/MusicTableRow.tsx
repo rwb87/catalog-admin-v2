@@ -132,9 +132,7 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
                                 {
                                     item?.user
                                         ? <Avatar
-                                            src={item?.user?.smallPictureURL}
-                                            name={item?.user?.username || '-'}
-                                            showName={true}
+                                            user={item?.user}
                                             size="2rem"
                                         />
                                     : <Text color='gray.500' fontSize='sm' opacity={0.5} fontStyle='italic'>N/A</Text>

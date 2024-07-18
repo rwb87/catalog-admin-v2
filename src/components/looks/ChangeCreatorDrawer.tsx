@@ -127,9 +127,7 @@ const ChangeCreatorDrawer = () => {
                                 >
                                     <Flex alignItems='center' gap={2}>
                                         <Avatar
-                                            src={creator?.smallPictureURL}
-                                            name={creator?.username || '-'}
-                                            showName={true}
+                                            user={creator}
                                             size="2rem"
                                         />
                                     </Flex>

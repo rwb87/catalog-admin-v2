@@ -469,11 +469,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                             fontWeight='normal'
                             onClick={() => handleOpenChangeCreatorDrawer(item)}
                         >
-                            <Avatar
-                                src={item?.user?.smallPictureURL}
-                                name={item?.user?.username || '-'}
-                                showName={true}
-                            />
+                            <Avatar user={item?.user} />
                         </Button>
                     </Flex>
                 </Flex>

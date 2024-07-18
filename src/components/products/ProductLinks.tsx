@@ -300,11 +300,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                     <Td>
                                         {
                                             link?.user
-                                                ? <Avatar
-                                                    src={link?.user?.smallPictureURL}
-                                                    name={link?.user?.username || '-'}
-                                                    showName={true}
-                                                />
+                                                ? <Avatar user={link?.user} />
                                                 : <Text fontStyle='italic' opacity={0.5}>NIL</Text>
                                         }
                                     </Td>

@@ -1,3 +1,5 @@
+import { ROLES } from "@/_config";
+import { useUser } from "@/_store";
 import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
@@ -11,6 +13,7 @@ import { useEffect, useState } from "react";
 import { BiDollar } from "react-icons/bi";
 
 const EarningsView = () => {
+    const { role: authUserRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [month, setMonth] = useState(moment().format('YYYY-MM'));
     const [data, setData] = useState<any>([]);
@@ -73,15 +76,17 @@ const EarningsView = () => {
         if(value <= 0) return;
 
         try {
-            const response = await fetch({
+            fetch({
                 endpoint: `/discovers/dailypayout`,
                 method: 'POST',
                 data: {
                     payoutValue: value
                 }
-            });
+            }).then(response => {
+                setDailyPayout(response);
+            })
 
-            setDailyPayout(response);
+            notify('Daily payout updated successfully', 3000);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -125,7 +130,7 @@ const EarningsView = () => {
 
                     {/* Date Filters */}
                     <Input
-                        type="month"
+                        type="date"
                         bgColor='white'
                         rounded='full'
                         width={{
@@ -140,52 +145,55 @@ const EarningsView = () => {
                     />
 
                     {/* Edit Payout */}
-                    <Popover
-                        placement='left'
-                        closeOnBlur={true}
-                        isOpen={isPayoutEditPopoverOpen}
-                        onClose={() => setIsPayoutEditPopoverOpen(false)}
-                    >
-                        <PopoverTrigger>
-                            <IconButton
-                                aria-label='Edit Payout'
-                                variant='solid'
-                                rounded='full'
-                                borderWidth={2}
-                                borderColor='gray.100'
-                                size='sm'
-                                icon={<IconEdit size={20} />}
-                                onClick={() => setIsPayoutEditPopoverOpen(true)}
-                            />
-                        </PopoverTrigger>
+                    {
+                        authUserRole === ROLES.SUPER_ADMIN && <Popover
+                            isLazy={true}
+                            placement='left'
+                            closeOnBlur={true}
+                            isOpen={isPayoutEditPopoverOpen}
+                            onClose={() => setIsPayoutEditPopoverOpen(false)}
+                        >
+                            <PopoverTrigger>
+                                <IconButton
+                                    aria-label='Edit Payout'
+                                    variant='solid'
+                                    rounded='full'
+                                    borderWidth={2}
+                                    borderColor='gray.100'
+                                    size='sm'
+                                    icon={<IconEdit size={20} />}
+                                    onClick={() => setIsPayoutEditPopoverOpen(true)}
+                                />
+                            </PopoverTrigger>
 
-                        <PopoverContent>
-                            <PopoverArrow />
-                            <PopoverHeader>Daily Payout Value</PopoverHeader>
-                            <PopoverCloseButton />
+                            <PopoverContent>
+                                <PopoverArrow />
+                                <PopoverHeader>Daily Payout Value</PopoverHeader>
+                                <PopoverCloseButton />
 
-                            <PopoverBody>
-                                <Box p={4}>
-                                    <FormControl>
-                                        <InputGroup>
-                                            <InputLeftAddon><BiDollar /></InputLeftAddon>
+                                <PopoverBody>
+                                    <Box p={4}>
+                                        <FormControl>
+                                            <InputGroup>
+                                                <InputLeftAddon><BiDollar /></InputLeftAddon>
 
-                                            <Input
-                                                type="number"
-                                                required
-                                                autoComplete="payout"
-                                                step={0.01}
-                                                min={0}
-                                                value={dailyPayout?.payoutValue || 0}
-                                                onChange={(e: any) => setDailyPayout({ ...dailyPayout, payoutValue: e.target.value })}
-                                                onBlur={handleUpdatePayoutValue}
-                                            />
-                                        </InputGroup>
-                                    </FormControl>
-                                </Box>
-                            </PopoverBody>
-                        </PopoverContent>
-                    </Popover>
+                                                <Input
+                                                    type="number"
+                                                    required
+                                                    autoComplete="payout"
+                                                    step={0.01}
+                                                    min={0}
+                                                    value={dailyPayout?.payoutValue || 0}
+                                                    onChange={(e: any) => setDailyPayout({ ...dailyPayout, payoutValue: e.target.value })}
+                                                    onBlur={handleUpdatePayoutValue}
+                                                />
+                                            </InputGroup>
+                                        </FormControl>
+                                    </Box>
+                                </PopoverBody>
+                            </PopoverContent>
+                        </Popover>
+                    }
                 </Flex>
             </Flex>
 
@@ -227,8 +235,9 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                     <Thead>
                         <Tr>
                             <Th>Date</Th>
+                            <Th>Creator</Th>
                             <Th textAlign='center' color='blue.500'># of Discovers</Th>
-                            <Th textAlign='center' color='green.500'>Daily Revenue Payout</Th>
+                            <Th textAlign='right' color='green.500'>Daily Revenue Payout</Th>
                         </Tr>
                     </Thead>
 
@@ -254,8 +263,9 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                                     : reconstructedData.map((item: any, index: number) => (
                                         <Tr key={index}>
                                             <Td whiteSpace='nowrap'>{formatDateTime(item?.date, false)}</Td>
+                                            <Td>{item?.creator || '-'}</Td>
                                             <Td textAlign='center' color='blue.500'>{item?.discovers || 0}</Td>
-                                            <Td textAlign='center' color='green.500'>${parseFloat(item?.dailyTotalEarnings)?.toFixed(2) || 0}</Td>
+                                            <Td textAlign='right' color='green.500'>${parseFloat(item?.dailyTotalEarnings)?.toFixed(2) || 0}</Td>
                                         </Tr>
                                     ))
                         }

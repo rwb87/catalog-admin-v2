@@ -1,4 +1,4 @@
-import { Box, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text, Textarea } from "@chakra-ui/react";
+import { Box, Checkbox, FormControl, FormLabel, Grid, IconButton, Image, Input, Select, Text, Textarea } from "@chakra-ui/react";
 import { IconCamera } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import CustomDrawer from "@/components/Drawer";
@@ -60,6 +60,9 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         payload.append('creatorGender', editingUser?.creatorGender || '');
         if(editingUser?.birthDate) payload.append('birthDate', moment(editingUser?.birthDate).format('YYYY-MM-DD'));
         payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : '');
+
+        // Is early adaptor for creator
+        if(editingUser?.type === ROLES.CREATOR) payload.append('isEarlyAdaptor', editingUser?.isEarlyAdaptor);
 
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
@@ -141,8 +144,9 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         transform='translateX(-50%)'
                     >
                         <Avatar
-                            src={editingUser?.smallPictureURL}
+                            user={editingUser}
                             name={editingUser?.name}
+                            showName={false}
                             size='8rem'
                             style={{
                                 border: '4px solid white'
@@ -178,16 +182,6 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                             onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                         />
                     </FormControl>
-
-                    {/* <FormControl id="lastName">
-                        <FormLabel >Last Name</FormLabel>
-                        <Input
-                            type="text"
-                            autoComplete="lastName"
-                            value={editingUser?.lastName || ''}
-                            onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
-                        />
-                    </FormControl> */}
                 </Grid>
 
                 {/* Email and Username */}
@@ -302,6 +296,18 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         value={editingUser?.password}
                         onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
                     />
+                </FormControl>
+
+                {/* Is Early Adaptor */}
+                <FormControl
+                    mt={4}
+                    display={editingUser?.type === ROLES.CREATOR ? 'block' : 'none'}
+                >
+                    <Checkbox
+                        size='lg'
+                        isChecked={editingUser?.isEarlyAdaptor}
+                        onChange={(e) => setEditingUser({ ...editingUser, isEarlyAdaptor: e.target.checked })}
+                    >Early Adaptor</Checkbox>
                 </FormControl>
 
                 {/* Creator Description */}

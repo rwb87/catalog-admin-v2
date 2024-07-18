@@ -165,6 +165,11 @@ const theme = extendTheme({
 					height: '2rem',
 					padding: '4px',
 				},
+			},
+			'.chakra-checkbox svg': {
+				width: '100%',
+				height: '100%',
+				padding: 'unset',
 			}
 		}),
 	},

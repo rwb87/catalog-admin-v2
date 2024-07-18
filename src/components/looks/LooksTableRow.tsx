@@ -240,8 +240,7 @@ const LooksTableRow = (props: TableRowProps) => {
                         onClick={() => isUserChangeAllowed ? handleOpenChangeCreatorDrawer(item) : {}}
                     >
                         <Avatar
-                            src={item?.user?.smallPictureURL}
-                            name={item?.user?.username || '-'}
+                            user={item?.user}
                             showName={true}
                         />
                     </Button>
