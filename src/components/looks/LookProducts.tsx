@@ -459,7 +459,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                 </Td>
                 <Td width='250px'>{item?.name || '-'}</Td>
                 <Td>{item?.style?.label || '-'}</Td>
-                <Td>{item?.isShopify ? 'Shopify' : 'Catalog'}</Td>
+                <Td>{item?.isShopify ? 'Shopify' : 'General'}</Td>
                 <Td textAlign='center'>
                     <IconButton
                         aria-label='View Links'

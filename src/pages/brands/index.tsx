@@ -464,7 +464,7 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                             : '-'
                     }
                 </Td>
-                <Td textAlign='center'>{item?.isShopify ? 'Shopify' : 'Catalog'}</Td>
+                <Td textAlign='center'>{item?.isShopify ? 'Shopify' : 'General'}</Td>
                 <Td textAlign='center'>{item?.items?.length || 0}</Td>
                 <Td textAlign='center'>{item?.partnership || 'None'}</Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>

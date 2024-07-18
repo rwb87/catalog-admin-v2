@@ -177,7 +177,7 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                 </Td>
                 <Td>{product?.name || '-'}</Td>
                 <Td>{product?.style?.label || '-'}</Td>
-                <Td>{product?.isShopify ? 'Shopify' : 'Catalog'}</Td>
+                <Td>{product?.isShopify ? 'Shopify' : 'General'}</Td>
                 <Td textAlign='center'>
                     {
                         <IconButton
