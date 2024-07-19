@@ -1,5 +1,6 @@
 import { ROLES } from "@/_config";
 import { useUser } from "@/_store";
+import Avatar from "@/components/Avatar";
 import Pagination from "@/components/Pagination";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
@@ -15,7 +16,7 @@ import { BiDollar } from "react-icons/bi";
 const EarningsView = () => {
     const { role: authUserRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [month, setMonth] = useState(moment().format('YYYY-MM'));
+    const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
     const [data, setData] = useState<any>([]);
     const [dailyPayout, setDailyPayout] = useState<any>({});
     const [isPayoutEditPopoverOpen, setIsPayoutEditPopoverOpen] = useState<boolean>(false);
@@ -34,17 +35,13 @@ const EarningsView = () => {
         }, 500);
 
         return () => clearTimeout(debounce);
-    }, [month]);
+    }, [date]);
 
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/discovers/daily`,
-                method: 'PUT',
-                data: {
-                    startDate: moment(month).startOf('month').format('YYYY-MM-DD') ?? moment().startOf('month').format('YYYY-MM-DD'),
-                    endDate: moment(month).endOf('month').format('YYYY-MM-DD') ?? moment().endOf('month').format('YYYY-MM-DD'),
-                },
+                endpoint: `/earnings?date=${date}`,
+                method: 'GET',
             });
 
             setData(response);
@@ -140,8 +137,9 @@ const EarningsView = () => {
                         size='sm'
                         borderWidth={2}
                         borderColor='gray.100'
-                        defaultValue={month ?? moment().format('YYYY-MM')}
-                        onChange={(e: any) => setMonth(moment(e.target.value).format('YYYY-MM'))}
+                        max={moment().format('YYYY-MM-DD')}
+                        defaultValue={date ?? moment().format('YYYY-MM')}
+                        onChange={(e: any) => setDate(moment(e.target.value).format('YYYY-MM-DD'))}
                     />
 
                     {/* Edit Payout */}
@@ -263,9 +261,11 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                                     : reconstructedData.map((item: any, index: number) => (
                                         <Tr key={index}>
                                             <Td whiteSpace='nowrap'>{formatDateTime(item?.date, false)}</Td>
-                                            <Td>{item?.creator || '-'}</Td>
-                                            <Td textAlign='center' color='blue.500'>{item?.discovers || 0}</Td>
-                                            <Td textAlign='right' color='green.500'>${parseFloat(item?.dailyTotalEarnings)?.toFixed(2) || 0}</Td>
+                                            <Td>
+                                                <Avatar user={item?.creator} />
+                                            </Td>
+                                            <Td textAlign='center' color='blue.500'>{item?.discoversCount || 0}</Td>
+                                            <Td textAlign='right' color='green.500' fontWeight='bold'>${parseFloat(item?.amount || 0)?.toFixed(2)}</Td>
                                         </Tr>
                                     ))
                         }
