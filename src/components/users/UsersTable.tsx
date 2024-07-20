@@ -528,6 +528,7 @@ const UserLooks = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
                                         <Th textAlign='center'>Platform</Th>
                                         <Th textAlign='center'>Featured</Th>
                                         <Th textAlign='center'>Priority</Th>
+                                        <Th textAlign='center'>Splash Index</Th>
                                         <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                         <Th textAlign='center'>Status</Th>
                                         <Th textAlign='right'>Actions</Th>

@@ -469,6 +469,7 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
                                         Priority
                                         {sortByPriority ? sortByPriority === 'desc' ? <ArrowUpIcon boxSize={6} ml={1}/> : <ArrowDownIcon boxSize={6} ml={1}/> :<></>}
                                     </Th>
+                                    <Th textAlign='center'>Splash Index</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                 </>
                             }

@@ -184,6 +184,7 @@ export default function MusicTableRow({ item, onDelete, isLookMusic = false }: T
                                 <Th textAlign='center'>Platform</Th>
                                 <Th textAlign='center'>Featured</Th>
                                 <Th textAlign='center'>Priority</Th>
+                                <Th textAlign='center'>Splash Index</Th>
                                 <Th textAlign='center' color='blue.500'>Incoming Discovers</Th>
                                 <Th textAlign='center'>Status</Th>
                                 <Th textAlign='right' color='blue.500'>Actions</Th>

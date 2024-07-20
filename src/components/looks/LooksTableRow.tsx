@@ -306,6 +306,24 @@ const LooksTableRow = (props: TableRowProps) => {
                                 }}
                             />
                         </Td>
+                        <Td textAlign='center'>
+                            <Input
+                                type="number"
+                                rounded='full'
+                                size='xs'
+                                width={20}
+                                borderColor='gray.200'
+                                textAlign='center'
+                                defaultValue={item?.splashIndex || 0}
+                                onBlur={(e: any) => {
+                                    if(parseInt(e.target.value) === parseInt(item?.splashIndex)) return;
+
+                                    handleUpdateData({
+                                        splashIndex: parseInt(e.target.value),
+                                    }, item?.id, false)
+                                }}
+                            />
+                        </Td>
                         <Td
                             textAlign='center'
                             color='blue.500'
