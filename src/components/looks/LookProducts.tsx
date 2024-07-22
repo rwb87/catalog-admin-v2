@@ -529,7 +529,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
             {
                 links !== null
                     ? <Tr bgColor='gray.100' p={6}>
-                        <Td colSpan={9}>
+                        <Td colSpan={20}>
                             <ProductLinks
                                 links={links}
                                 productId={item?.id}
