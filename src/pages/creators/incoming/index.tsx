@@ -238,7 +238,8 @@ const UsersTable = ({ data, pagination, onPaginate, isLoading }: UsersTableProps
                             <Th>Photos</Th>
                             <Th>Shopper</Th>
                             <Th textAlign='center'>Email</Th>
-                            <Th>Appeals</Th>
+                            <Th>Message</Th>
+                            <Th textAlign='center'>Appeals</Th>
                             <Th>Location</Th>
                             <Th>Height</Th>
                             <Th>Submitted On</Th>
@@ -388,7 +389,8 @@ const TableRow = ({ item }: TableRowProps) => {
                             : '-'
                     }
                 </Td>
-                <Td textTransform='capitalize'>{item?.user?.gender || '-'}</Td>
+                <Td maxWidth='300px'>{item?.message || '-'}</Td>
+                <Td textAlign='center' textTransform='capitalize'>{item?.user?.gender || '-'}</Td>
                 <Td textTransform='capitalize'>{item?.user?.location || '-'}</Td>
                 <Td>{ (typeof item?.user?.heightFeet !== 'undefined' && item?.user?.heightFeet !== null && item?.user?.heightFeet !== '') ? item?.user?.heightFeet + '.' + item?.user?.heightInch + 'ft' : '-'}</Td>
                 <Td>{moment(new Date(item?.createdAt)).format('MMM DD, YYYY')}</Td>
