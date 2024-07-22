@@ -145,6 +145,18 @@ type ProductProps = {
 const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
+    useEffect(() => {
+        const closeLinks = () => {
+            setLinks(null);
+        }
+
+        window.addEventListener('refresh:creator-changed', closeLinks);
+
+        return () => {
+            window.removeEventListener('refresh:creator-changed', closeLinks);
+        }
+    }, []);
+
     if(!product) return null;
 
     return (

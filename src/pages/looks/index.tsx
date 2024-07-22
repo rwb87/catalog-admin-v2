@@ -10,7 +10,6 @@ import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftEle
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { IconLoader2, IconPlus, IconSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
@@ -507,9 +506,6 @@ const LooksTable = ({ data, pagination, onPaginate, isLoading, setSortBy }: Look
 
             {/* Update product drawer */}
             <UpdateProduct />
-
-            {/* Look Creator Change */}
-            <ChangeCreatorDrawer />
 
             {/* Add music popup */}
             <AddMusicPopup onComplete={(music: any, lookId: number) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music, lookId } }))} />

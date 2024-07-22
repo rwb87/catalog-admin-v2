@@ -12,7 +12,6 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Button, Divider, Flex, Heading, IconButton, Image, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "@/components/looks/LookMusics";
@@ -352,9 +351,6 @@ const LooksManagementTable = ({ data, pagination, onPaginate, isLoading, onSendL
                     setBrand({});
                 }}
             />
-
-            {/* Look Creator Change */}
-            <ChangeCreatorDrawer />
 
             {/* Pagination */}
             <Pagination

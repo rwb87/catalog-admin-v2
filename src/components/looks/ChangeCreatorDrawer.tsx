@@ -12,18 +12,23 @@ const ChangeCreatorDrawer = () => {
     const [creators, setCreators] = useState<any[]>([]);
     const [selectedCreator, setSelectedCreator] = useState<any>({});
     const [look, setLook] = useState<any>({});
+    const [productLink, setProductLink] = useState<any>({});
+    const [type, setType] = useState<string>('');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [isSearching, setIsSearching] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const handleEvent = (event: any) => {
-            const { detail } = event;
+            const { look = undefined, link = undefined } = event?.detail as any;
 
-            if(!detail || !detail?.look || !detail?.look?.user) return;
+            if(look === undefined && look?.user === undefined && link === undefined && link?.user === undefined) return;
 
-            setLook(detail?.look);
-            setSelectedCreator(detail?.look?.user);
+            if(look) setLook(look);
+            if(link) setProductLink(link);
+
+            setType(look !== undefined ? 'look' : 'product');
+            setSelectedCreator(look?.user || link?.user || {});
         }
 
         window.addEventListener('drawer:change-creator', handleEvent);
@@ -41,30 +46,42 @@ const ChangeCreatorDrawer = () => {
     const handleSubmitChangeCreator = async () => {
         setIsLoading(true);
 
+        const endpoint = type === 'look'
+            ? `/looks/${look?.id}/change-creator`
+            : `/items/links/${productLink?.id}/change-assignee`;
+
         try {
             const response = await fetch({
                 method: 'PUT',
-                endpoint: `/looks/${look?.id}/change-creator`,
+                endpoint: endpoint,
                 data: {
                     user: selectedCreator
                 }
             });
 
-            if(response) notify('Creator changed successfully');
-            else notify('Could not change creator');
+            if(type === 'look') {
+                if(response) notify('Creator changed successfully');
+                else notify('Could not change creator');
+            }
+            if(type === 'product') {
+                if(response) notify('Assignee changed successfully');
+                else notify('Could not change Assignee');
+            }
         } catch (error) {
-            notify('Could not change creator');
+            if(type === 'look') notify('Could not change creator');
+            if(type === 'product') notify('Could not change Assignee');
         }
 
         setIsLoading(false);
         setLook({});
+        setProductLink({});
         setSelectedCreator({});
+        setType('');
         window?.dispatchEvent(new CustomEvent('refresh:data'));
+        window?.dispatchEvent(new CustomEvent('refresh:creator-changed'));
     }
 
     const getCreators = async () => {
-        // if(searchTerm?.trim() === '') return;
-
         setIsSearching(true);
 
         try {
@@ -83,13 +100,15 @@ const ChangeCreatorDrawer = () => {
 
     return (
         <CustomDrawer
-            isOpen={!!look?.id}
+            isOpen={!!look?.id || !!productLink?.id}
             onClose={() => {
                 setLook({});
+                setProductLink({});
                 setSelectedCreator({});
+                setType('');
                 setSearchTerm('');
             }}
-            title="Change Look Creator"
+            title={type === 'look' ? 'Change look creator' : 'Change link assignee'}
             isProcessing={isLoading}
             processingText="Saving..."
             onSubmit={handleSubmitChangeCreator}

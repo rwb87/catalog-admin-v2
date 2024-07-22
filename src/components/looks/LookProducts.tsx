@@ -355,6 +355,18 @@ type ProductProps = {
 const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
 
+    useEffect(() => {
+        const closeLinks = () => {
+            setLinks(null);
+        }
+
+        window.addEventListener('refresh:creator-changed', closeLinks);
+
+        return () => {
+            window.removeEventListener('refresh:creator-changed', closeLinks);
+        }
+    }, []);
+
     const handleOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
     }

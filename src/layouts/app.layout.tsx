@@ -8,6 +8,7 @@ import Lightcase from "@/components/Lightcase";
 import { Config, ROLES } from "@/_config";
 import fetch from "@/helpers/fetch";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
+import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -651,6 +652,8 @@ const GlobalPopups = () => {
                     window?.dispatchEvent(new CustomEvent('refresh:data'))
                 }}
             />
+
+            <ChangeCreatorDrawer />
         </>
     )
 }

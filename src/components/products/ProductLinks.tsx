@@ -177,6 +177,14 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
         return <Text color='green.500' fontSize='sm' fontWeight='bold'>OK</Text>
     }
 
+    const handleOpenChangeCreatorDrawer = (link: any) => {
+        window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
+            detail: {
+                link: link,
+            }
+        }));
+    }
+
     return (
         <>
             <Table>
@@ -300,7 +308,20 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                     <Td>
                                         {
                                             link?.user
-                                                ? <Avatar user={link?.user} />
+                                                ? <Button
+                                                    variant='ghost'
+                                                    rounded='full'
+                                                    gap={2}
+                                                    pl={1}
+                                                    pt={1}
+                                                    pb={1}
+                                                    height='auto'
+                                                    fontWeight='normal'
+                                                    cursor='pointer'
+                                                    onClick={() => handleOpenChangeCreatorDrawer(link)}
+                                                >
+                                                    <Avatar user={link?.user} />
+                                                </Button>
                                                 : <Text fontStyle='italic' opacity={0.5}>NIL</Text>
                                         }
                                     </Td>
