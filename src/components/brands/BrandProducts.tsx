@@ -1,9 +1,8 @@
-import { IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconCornerDownRight, IconEdit, IconLink } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Box, Button, IconButton, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { IconCornerDownRight, IconEdit, IconLink, IconTrash } from "@tabler/icons-react";
+import { useEffect, useRef, useState } from "react";
 import ProductLinks from "@/components/products/ProductLinks";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
-import Confirmation from "@/components/Confirmation";
 import notify from "@/helpers/notify";
 import fetch from "@/helpers/fetch";
 import KeywordsPopover from "@/components/KeywordsPopover";
@@ -16,41 +15,11 @@ type BrandProductsProps = {
 const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
     const [editedProducts, setEditedProducts] = useState<any>([]);
     const [editingData, setEditingData] = useState<any>({});
-    const [deletingProduct, setDeletingProduct] = useState<any>({});
-    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const newProducts = JSON.parse(JSON.stringify(products));
         setEditedProducts(newProducts);
     }, [products]);
-
-    const handleRemove = (product: any) => {
-        setDeletingProduct(product);
-    }
-
-    const handleRemoveConfirm = async () => {
-        setIsDeleting(true);
-
-        try {
-            const response = await fetch({
-                endpoint: `/items/${deletingProduct?.id}`,
-                method: 'PUT',
-                data: {
-                    brandId: null,
-                }
-            });
-
-            if(response) {
-                const newProducts = editedProducts.filter((p: any) => p?.id !== deletingProduct?.id);
-                setEditedProducts(newProducts);
-                onSave?.(newProducts);
-            } else notify('Failed to remove product from brand');
-        } catch (error) {
-            notify('Failed to remove product from brand');
-        }
-
-        setIsDeleting(false);
-    }
 
     const handleOnOpenImage = (link: string) => {
         window?.dispatchEvent(new CustomEvent('lightcase', { detail: { image: link } }));
@@ -74,15 +43,20 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
                 </Thead>
                 <Tbody>
                     {
-                        editedProducts?.map((product: any) => <Product
-                            key={product?.id}
-                            product={product}
-                            brand={brand}
-                            handleOnOpenImage={handleOnOpenImage}
-                            onEdit={(data: any) => setEditingData(data)}
-                            onRemove={handleRemove}
-                        />
-                    )}
+                        !editedProducts?.length
+                            ? <Tr>
+                                <Td colSpan={20} textAlign='center'>
+                                    <Text fontStyle='italic' opacity={0.5}>NO PRODUCT AVAILABLE</Text>
+                                </Td>
+                            </Tr>
+                            : editedProducts?.map((product: any) => <Product
+                                key={product?.id}
+                                product={product}
+                                brand={brand}
+                                handleOnOpenImage={handleOnOpenImage}
+                                onEdit={(data: any) => setEditingData(data)}
+                            />)
+                        }
                 </Tbody>
             </Table>
 
@@ -105,14 +79,7 @@ const BrandProducts = ({ brand, products, onSave }: BrandProductsProps) => {
             />
 
             {/* Remove Product Prompt */}
-            <Confirmation
-                isOpen={!!deletingProduct?.id}
-                text={`Are you sure you want to remove <strong>${deletingProduct?.name}</strong> from this the brand <strong>${brand?.name}</strong>?`}
-                isProcessing={isDeleting}
-                confirmText="Yes, Remove from brand"
-                onConfirm={() => handleRemoveConfirm()}
-                onCancel={() => setDeletingProduct({})}
-            />
+            <ProductDeleteConfirmation />
 
             {/* Actions */}
             {/* <Flex alignItems='center' justifyContent='space-between' mt={4}>
@@ -140,7 +107,6 @@ type ProductProps = {
     brand: any;
     handleOnOpenImage: (link: string) => void;
     onEdit?: (product: any) => void;
-    onRemove?: (product: any) => void;
 }
 const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
     const [links, setLinks] = useState<any[] | null>(null);
@@ -157,7 +123,9 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
         }
     }, []);
 
-    if(!product) return null;
+    const handleRemove = () => {
+        window.dispatchEvent(new CustomEvent('confirmation:remove-product-from-brand', { detail: { product: product } }));
+    }
 
     return (
         <>
@@ -244,7 +212,7 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                         onClick={() => handleMoveDown(index)}
                     /> */}
 
-                    {/* <IconButton
+                    <IconButton
                         aria-label='Delete'
                         variant='ghost'
                         colorScheme='red'
@@ -252,8 +220,8 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                         size='sm'
                         ml={4}
                         icon={<IconTrash size={22} />}
-                        onClick={() => onRemove(product)}
-                    /> */}
+                        onClick={handleRemove}
+                    />
                 </Td>
             </Tr>
 
@@ -276,6 +244,141 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                     : null
             }
         </>
+    )
+}
+
+const ProductDeleteConfirmation = () => {
+    const cancelRef = useRef<any>(null);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [processingType, setProcessingType] = useState<'delete' | 'remove' | null>(null);
+    const [product, setProduct] = useState<any>(null);
+
+    useEffect(() => {
+        const handleRemoveProduct = (event: any) => {
+            const product = event?.detail?.product;
+
+            if(product?.id === undefined) return;
+
+            setProduct(product);
+            setIsOpen(true);
+        }
+
+        window.addEventListener('confirmation:remove-product-from-brand', handleRemoveProduct);
+
+        return () => {
+            window.removeEventListener('confirmation:remove-product-from-brand', handleRemoveProduct);
+        }
+    }, [product]);
+
+    const handleCancel = () => {
+        setIsOpen(false);
+        setProduct(null);
+    }
+
+    const handleRemoveFromBrand = async () => {
+        setIsProcessing(true);
+        setProcessingType('remove');
+
+        try {
+            await fetch({
+                endpoint: `/items/${product?.id}`,
+                method: 'PUT',
+                data: {
+                    brandId: null,
+                }
+            });
+
+            notify('Product removed from the brand successfully');
+            window.dispatchEvent(new CustomEvent('refresh:data'));
+        } catch (error) {
+            console.log(error);
+            notify('Could not remove the product from the brand');
+        }
+
+        setIsOpen(false);
+        setProduct(null);
+        setIsProcessing(false);
+        setProcessingType(null);
+    }
+
+    const handleDeletePermanently = async() => {
+        setIsProcessing(true);
+        setProcessingType('delete');
+
+        try {
+            await fetch({
+                endpoint: `/items/${product?.id}`,
+                method: 'DELETE',
+            });
+
+            notify('Product deleted successfully');
+            window.dispatchEvent(new CustomEvent('refresh:data'));
+        } catch (error) {
+            console.log(error);
+            notify('Could not delete the product');
+        }
+
+        setIsOpen(false);
+        setProduct(null);
+        setIsProcessing(false);
+        setProcessingType(null);
+    }
+
+    return (
+        <AlertDialog
+            leastDestructiveRef={cancelRef}
+            onClose={handleCancel}
+            isOpen={isOpen}
+            isCentered
+            closeOnOverlayClick={!isProcessing}
+            closeOnEsc={!isProcessing}
+            size='2xl'
+        >
+            <AlertDialogOverlay />
+
+            <AlertDialogContent>
+
+                <AlertDialogHeader>Remove product</AlertDialogHeader>
+
+                <AlertDialogCloseButton isDisabled={isProcessing}/>
+
+                <AlertDialogBody>Do you want to remove <b>{product?.name || '-'}</b> from the brand <b>{product?.brand?.name || '-'}</b> or completely delete it?</AlertDialogBody>
+
+                <AlertDialogFooter justifyContent='space-between'>
+                    <Button
+                        ref={cancelRef}
+                        variant='ghost'
+                        size='sm'
+                        isDisabled={isProcessing}
+                        onClick={handleCancel}
+                    >Nevermind</Button>
+
+                    <Box>
+                        <Button
+                            colorScheme='purple'
+                            size='sm'
+                            ml={4}
+                            isDisabled={isProcessing}
+                            isLoading={processingType === 'remove' && isProcessing}
+                            loadingText='Removing...'
+                            onClick={handleRemoveFromBrand}
+                        >Remove from brand</Button>
+
+                        <Button
+                            colorScheme='red'
+                            size='sm'
+                            ml={4}
+                            isDisabled={isProcessing}
+                            isLoading={processingType === 'delete' && isProcessing}
+                            loadingText='Deleting...'
+                            onClick={handleDeletePermanently}
+                        >Permanently delete</Button>
+                    </Box>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }
 
