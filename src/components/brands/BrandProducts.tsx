@@ -179,7 +179,7 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                 </Td>
                 <Td textAlign='center' color='green.500'>{product?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
-                    <KeywordsPopover keywords={product?.keywords} />
+                    <KeywordsPopover type="products" id={product?.id} />
 
                     <IconButton
                         aria-label="Edit"

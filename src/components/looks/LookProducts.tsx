@@ -512,7 +512,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                         onClick={() => handleMoveDown(index)}
                     />
 
-                    <KeywordsPopover keywords={item?.keywords} />
+                    <KeywordsPopover type="products" id={item?.id} />
 
                     <IconButton
                         aria-label="Edit"

@@ -347,7 +347,7 @@ const LooksTableRow = (props: TableRowProps) => {
                     display={isAdminActionsAllowed? 'table-cell' : 'none'}
                 >
                     <Box display='inline-block'>
-                        <KeywordsPopover keywords={item?.keywordLooks} />
+                        <KeywordsPopover type="looks" id={item?.id} />
                     </Box>
 
                     {/* Send to Management button */}

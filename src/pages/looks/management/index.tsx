@@ -478,7 +478,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         onClick={() => onSendToLive?.(item)}
                     >Send Live</Button>
 
-                    <KeywordsPopover keywords={item?.keywordLooks} />
+                    <KeywordsPopover type="looks" id={item?.id} />
 
                     {/* Message */}
                     <Popover>
