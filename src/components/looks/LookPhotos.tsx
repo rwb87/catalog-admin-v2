@@ -1,3 +1,4 @@
+import { themeColors } from '@/_theme';
 import fetch from '@/helpers/fetch';
 import { Box, Button, Flex, Grid, IconButton } from '@chakra-ui/react';
 import { IconTrash, IconUpload } from '@tabler/icons-react';
@@ -33,6 +34,9 @@ const LookPhotos = ({ lookId, images, isAdminActionsAllowed = true, onSave, onCa
 
         // Filter deleted images
         newImages.filter((image: any) => image.deletedAt === null);
+
+        // Sort by orderIndex
+        newImages.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
 
         setList(JSON.parse(JSON.stringify(newImages)));
         setIsProcessing(false);
@@ -240,6 +244,7 @@ const LookPhotos = ({ lookId, images, isAdminActionsAllowed = true, onSave, onCa
                                         borderRadius: '0.375rem',
                                         pointerEvents: 'none',
                                         zIndex: 5,
+                                        border: `1px solid ${themeColors.gray[200]}`
                                     }}
                                 />
 
