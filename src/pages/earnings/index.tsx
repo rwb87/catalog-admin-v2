@@ -40,11 +40,15 @@ const EarningsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/earnings?date=${date}`,
-                method: 'GET',
+                endpoint: `/discovers/daily`,
+                method: 'PUT',
+                data: {
+                    startDay: date,
+                    endDay: date,
+                }
             });
 
-            setData(response);
+            setData(response?.[0]);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message, 3000);
@@ -217,9 +221,11 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
 
     useEffect(() => {
         setPage(1);
-    }, [data.length]);
+    }, [data?.creators?.length]);
 
-    const reconstructedData = pagination.total > pagination.limit ? data.slice((page - 1) * pagination.limit, page * pagination.limit) : data;
+    const reconstructedData = pagination.total > pagination.limit
+        ? data?.creators?.slice((page - 1) * pagination.limit, page * pagination.limit)
+        : data?.creators;
 
     return (
         <>
@@ -260,12 +266,12 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                                     </Tr>
                                     : reconstructedData.map((item: any, index: number) => (
                                         <Tr key={index}>
-                                            <Td whiteSpace='nowrap'>{formatDateTime(item?.date, false)}</Td>
+                                            <Td whiteSpace='nowrap'>{formatDateTime(data?.date, false)}</Td>
                                             <Td>
                                                 <Avatar user={item?.creator} />
                                             </Td>
-                                            <Td textAlign='center' color='blue.500'>{item?.discoversCount || 0}</Td>
-                                            <Td textAlign='right' color='green.500' fontWeight='bold'>${parseFloat(item?.amount || 0)?.toFixed(2)}</Td>
+                                            <Td textAlign='center' color='blue.500'>{item?.creatorDailyTotal || 0}</Td>
+                                            <Td textAlign='right' color='green.500' fontWeight='bold'>${parseFloat(item?.creatorDailyEarnings || 0)?.toFixed(2)}</Td>
                                         </Tr>
                                     ))
                         }
