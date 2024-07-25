@@ -16,7 +16,7 @@ import { BiDollar } from "react-icons/bi";
 const EarningsView = () => {
     const { role: authUserRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [date, setDate] = useState(moment().subtract(1, 'days').format('YYYY-MM-DD'));
+    const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
     const [data, setData] = useState<any>([]);
     const [dailyPayout, setDailyPayout] = useState<any>({});
     const [isPayoutEditPopoverOpen, setIsPayoutEditPopoverOpen] = useState<boolean>(false);
@@ -142,7 +142,7 @@ const EarningsView = () => {
                         borderWidth={2}
                         borderColor='gray.100'
                         max={moment().format('YYYY-MM-DD')}
-                        defaultValue={date ?? moment().subtract(1, 'days').format('YYYY-MM')}
+                        defaultValue={date ?? moment().format('YYYY-MM')}
                         onChange={(e: any) => setDate(moment(e.target.value).format('YYYY-MM-DD'))}
                     />
 
