@@ -1,5 +1,5 @@
 import formatDateTime from "@/helpers/formatDateTime";
-import { Box, Button, Heading, IconButton, Input, Switch, Td, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Heading, IconButton, Input, Switch, Td, Tooltip, Tr } from "@chakra-ui/react";
 import { IconChevronDown, IconPhoto, IconTrash, IconUpload } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import LookPhotos from "./LookPhotos";
@@ -25,7 +25,7 @@ type TableRowProps = {
 const LooksTableRow = (props: TableRowProps) => {
     const {
         item,
-        isUserChangeAllowed = true,
+        // isUserChangeAllowed = false,
         isProductExpandAllowed = true,
         isAdminActionsAllowed = true,
         isResourcesExpandable = true,
@@ -62,13 +62,13 @@ const LooksTableRow = (props: TableRowProps) => {
         setIsImagesExpanded(!isImagesExpanded);
     }
 
-    const handleOpenChangeCreatorDrawer = (item: any) => {
-        window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
-            detail: {
-                look: item,
-            }
-        }));
-    }
+    // const handleOpenChangeCreatorDrawer = (item: any) => {
+    //     window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
+    //         detail: {
+    //             look: item,
+    //         }
+    //     }));
+    // }
 
     const handleUpdateData = async (data: any, id?: number, refreshData: boolean = true) => {
         setIsProcessing(true);
@@ -227,7 +227,7 @@ const LooksTableRow = (props: TableRowProps) => {
                     }
                 </Td>
                 <Td>
-                    <Button
+                    {/* <Button
                         variant={isUserChangeAllowed ? 'ghost' : 'none'}
                         rounded='full'
                         gap={2}
@@ -238,12 +238,12 @@ const LooksTableRow = (props: TableRowProps) => {
                         fontWeight='normal'
                         cursor={isUserChangeAllowed ? 'pointer' : 'default'}
                         onClick={() => isUserChangeAllowed ? handleOpenChangeCreatorDrawer(item) : {}}
-                    >
+                    > */}
                         <Avatar
                             user={item?.user}
                             showName={true}
                         />
-                    </Button>
+                    {/* </Button> */}
                 </Td>
                 <Td textAlign='center' minWidth='150px' dangerouslySetInnerHTML={{ __html: dateTime }} />
                 {

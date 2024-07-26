@@ -390,13 +390,13 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
         setIsImagesExpanded(!isImagesExpanded);
     }
 
-    const handleOpenChangeCreatorDrawer = (item: any) => {
-        window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
-            detail: {
-                look: item,
-            }
-        }));
-    }
+    // const handleOpenChangeCreatorDrawer = (item: any) => {
+    //     window?.dispatchEvent(new CustomEvent('drawer:change-creator', {
+    //         detail: {
+    //             look: item,
+    //         }
+    //     }));
+    // }
 
     const thumbnailImage = useMemo(() => {
         if(item?.thumbnailImage) return item?.thumbnailImage;
@@ -454,7 +454,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
 
                     {/* Creator */}
                     <Flex alignItems='center' gap={2}>
-                        <Button
+                        {/* <Button
                             variant='ghost'
                             rounded='full'
                             gap={2}
@@ -464,9 +464,9 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                             height='auto'
                             fontWeight='normal'
                             onClick={() => handleOpenChangeCreatorDrawer(item)}
-                        >
+                        > */}
                             <Avatar user={item?.user} />
-                        </Button>
+                        {/* </Button> */}
                     </Flex>
                 </Flex>
 
