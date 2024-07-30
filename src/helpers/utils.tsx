@@ -17,3 +17,15 @@ export const getImageMetadata = async (file: File) => {
         }
     });
 }
+export const changeSelectBoxColorForProductReviewStatus = (status: string) => {
+    switch (status) {
+        case 'correct':
+            return 'green';
+        case 'incorrect and updated':
+            return 'orange';
+        case 'need further review':
+            return'red';
+        default:
+            return 'green.500';
+    }
+}

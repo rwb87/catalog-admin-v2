@@ -194,7 +194,6 @@ const Row = ({ index, link, onCreate, onMerge, onDelete }: RowProps) => {
         setUpdatedLink(link);
     }, [link]);
 
-
     return (
         <Flex
             direction='row'

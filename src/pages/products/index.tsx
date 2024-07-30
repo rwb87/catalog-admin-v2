@@ -160,7 +160,9 @@ const ProductsView = () => {
                         />
                     </Flex>
 
+                    {/* Link Type and Class */}
                     <Flex
+                        display='none'
                         width='full'
                         gap={2}
                     >

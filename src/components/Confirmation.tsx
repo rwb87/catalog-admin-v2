@@ -11,10 +11,11 @@ type ConfirmationProps = {
     confirmText?: string,
     processingConfirmText?: string,
     isDangerous?: boolean,
+    size?: string,
     onConfirm: () => void,
     onCancel: () => void,
 }
-const Confirmation = ({ isOpen = false, isProcessing = false, title = 'Confirmation', text = '', html, cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', isDangerous = true, onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
+const Confirmation = ({ isOpen = false, isProcessing = false, title = 'Confirmation', text = '', html, cancelText = 'Nevermind', confirmText = 'Yes, delete', processingConfirmText = 'Deleting...', isDangerous = true, size = 'md', onConfirm = () => {}, onCancel = () => {} }: ConfirmationProps) => {
     const cancelRef = useRef<any>(null);
 
     return (
@@ -23,6 +24,7 @@ const Confirmation = ({ isOpen = false, isProcessing = false, title = 'Confirmat
             onClose={onCancel}
             isOpen={isOpen}
             isCentered
+            size={size}
             closeOnOverlayClick={!isProcessing}
             closeOnEsc={!isProcessing}
         >

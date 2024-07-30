@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Grid, IconButton, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
+import { Box, Button, Flex, Grid, IconButton, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconArrowDown, IconArrowMerge, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconEdit, IconLink, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import ProductLinks from "@/components/products/ProductLinks";
 import CustomDrawer from "@/components/Drawer";
@@ -7,10 +7,11 @@ import SearchableInput from "@/components/SearchableInput";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useGlobalVolatileStorage } from "@/_store";
-import { encodeAmpersand } from "@/helpers/utils";
+import { changeSelectBoxColorForProductReviewStatus, encodeAmpersand } from "@/helpers/utils";
 import UpdateBrandDrawer from "@/components/brands/UpdateBrandDrawer";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import KeywordsPopover from "@/components/KeywordsPopover";
+import formatDateTime from "@/helpers/formatDateTime";
 
 type LookProductsProps = {
     look: any,
@@ -201,6 +202,8 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                             <Th>Platform</Th>
                             <Th textAlign='center'>Links</Th>
                             <Th textAlign='center'>Price</Th>
+                            <Th textAlign='center'>Submission Date</Th>
+                            <Th textAlign='center'>Reviewed</Th>
                             <Th textAlign='center'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
@@ -489,51 +492,98 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                     <Text whiteSpace='nowrap'><strong>${productPrice}</strong></Text>
                     { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                 </Td>
+                <Td textAlign='center'>{formatDateTime(item?.createdAt, false)}</Td>
+                <Td textAlign='center'>
+                    <Select
+                        variant='solid'
+                        size='xs'
+                        rounded='full'
+                        width={24}
+                        background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus)}
+                        isTruncated={true}
+                        color='white'
+                        style={{
+                            color: 'white',
+                        }}
+                        defaultValue={item?.reviewStatus}
+                        onChange={(event: any) => {
+                            const { value } = event.target;
+
+                            event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
+                            window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
+                        }}
+                    >
+                        <option value="correct">Correct</option>
+                        <option value="incorrect and updated">Incorrect and Updated</option>
+                        <option value="need further review">Need further review</option>
+                    </Select>
+                </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
-                    <IconButton
-                        aria-label='Move Up'
-                        variant='ghost'
-                        colorScheme='blue'
-                        rounded='full'
-                        size='sm'
-                        icon={<IconArrowUp size={22} />}
-                        onClick={() => handleMoveUp(index)}
-                    />
 
-                    <IconButton
-                        aria-label='Move Down'
-                        variant='ghost'
-                        colorScheme='blue'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconArrowDown size={22} />}
-                        onClick={() => handleMoveDown(index)}
-                    />
+                    <Tooltip label="Move up">
+                        <IconButton
+                            aria-label='Move Up'
+                            variant='ghost'
+                            colorScheme='blue'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconArrowUp size={22} />}
+                            onClick={() => handleMoveUp(index)}
+                        />
+                    </Tooltip>
+
+                    <Tooltip label="Move down">
+                        <IconButton
+                            aria-label='Move Down'
+                            variant='ghost'
+                            colorScheme='blue'
+                            rounded='full'
+                            size='sm'
+                            ml={4}
+                            icon={<IconArrowDown size={22} />}
+                            onClick={() => handleMoveDown(index)}
+                        />
+                    </Tooltip>
 
                     <KeywordsPopover type="products" id={item?.id} />
 
-                    <IconButton
-                        aria-label="Edit"
-                        variant='ghost'
-                        rounded='full'
-                        ml={4}
-                        size='sm'
-                        icon={<IconEdit size={22} />}
-                        onClick={() => window?.dispatchEvent(new CustomEvent('action:edit-product', { detail: { product: item, brand: item?.brand } }))}
-                    />
+                    <Tooltip label="Merge Products">
+                        <IconButton
+                            aria-label="Merge Products"
+                            variant='ghost'
+                            rounded='full'
+                            size='sm'
+                            ml={4}
+                            icon={<IconArrowMerge size={22} />}
+                            onClick={() => window.dispatchEvent(new CustomEvent('drawer:merge-products', { detail: { product: item } }))}
+                        />
+                    </Tooltip>
 
-                    <IconButton
-                        aria-label='Delete'
-                        variant='ghost'
-                        colorScheme='red'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconTrash size={22} />}
-                        onClick={() => handleRemove(index)}
-                    />
+                    <Tooltip label="Edit">
+                        <IconButton
+                            aria-label="Edit"
+                            variant='ghost'
+                            rounded='full'
+                            ml={4}
+                            size='sm'
+                            icon={<IconEdit size={22} />}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('action:edit-product', { detail: { product: item, brand: item?.brand } }))}
+                        />
+                    </Tooltip>
+
+                    <Tooltip label="Delete">
+                        <IconButton
+                            aria-label='Delete'
+                            variant='ghost'
+                            colorScheme='red'
+                            rounded='full'
+                            size='sm'
+                            ml={4}
+                            icon={<IconTrash size={22} />}
+                            onClick={() => handleRemove(index)}
+                        />
+                    </Tooltip>
                 </Td>
             </Tr>
 

@@ -1,5 +1,5 @@
 import fetch from "@/helpers/fetch";
-import { Box, Flex, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tag, Text } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Tag, Text, Tooltip } from "@chakra-ui/react";
 import { IconHash, IconLoader2 } from "@tabler/icons-react";
 import { useCallback, useId, useRef, useState } from "react";
 
@@ -54,29 +54,35 @@ export default function KeywordsPopover({ type, id }: Props) {
             initialFocusRef={initialFocusRef}
         >
             <PopoverTrigger>
-                <IconButton
-                    aria-label='Hashtags'
-                    variant='ghost'
-                    rounded='full'
-                    size='sm'
-                    backgroundColor='black'
-                    color='white'
-                    ml={4}
-                    _hover={{
-                        backgroundColor: 'blackAlpha.700',
-                    }}
-                    _focusVisible={{
-                        backgroundColor: 'blackAlpha.800',
-                    }}
-                    icon={<IconHash size={22} />}
-                    onClick={handleFetchKeywords}
-                />
+                <Tooltip label='Keywords'>
+                    <IconButton
+                        aria-label='Hashtags'
+                        variant='ghost'
+                        rounded='full'
+                        size='sm'
+                        backgroundColor='black'
+                        color='white'
+                        ml={4}
+                        _hover={{
+                            backgroundColor: 'blackAlpha.700',
+                        }}
+                        _focusVisible={{
+                            backgroundColor: 'blackAlpha.800',
+                        }}
+                        icon={<IconHash size={22} />}
+                        onClick={handleFetchKeywords}
+                    />
+                </Tooltip>
             </PopoverTrigger>
             <PopoverContent textAlign='left'>
                 <PopoverArrow />
                 <PopoverCloseButton />
                 <PopoverHeader>Keywords</PopoverHeader>
-                <PopoverBody whiteSpace='wrap'>
+                <PopoverBody
+                    whiteSpace='wrap'
+                    maxHeight='500px'
+                    overflowY='auto'
+                >
                     {
                         isLoading
                             ? <Text

@@ -1,7 +1,7 @@
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, Button, IconButton, Image, Table, Tag, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import { IconEdit, IconHanger, IconLink, IconLoader2, IconTrash } from "@tabler/icons-react";
+import { Box, Button, IconButton, Image, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconArrowMerge, IconEdit, IconHanger, IconLink, IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
@@ -10,6 +10,8 @@ import LooksTableRow from "@/components/looks/LooksTableRow";
 import { ROLES } from "@/_config";
 import UsersTable from "@/components/users/UsersTable";
 import KeywordsPopover from "@/components/KeywordsPopover";
+import formatDateTime from "@/helpers/formatDateTime";
+import { changeSelectBoxColorForProductReviewStatus } from "@/helpers/utils";
 
 type ProductsTableProps = {
     data: any,
@@ -66,6 +68,8 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false, 
                             <Th textAlign='center'>Looks</Th>
                             <Th textAlign='center'>Creators</Th>
                             <Th textAlign='center'>Price</Th>
+                            <Th textAlign='center'>Submission Date</Th>
+                            <Th textAlign='center'>Reviewed</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
@@ -277,6 +281,32 @@ const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowPr
                     <Text whiteSpace='nowrap'><strong>${productPrice}</strong></Text>
                     { parseFloat(productDiscountPrice) > 0 ? <Text whiteSpace='nowrap'>Deal Price: <strong>${productDiscountPrice}</strong></Text> : null }
                 </Td>
+                <Td textAlign='center'>{formatDateTime(item?.createdAt, false)}</Td>
+                <Td textAlign='center'>
+                    <Select
+                        variant='solid'
+                        size='xs'
+                        rounded='full'
+                        width={24}
+                        background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus)}
+                        isTruncated={true}
+                        color='white'
+                        style={{
+                            color: 'white',
+                        }}
+                        defaultValue={item?.reviewStatus}
+                        onChange={(event: any) => {
+                            const { value } = event.target;
+
+                            event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
+                            window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
+                        }}
+                    >
+                        <option value="correct">Correct</option>
+                        <option value="incorrect and updated">Incorrect and Updated</option>
+                        <option value="need further review">Need further review</option>
+                    </Select>
+                </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
                     {
@@ -293,26 +323,42 @@ const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowPr
                             : <>
                                 <KeywordsPopover type="products" id={item?.id} />
 
-                                <IconButton
-                                    aria-label="Edit"
-                                    variant='ghost'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={4}
-                                    icon={<IconEdit size={22} />}
-                                    onClick={() => window.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: item } }))}
-                                />
+                                <Tooltip label="Merge Products">
+                                    <IconButton
+                                        aria-label="Merge Products"
+                                        variant='ghost'
+                                        rounded='full'
+                                        size='sm'
+                                        ml={4}
+                                        icon={<IconArrowMerge size={22} />}
+                                        onClick={() => window.dispatchEvent(new CustomEvent('drawer:merge-products', { detail: { product: item } }))}
+                                    />
+                                </Tooltip>
 
-                                <IconButton
-                                    aria-label='Delete'
-                                    variant='ghost'
-                                    colorScheme='red'
-                                    rounded='full'
-                                    size='sm'
-                                    ml={4}
-                                    icon={<IconTrash size={22} />}
-                                    onClick={() => onDelete(item)}
-                                />
+                                <Tooltip label="Edit">
+                                    <IconButton
+                                        aria-label="Edit"
+                                        variant='ghost'
+                                        rounded='full'
+                                        size='sm'
+                                        ml={4}
+                                        icon={<IconEdit size={22} />}
+                                        onClick={() => window.dispatchEvent(new CustomEvent('action:product-drawer', { detail: { product: item } }))}
+                                    />
+                                </Tooltip>
+
+                                <Tooltip label="Delete">
+                                    <IconButton
+                                        aria-label='Delete'
+                                        variant='ghost'
+                                        colorScheme='red'
+                                        rounded='full'
+                                        size='sm'
+                                        ml={4}
+                                        icon={<IconTrash size={22} />}
+                                        onClick={() => onDelete(item)}
+                                    />
+                                </Tooltip>
                             </>
                         }
                 </Td>

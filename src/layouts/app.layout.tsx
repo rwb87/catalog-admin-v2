@@ -9,6 +9,8 @@ import { Config, ROLES } from "@/_config";
 import fetch from "@/helpers/fetch";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import ChangeCreatorDrawer from "@/components/looks/ChangeCreatorDrawer";
+import MergeProductsDrawer from "@/components/products/MergeProductsDrawer";
+import notify from "@/helpers/notify";
 
 type AppLayoutProps = {
     children: ReactElement | ReactElement[],
@@ -638,8 +640,41 @@ const GlobalPopups = () => {
         }
     }, []);
 
+    // Change product review status
+    useEffect(() => {
+        const handleUpdateProduct = async (event: any) => {
+            const { productId, reviewStatus } = event.detail;
+
+            if(!productId) return;
+            if(!reviewStatus) return;
+
+            try {
+                await fetch({
+                    endpoint: `/items/${productId}`,
+                    method: 'PUT',
+                    data: {
+                        reviewStatus: reviewStatus,
+                    },
+                })
+
+                notify('Product updated successfully');
+            } catch (error) {
+                console.log(error);
+                notify('Product could not be updated');
+            }
+        }
+
+        window.addEventListener('action:change-product-review-status', handleUpdateProduct);
+
+        return () => {
+            window.removeEventListener('action:change-product-review-status', handleUpdateProduct);
+        }
+    }, []);
+
     return (
         <>
+
+            {/* Product Edit Drawer */}
             <UpdateProductDrawer
                 data={{
                     ...product,
@@ -653,6 +688,10 @@ const GlobalPopups = () => {
                 }}
             />
 
+            {/* Merge Multiple Products */}
+            <MergeProductsDrawer />
+
+            {/* Change Creator */}
             <ChangeCreatorDrawer />
         </>
     )
