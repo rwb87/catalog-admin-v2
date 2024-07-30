@@ -59,7 +59,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         payload.append('gender', editingUser?.gender);
         payload.append('creatorGender', editingUser?.creatorGender || '');
         if(editingUser?.birthDate) payload.append('birthDate', moment(editingUser?.birthDate).format('YYYY-MM-DD'));
-        payload.append('description', editingUser?.description?.trim() !== '' ? editingUser?.description : '');
+        payload.append('description', editingUser?.description || '');
 
         // Is early adaptor for creator
         if(editingUser?.type === ROLES.CREATOR) payload.append('isEarlyAdaptor', editingUser?.isEarlyAdaptor);
@@ -316,7 +316,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                         <FormLabel>Description</FormLabel>
                         <Textarea
                             autoComplete="off"
-                            value={editingUser?.description ? editingUser?.description : ''}
+                            value={editingUser?.description || ''}
                             onChange={(e) => setEditingUser({ ...editingUser, description: e.target.value })}
                         />
                     </FormControl>
