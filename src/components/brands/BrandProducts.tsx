@@ -201,7 +201,8 @@ const Product = ({ product, handleOnOpenImage, onEdit }: ProductProps) => {
                             event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
                             window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: product?.id, reviewStatus: value } }))
                         }}
-                    >
+                    >   
+                        <option value=""></option>
                         <option value="correct">Correct</option>
                         <option value="incorrect and updated">Incorrect and Updated</option>
                         <option value="need further review">Need further review</option>
