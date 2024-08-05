@@ -513,6 +513,7 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                             window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
                         }}
                     >
+                        <option value=""></option>
                         <option value="correct">Correct</option>
                         <option value="incorrect and updated">Incorrect and Updated</option>
                         <option value="need further review">Need further review</option>
