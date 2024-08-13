@@ -12,6 +12,7 @@ import UpdateBrandDrawer from "@/components/brands/UpdateBrandDrawer";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import formatDateTime from "@/helpers/formatDateTime";
+import { PRODUCT_REVIEW_OPTIONS } from "@/_config";
 
 type LookProductsProps = {
     look: any,
@@ -494,30 +495,27 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                 </Td>
                 <Td textAlign='center'>{formatDateTime(item?.createdAt, false)}</Td>
                 <Td textAlign='center'>
-                    <Select
-                        variant='solid'
-                        size='xs'
-                        rounded='full'
-                        width={24}
-                        background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus)}
-                        isTruncated={true}
-                        color='white'
-                        style={{
-                            color: 'white',
-                        }}
-                        defaultValue={item?.reviewStatus}
-                        onChange={(event: any) => {
-                            const { value } = event.target;
+                    <Tooltip label={PRODUCT_REVIEW_OPTIONS?.find(option => option.value === item?.reviewStatus)?.label} placement="bottom">
+                        <Select
+                            variant='solid'
+                            size='xs'
+                            rounded='full'
+                            width={24}
+                            background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus)}
+                            isTruncated={true}
+                            color='white'
+                            style={{
+                                color: 'white',
+                            }}
+                            defaultValue={item?.reviewStatus}
+                            onChange={(event: any) => {
+                                const { value } = event.target;
 
-                            event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
-                            window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
-                        }}
-                    >
-                        <option value="correct">Correct link, correct information</option>
-                        <option value="correct link but incorrect info. updated">Correct link but incorrect information. Updated</option>
-                        <option value="incorrect">Incorrect link, does not match product</option>
-                        <option value="need further review">Need further review</option>
-                    </Select>
+                                event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
+                                window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
+                            }}
+                        >{PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
+                    </Tooltip>
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>

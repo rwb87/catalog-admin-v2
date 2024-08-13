@@ -1,3 +1,4 @@
+import { PRODUCT_REVIEW_OPTIONS } from "@/_config";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import ProductsTable from "@/components/products/ProductsTable";
 import fetch from "@/helpers/fetch";
@@ -16,6 +17,7 @@ const ProductsView = () => {
     const [data, setData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt,desc');
+    const [filterReviewStatusBy, setFilterReviewStatusBy] = useState<string>('');
 
     const location = useLocation();
     const isManagement = location.pathname.includes('management');
@@ -53,7 +55,7 @@ const ProductsView = () => {
         window?.addEventListener('refresh:data', getData);
 
         return () => window?.removeEventListener('refresh:data', getData);
-    }, [sortBy, pagination.page]);
+    }, [sortBy, pagination.page, filterReviewStatusBy]);
 
     useEffect(() => {
         const debounce = setTimeout(() => getData(), 500);
@@ -61,14 +63,20 @@ const ProductsView = () => {
     }, [search]);
 
     const getData = async () => {
+
+        // Filters
+        const reviewStatus = filterReviewStatusBy ? `reviewStatus=${filterReviewStatusBy}` : '';
+
         try {
             const response = await fetch({
-                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${encodeAmpersand(search)}&order=${sortBy}`,
+                endpoint: `/items?offset=${pagination?.offset}&limit=${pagination.limit}&search=${encodeAmpersand(search)}&order=${sortBy}&${reviewStatus}`,
                 method: 'GET',
             });
 
             // Sort by createdAt
-            const sortedData = sortData(response?.items, sortBy);
+            let sortedData = sortData(response?.items, sortBy);
+
+            if(filterReviewStatusBy) sortedData = sortedData.filter((item: any) => item?.reviewStatus === filterReviewStatusBy);
 
             setData(sortedData);
             setPagination({
@@ -160,50 +168,6 @@ const ProductsView = () => {
                         />
                     </Flex>
 
-                    {/* Link Type and Class */}
-                    <Flex
-                        display='none'
-                        width='full'
-                        gap={2}
-                    >
-                        {/* Link Type */}
-                        <Select
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                xl: '120px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            fontWeight='medium'
-                        >
-                            <option value='GAAN'>GAAN</option>
-                            <option value='CREATOR-AFFILIATE'>⭐ Creator Affiliate</option>
-                            <option value='BASIC'>Basic</option>
-                        </Select>
-
-                        {/* Link Class */}
-                        <Select
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                xl: '120px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            fontWeight='medium'
-                        >
-                            <option value='ALPHA'>👑 Alpha</option>
-                            <option value='BACKUP'>Backup</option>
-                        </Select>
-                    </Flex>
-
                     {/* Clickouts */}
                     <Flex
                         alignItems='center'
@@ -231,6 +195,27 @@ const ProductsView = () => {
                             <option value="this week">This Week</option>
                             <option value="this month">This Month</option>
                             <option value=''>All Time</option>
+                        </Select>
+
+                        <Divider orientation='vertical' height='20px' />
+
+                        <Select
+                            variant='outline'
+                            width={{
+                                base: 'full',
+                                xl: '120px',
+                            }}
+                            size='sm'
+                            rounded='full'
+                            bgColor='white'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            fontWeight='medium'
+                            defaultValue={filterReviewStatusBy}
+                            onChange={(e: any) => setFilterReviewStatusBy(e.target.value)}
+                        >
+                            <option value="">All</option>
+                            {PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}
                         </Select>
 
                         <Divider orientation='vertical' height='20px' />

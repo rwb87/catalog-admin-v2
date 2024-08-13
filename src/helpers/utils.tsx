@@ -21,11 +21,11 @@ export const changeSelectBoxColorForProductReviewStatus = (status: string) => {
     switch (status) {
         case 'correct':
             return '#379777';
-        case 'correct link but incorrect info. updated':
+        case 'updated':
             return '#279EFF'
         case 'incorrect':
             return '#FF8225';
-        case 'need further review':
+        case 'need_further_review':
             return'#C80036';
         default:
             return '#379777';

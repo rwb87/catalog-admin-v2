@@ -44,3 +44,20 @@ export const MUSIC_PROVIDERS = {
     },
 }
 export type MUSIC_PROVIDERS = typeof MUSIC_PROVIDERS[keyof typeof MUSIC_PROVIDERS];
+
+export const PRODUCT_REVIEW_OPTIONS = [
+    {
+        label: 'Correct link, correct information',
+        value: 'correct',
+    }, {
+        label: 'Correct link but incorrect information. Updated',
+        value: 'updated',
+    }, {
+        label: 'Incorrect link, does not match product',
+        value: 'incorrect',
+    }, {
+        label: 'Need further review',
+        value: 'need_further_review',
+    },
+]
+export type PRODUCT_REVIEW_OPTIONS = typeof PRODUCT_REVIEW_OPTIONS[keyof typeof PRODUCT_REVIEW_OPTIONS];
