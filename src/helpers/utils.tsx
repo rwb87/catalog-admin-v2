@@ -20,12 +20,14 @@ export const getImageMetadata = async (file: File) => {
 export const changeSelectBoxColorForProductReviewStatus = (status: string) => {
     switch (status) {
         case 'correct':
-            return 'green';
-        case 'incorrect and updated':
-            return 'orange';
+            return '#379777';
+        case 'correct link but incorrect info. updated':
+            return '#279EFF'
+        case 'incorrect':
+            return '#FF8225';
         case 'need further review':
-            return'red';
+            return'#C80036';
         default:
-            return 'green.500';
+            return '#379777';
     }
 }

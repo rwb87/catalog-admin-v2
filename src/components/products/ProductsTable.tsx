@@ -69,7 +69,7 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false, 
                             <Th textAlign='center'>Creators</Th>
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center'>Submission Date</Th>
-                            <Th textAlign='center'>Reviewed</Th>
+                            <Th textAlign='center'>Review</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
@@ -302,8 +302,9 @@ const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowPr
                             window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
                         }}
                     >
-                        <option value="correct">Correct</option>
-                        <option value="incorrect and updated">Incorrect and Updated</option>
+                        <option value="correct">Correct link, correct information</option>
+                        <option value="correct link but incorrect info. updated">Correct link but incorrect information. Updated</option>
+                        <option value="incorrect">Incorrect link, does not match product</option>
                         <option value="need further review">Need further review</option>
                     </Select>
                 </Td>
