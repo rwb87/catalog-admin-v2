@@ -211,6 +211,7 @@ const ProductsView = () => {
                             borderWidth={2}
                             borderColor='gray.100'
                             fontWeight='medium'
+                            isTruncated={true}
                             defaultValue={filterReviewStatusBy}
                             onChange={(e: any) => setFilterReviewStatusBy(e.target.value)}
                         >
