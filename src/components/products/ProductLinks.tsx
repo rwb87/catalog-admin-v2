@@ -306,24 +306,20 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                         </Select>
                                     </Td>
                                     <Td>
-                                        {
-                                            link?.user
-                                                ? <Button
-                                                    variant='ghost'
-                                                    rounded='full'
-                                                    gap={2}
-                                                    pl={1}
-                                                    pt={1}
-                                                    pb={1}
-                                                    height='auto'
-                                                    fontWeight='normal'
-                                                    cursor='pointer'
-                                                    onClick={() => handleOpenChangeCreatorDrawer(link)}
-                                                >
-                                                    <Avatar user={link?.user} />
-                                                </Button>
-                                                : <Text fontStyle='italic' opacity={0.5}>NIL</Text>
-                                        }
+                                        <Button
+                                            variant='ghost'
+                                            rounded='full'
+                                            gap={2}
+                                            pl={1}
+                                            pt={1}
+                                            pb={1}
+                                            height='auto'
+                                            fontWeight='normal'
+                                            cursor='pointer'
+                                            opacity={link?.user?.name === undefined ? 0.6 : 1}
+                                            fontStyle={link?.user?.name === undefined ? 'italic' : 'normal'}
+                                            onClick={() => handleOpenChangeCreatorDrawer(link)}
+                                        ><Avatar user={link?.user} name={link?.user?.username || 'NIL'} /></Button>
                                     </Td>
                                     <Td textAlign='center'>{renderLinkStatus(link)}</Td>
                                     <Td
