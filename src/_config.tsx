@@ -47,6 +47,9 @@ export type MUSIC_PROVIDERS = typeof MUSIC_PROVIDERS[keyof typeof MUSIC_PROVIDER
 
 export const PRODUCT_REVIEW_OPTIONS = [
     {
+        label: 'Need review',
+        value: 'need_review',
+    }, {
         label: 'Correct link, correct information',
         value: 'correct',
     }, {

@@ -2,7 +2,7 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Box, Button, IconButton, Image, Select, Table, Tag, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconArrowMerge, IconEdit, IconHanger, IconLink, IconLoader2, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
 import ProductLinks from "./ProductLinks";
@@ -11,7 +11,7 @@ import { PRODUCT_REVIEW_OPTIONS, ROLES } from "@/_config";
 import UsersTable from "@/components/users/UsersTable";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import formatDateTime from "@/helpers/formatDateTime";
-import { changeSelectBoxColorForProductReviewStatus } from "@/helpers/utils";
+import { changeSelectBoxColorForProductReviewStatus, handleProductReviewStatusUpdate } from "@/helpers/utils";
 
 type ProductsTableProps = {
     data: any,
@@ -285,23 +285,19 @@ const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowPr
                 <Td textAlign='center'>
                     <Tooltip label={PRODUCT_REVIEW_OPTIONS?.find(option => option.value === item?.reviewStatus)?.label} placement="bottom">
                         <Select
-                            variant='solid'
+                            variant='outline'
                             size='xs'
                             rounded='full'
                             width={24}
-                            background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus)}
+                            background={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus, 'background')}
                             isTruncated={true}
-                            color='white'
+                            color={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus, 'text')}
                             style={{
-                                color: 'white',
+                                color: changeSelectBoxColorForProductReviewStatus(item?.reviewStatus, 'text'),
                             }}
+                            borderColor={changeSelectBoxColorForProductReviewStatus(item?.reviewStatus, 'border')}
                             defaultValue={item?.reviewStatus}
-                            onChange={(event: any) => {
-                                const { value } = event.target;
-
-                                event.target.style.backgroundColor = changeSelectBoxColorForProductReviewStatus(value);
-                                window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: item?.id, reviewStatus: value } }))
-                            }}
+                            onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductReviewStatusUpdate(event, item?.id)}
                         >{PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
                     </Tooltip>
                 </Td>
