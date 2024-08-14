@@ -64,3 +64,23 @@ export const PRODUCT_REVIEW_OPTIONS = [
     },
 ]
 export type PRODUCT_REVIEW_OPTIONS = typeof PRODUCT_REVIEW_OPTIONS[keyof typeof PRODUCT_REVIEW_OPTIONS];
+
+export const PRODUCT_STATUS_OPTIONS = [
+    {
+        label: 'Unknown',
+        value: 'unknown',
+    }, {
+        label: 'Live',
+        value: 'live',
+    }, {
+        label: 'Out of stock',
+        value: 'out_of_stock',
+    }, {
+        label: 'Data Mismatch',
+        value: 'data_mismatch',
+    }, {
+        label: '404',
+        value: 'not_found',
+    }
+]
+export type PRODUCT_STATUS_OPTIONS = typeof PRODUCT_STATUS_OPTIONS[keyof typeof PRODUCT_STATUS_OPTIONS];

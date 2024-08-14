@@ -7,11 +7,11 @@ import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
 import ProductLinks from "./ProductLinks";
 import LooksTableRow from "@/components/looks/LooksTableRow";
-import { PRODUCT_REVIEW_OPTIONS, ROLES } from "@/_config";
+import { PRODUCT_REVIEW_OPTIONS, PRODUCT_STATUS_OPTIONS, ROLES } from "@/_config";
 import UsersTable from "@/components/users/UsersTable";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import formatDateTime from "@/helpers/formatDateTime";
-import { changeSelectBoxColorForProductReviewStatus, handleProductReviewStatusUpdate } from "@/helpers/utils";
+import { changeSelectBoxColorForProductReviewStatus, changeSelectBoxColorForProductStatus, handleProductReviewStatusUpdate, handleProductStatusUpdate } from "@/helpers/utils";
 
 type ProductsTableProps = {
     data: any,
@@ -70,6 +70,7 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false, 
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center'>Submission Date</Th>
                             <Th textAlign='center'>Review</Th>
+                            <Th textAlign='center'>Status</Th>
                             <Th textAlign='center' color='green.500'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
@@ -299,6 +300,25 @@ const TableRow = ({ item, isSelectable = false, onSelect, onDelete }: TableRowPr
                             defaultValue={item?.reviewStatus}
                             onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductReviewStatusUpdate(event, item?.id)}
                         >{PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
+                    </Tooltip>
+                </Td>
+                <Td textAlign='center'>
+                    <Tooltip label={PRODUCT_STATUS_OPTIONS?.find(option => option.value === item?.status)?.label} placement="bottom">
+                        <Select
+                            variant='outline'
+                            size='xs'
+                            rounded='full'
+                            width={24}
+                            background={changeSelectBoxColorForProductStatus(item?.status, 'background')}
+                            isTruncated={true}
+                            color={changeSelectBoxColorForProductStatus(item?.status, 'text')}
+                            style={{
+                                color: changeSelectBoxColorForProductStatus(item?.status, 'text'),
+                            }}
+                            borderColor={changeSelectBoxColorForProductStatus(item?.status, 'border')}
+                            defaultValue={item?.status}
+                            onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductStatusUpdate(event, item?.id)}
+                        >{PRODUCT_STATUS_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
                     </Tooltip>
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>

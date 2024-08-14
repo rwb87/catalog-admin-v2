@@ -7,12 +7,12 @@ import SearchableInput from "@/components/SearchableInput";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { useGlobalVolatileStorage } from "@/_store";
-import { changeSelectBoxColorForProductReviewStatus, encodeAmpersand, handleProductReviewStatusUpdate } from "@/helpers/utils";
+import { changeSelectBoxColorForProductReviewStatus, changeSelectBoxColorForProductStatus, encodeAmpersand, handleProductReviewStatusUpdate, handleProductStatusUpdate } from "@/helpers/utils";
 import UpdateBrandDrawer from "@/components/brands/UpdateBrandDrawer";
 import UpdateProductDrawer from "@/components/products/UpdateProductDrawer";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import formatDateTime from "@/helpers/formatDateTime";
-import { PRODUCT_REVIEW_OPTIONS } from "@/_config";
+import { PRODUCT_REVIEW_OPTIONS, PRODUCT_STATUS_OPTIONS } from "@/_config";
 
 type LookProductsProps = {
     look: any,
@@ -205,6 +205,7 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
                             <Th textAlign='center'>Price</Th>
                             <Th textAlign='center'>Submission Date</Th>
                             <Th textAlign='center'>Review</Th>
+                            <Th textAlign='center'>Status</Th>
                             <Th textAlign='center'>Clickouts</Th>
                             <Th textAlign='right'>Actions</Th>
                         </Tr>
@@ -511,6 +512,25 @@ const Product = ({ index, item, handleMoveUp, handleMoveDown, handleRemove }: Pr
                             defaultValue={item?.reviewStatus}
                             onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductReviewStatusUpdate(event, item?.id)}
                         >{PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
+                    </Tooltip>
+                </Td>
+                <Td textAlign='center'>
+                    <Tooltip label={PRODUCT_STATUS_OPTIONS?.find(option => option.value === item?.status)?.label} placement="bottom">
+                        <Select
+                            variant='outline'
+                            size='xs'
+                            rounded='full'
+                            width={24}
+                            background={changeSelectBoxColorForProductStatus(item?.status, 'background')}
+                            isTruncated={true}
+                            color={changeSelectBoxColorForProductStatus(item?.status, 'text')}
+                            style={{
+                                color: changeSelectBoxColorForProductStatus(item?.status, 'text'),
+                            }}
+                            borderColor={changeSelectBoxColorForProductStatus(item?.status, 'border')}
+                            defaultValue={item?.status}
+                            onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductStatusUpdate(event, item?.id)}
+                        >{PRODUCT_STATUS_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
                     </Tooltip>
                 </Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>

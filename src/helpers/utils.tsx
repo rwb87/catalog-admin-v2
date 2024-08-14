@@ -50,7 +50,7 @@ export const changeSelectBoxColorForProductReviewStatus = (status: string, type:
 
             return'#C80036';
         default:
-            if(isTextColor) return 'white';
+            if(isTextColor) return 'black';
             if(isBorderColor) return '#a1a3a5';
 
             return 'transparent';
@@ -72,4 +72,51 @@ export const handleProductReviewStatusUpdate = (event: ChangeEvent<HTMLSelectEle
     $svg.style.color = textColor;
 
     window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: itemId, reviewStatus: value } }))
+}
+
+export const changeSelectBoxColorForProductStatus = (status: string, type: 'background' | 'text' | 'border') => {
+    const isTextColor = type === 'text';
+    const isBorderColor = type === 'border';
+
+    switch (status) {
+        case 'unknown':
+            if(isTextColor) return 'white';
+            if(isBorderColor) return '#FF8225';
+
+            return '#FF8225';
+        case 'live':
+            if(isTextColor) return 'white';
+            if(isBorderColor) return '#379777';
+
+            return '#379777';
+        case 'out_of_stock':
+        case 'data_mismatch':
+        case 'not_found':
+            if(isTextColor) return 'white';
+            if(isBorderColor) return '#C80036';
+
+            return'#C80036';
+        default:
+            if(isTextColor) return 'white';
+            if(isBorderColor) return '#FF8225';
+
+            return '#FF8225';
+    }
+}
+export const handleProductStatusUpdate = (event: ChangeEvent<HTMLSelectElement>, itemId: number) => {
+    const { value } = event.target;
+
+    const $svg = event.target.parentElement.querySelector('svg');
+    const $this = event.target;
+
+    const backgroundColor = changeSelectBoxColorForProductStatus(value, 'background');
+    const textColor = changeSelectBoxColorForProductStatus(value, 'text');
+    const borderColor = changeSelectBoxColorForProductStatus(value, 'border');
+
+    $this.style.backgroundColor = backgroundColor;
+    $this.style.color = textColor;
+    $this.style.border = `1px solid ${borderColor}`;
+    $svg.style.color = textColor;
+
+    window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: itemId, status: value } }))
 }
