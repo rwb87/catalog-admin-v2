@@ -306,7 +306,10 @@ const LooksTableRow = (props: TableRowProps) => {
                                 }}
                             />
                         </Td>
-                        <Td textAlign='center'>
+                        <Td
+                            textAlign='center'
+                            display={!showStatus && !isLiveStatus ? 'none' : 'table-cell'}
+                        >
                             <Input
                                 type="number"
                                 rounded='full'

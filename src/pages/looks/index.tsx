@@ -13,12 +13,15 @@ import { useEffect, useState } from "react";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
+import { useSearchParams } from "react-router-dom";
 
 const LooksView = () => {
     const { user } = useUser() as any;
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
+    const [searchParams, setSearchParams] = useSearchParams();
+1
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [filter, setFilter] = useState<string>('');
+    const filter = searchParams.get('filter') || LOOK_STATUSES.LIVE;
     const [data, setData] = useState<any>([]);
     const [search, setSearch] = useState<string>('');
     const [sortBy, setSortBy] = useState<string>('createdAt:desc');
@@ -39,8 +42,6 @@ const LooksView = () => {
 
     useEffect(() => {
         getBrands();
-
-        setFilter(LOOK_STATUSES.LIVE);
     }, []);
 
     useEffect(() => {
@@ -142,13 +143,20 @@ const LooksView = () => {
             });
 
             notify('New look created successfully', 3000);
-            setFilter(LOOK_STATUSES.IN_EDIT);
+            handleUpdateSearchParams('filter', LOOK_STATUSES.IN_EDIT);
         } catch (error: any) {
             notify(error?.response?.data?.message || error?.message, 3000);
         }
 
         setIsCreatingNewLook(false);
         setIsProcessing(false);
+    }
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
     }
 
     return (
@@ -237,7 +245,7 @@ const LooksView = () => {
                         value={filter}
                         onChange={(event: any) => {
                             setIsLoading(true);
-                            setFilter(event.target.value)
+                            handleUpdateSearchParams('filter', event.target.value)
                         }}
                     >
                         <option value={LOOK_STATUSES.LIVE}>Live</option>
