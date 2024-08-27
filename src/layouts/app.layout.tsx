@@ -95,6 +95,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     const extraPages = [
         '/settings',
         '/settings/creator-affiliate-links',
+        '/shoppers/waitlist',
         '/creators/incoming'
     ];
 

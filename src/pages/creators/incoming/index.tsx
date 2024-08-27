@@ -45,7 +45,7 @@ const IncomingCreatorsView = () => {
     const getData = async () => {
         try {
             const response = await fetch({
-                endpoint: `/users/become-creator?&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}`,
+                endpoint: `/users/become-creator?limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}`,
                 method: 'GET',
             });
             setUsers(response?.users);

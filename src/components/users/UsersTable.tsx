@@ -35,14 +35,13 @@ const SSO_PROVIDERS = {
 
 type UsersTableProps = {
     isLoading?: boolean;
-    userType: ROLES;
+    userType: ROLES | 'WAITLIST';
     data?: any;
     pagination?: any;
     onPaginate?: (page: number) => void;
-    hasActions?: boolean;
-    onEdit?: (user: any) => void;
-    onDelete?: (user: any) => void;
+    hasActions?: boolean | 'edit' | 'delete';
     noUi?: boolean;
+    extraActions?: any;
 }
 const UsersTable = (props: UsersTableProps) => {
     const {
@@ -53,6 +52,7 @@ const UsersTable = (props: UsersTableProps) => {
         onPaginate,
         hasActions = true,
         noUi = false,
+        extraActions,
     } = props;
 
     const [editingData, setEditingData] = useState<any>({});
@@ -135,36 +135,37 @@ const UsersTable = (props: UsersTableProps) => {
                         <Tr>
                             <Th textTransform='capitalize'>{userType?.replace('_', ' ')}</Th>
                             { userType !== ROLES.ADMIN && <Th>SSO</Th> }
+                            { userType === 'WAITLIST' && <Th>SSO ID</Th> }
                             <Th>Email</Th>
                             <Th>Created At</Th>
                             {
-                                (userType === ROLES.SUPER_ADMIN || userType === ROLES.ADMIN) && <>
+                                ([ROLES.SUPER_ADMIN, ROLES.ADMIN].includes(userType)) && <>
                                     <Th>Role</Th>
                                 </>
                             }
                             {
-                                (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                                ([ROLES.SHOPPER, ROLES.CREATOR].includes(userType)) && <>
                                     <Th>Shopping</Th>
                                 </>
                             }
                             {
-                                (userType === ROLES.CREATOR) && <>
+                                ([ROLES.CREATOR].includes(userType)) && <>
                                     <Th>Gender</Th>
                                 </>
                             }
                             {
-                                (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                                ([ROLES.SHOPPER, ROLES.CREATOR].includes(userType)) && <>
                                     <Th>Location</Th>
                                     <Th textAlign='center'>Height</Th>
                                 </>
                             }
                             {
-                                (userType === ROLES.CREATOR || userType === ROLES.SHOPPER || userType === ROLES.DATA_MANAGER) && <>
+                                ([ROLES.CREATOR, ROLES.SHOPPER, ROLES.DATA_MANAGER].includes(userType)) && <>
                                     <Th>Age</Th>
                                 </>
                             }
                             {
-                                userType === ROLES.CREATOR && <>
+                                ([ROLES.CREATOR].includes(userType)) && <>
                                     <Th textAlign='center'>Looks</Th>
                                     <Th textAlign='center'>Products</Th>
                                     <Th textAlign='center' color='blue.500'>Incoming <br /> Discovers</Th>
@@ -172,18 +173,18 @@ const UsersTable = (props: UsersTableProps) => {
                                 </>
                             }
                             {
-                                userType !== ROLES.ADMIN && <>
+                                ([ROLES.CREATOR, ROLES.SHOPPER].includes(userType)) && <>
                                     <Th textAlign='center' color='blue.500'>Outgoing <br /> Discovers</Th>
                                     <Th textAlign='center' color='green.500'>Outgoing <br /> Clickouts</Th>
                                 </>
                             }
                             {
-                                userType === ROLES.CREATOR && <>
+                                ([ROLES.CREATOR].includes(userType)) && <>
                                     <Th textAlign='center'>Earnings</Th>
                                 </>
                             }
                             {
-                                userType === ROLES.SHOPPER && <>
+                                ([ROLES.SHOPPER].includes(userType)) && <>
                                     <Th textAlign='center'>Invited</Th>
                                 </>
                             }
@@ -218,6 +219,7 @@ const UsersTable = (props: UsersTableProps) => {
                                         hasActions={hasActions}
                                         onEdit={(user: any) => setEditingUser(user)}
                                         onDelete={(user) => setDeletingUser(user)}
+                                        extraActions={extraActions}
                                     />)
                         }
                     </Tbody>
@@ -272,9 +274,10 @@ const UsersTable = (props: UsersTableProps) => {
 type UsersTableRowProps = {
     userType: ROLES;
     user: any;
-    hasActions?: boolean;
+    hasActions?: boolean | 'edit' | 'delete';
     onEdit?: (user: any) => void;
     onDelete?: (user: any) => void;
+    extraActions?: any;
 }
 const TableRow = (props: UsersTableRowProps) => {
     const {
@@ -283,7 +286,11 @@ const TableRow = (props: UsersTableRowProps) => {
         hasActions = true,
         onEdit,
         onDelete,
+        extraActions,
     } = props;
+
+    const canEdit = typeof hasActions === 'boolean' || hasActions === 'edit';
+    const canDelete = typeof hasActions === 'boolean' || hasActions === 'delete';
 
     const [isLooksExpanded, setIsLooksExpanded] = useState(false);
     const [isProductsExpanded, setIsProductsExpanded] = useState(false);
@@ -302,7 +309,7 @@ const TableRow = (props: UsersTableRowProps) => {
                     </Tooltip>
                 </Td>
                 {
-                    userType !== ROLES.ADMIN && <Td>
+                    (![ROLES.ADMIN].includes(userType)) && <Td>
                         {
                             user?.provider
                                 ? <img src={SSO_PROVIDERS?.[user?.provider]?.icon} alt="SSO" style={{ width: '22px' }} />
@@ -310,51 +317,56 @@ const TableRow = (props: UsersTableRowProps) => {
                         }
                     </Td>
                 }
+                {
+                    (['WAITLIST']?.includes(userType)) && <Td>{user?.providerId}</Td>
+                }
                 <Td>
                     {
                         user?.email
-                            ? userType !== ROLES.ADMIN
-                                ? <IconButton
-                                    aria-label='Email'
-                                    variant='ghost'
-                                    rounded='full'
-                                    size='sm'
-                                    icon={<IconMail size={22} />}
-                                    onClick={() => window.open(`mailto:${user?.email}`)}
-                                />
+                            ? (![ROLES.ADMIN].includes(userType))
+                                ? <Tooltip label={user?.email}>
+                                    <IconButton
+                                        aria-label='Email'
+                                        variant='ghost'
+                                        rounded='full'
+                                        size='sm'
+                                        icon={<IconMail size={22} />}
+                                        onClick={() => window.open(`mailto:${user?.email}`)}
+                                    />
+                                </Tooltip>
                                 : user?.email
                             : '-'
                     }
                 </Td>
                 <Td minWidth='160px' maxWidth='160px'>{formatDateTime(user?.createdAt, true)}</Td>
                 {
-                    (userType === ROLES.SUPER_ADMIN || userType === ROLES.ADMIN) && <>
+                    ([ROLES.SUPER_ADMIN, ROLES.ADMIN].includes(userType)) && <>
                         <Td textTransform='capitalize'>{user?.type?.replace('_', ' ') || '-'}</Td>
                     </>
                 }
                 {
-                    (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                    ([ROLES.SHOPPER, ROLES.CREATOR].includes(userType)) && <>
                         <Td textTransform='capitalize'>{user?.gender || '-'}</Td>
                     </>
                 }
                 {
-                    (userType === ROLES.CREATOR) && <>
+                    ([ROLES.CREATOR].includes(userType)) && <>
                         <Td textTransform='capitalize'>{user?.creatorGender || '-'}</Td>
                     </>
                 }
                 {
-                    (userType !== ROLES.SUPER_ADMIN && userType !== ROLES.ADMIN) && <>
+                    ([ROLES.SHOPPER, ROLES.CREATOR].includes(userType)) && <>
                         <Td textTransform='capitalize'>{user?.location || '-'}</Td>
                         <Td textAlign='center'>{ user?.height || '-'}</Td>
                     </>
                 }
                 {
-                    (userType === ROLES.CREATOR || userType === ROLES.SHOPPER || userType === ROLES.DATA_MANAGER) && <>
+                    ([ROLES.CREATOR, ROLES.SHOPPER, ROLES.DATA_MANAGER].includes(userType)) && <>
                         <Td>{user?.birthDate ? moment().diff(user?.birthDate, 'years') + ' years' : '-'}</Td>
                     </>
                 }
                 {
-                    userType === ROLES.CREATOR && <>
+                    ([ROLES.CREATOR].includes(userType)) && <>
                         <Td textAlign='center'>
                             <IconButton
                                 aria-label='Looks'
@@ -388,13 +400,13 @@ const TableRow = (props: UsersTableRowProps) => {
                     </>
                 }
                 {
-                    userType !== ROLES.ADMIN && <>
+                    ([ROLES.CREATOR, ROLES.SHOPPER].includes(userType)) && <>
                         <Td textAlign='center' color='blue.500'>{user?.outgoingDiscovers || 0}</Td>
                         <Td textAlign='center' color='green.500'>{user?.outgoingClickouts || 0}</Td>
                     </>
                 }
                 {
-                    userType === ROLES.CREATOR && <>
+                    ([ROLES.CREATOR].includes(userType)) && <>
                         <Td textAlign='center'>
                             <Text
                                 borderWidth={2}
@@ -409,34 +421,40 @@ const TableRow = (props: UsersTableRowProps) => {
                     </>
                 }
                 {
-                    userType === ROLES.SHOPPER && <>
+                    ([ROLES.SHOPPER].includes(userType)) && <>
                         <Td textAlign='center'>{user?.invitations?.length || 0}</Td>
                     </>
                 }
                 {
                     hasActions && <Td textAlign='right' whiteSpace='nowrap'>
-                        {
-                            typeof onEdit === 'function' && <IconButton
-                                aria-label='Edit'
-                                variant='ghost'
-                                rounded='full'
-                                size='sm'
-                                icon={<IconEdit size={22} />}
-                                onClick={() => onEdit?.(user)}
-                            />
-                        }
-                        {
-                            typeof onDelete === 'function' && <IconButton
-                                aria-label='Delete'
-                                variant='ghost'
-                                colorScheme='red'
-                                rounded='full'
-                                size='sm'
-                                ml={4}
-                                icon={<IconTrash size={22} />}
-                                onClick={() => onDelete?.(user)}
-                            />
-                        }
+                        <Flex gap={4} justifyContent='flex-end' width='full'>
+
+                            {/* Extra Actions */}
+                            <span className="extra-actions" data-user-id={user?.id} >{extraActions}</span>
+
+                            {/* Dedicated Actions */}
+                            {
+                                (typeof onEdit === 'function' && canEdit) && <IconButton
+                                    aria-label='Edit'
+                                    variant='ghost'
+                                    rounded='full'
+                                    size='sm'
+                                    icon={<IconEdit size={22} />}
+                                    onClick={() => onEdit?.(user)}
+                                />
+                            }
+                            {
+                                (typeof onDelete === 'function' && canDelete) && <IconButton
+                                    aria-label='Delete'
+                                    variant='ghost'
+                                    colorScheme='red'
+                                    rounded='full'
+                                    size='sm'
+                                    icon={<IconTrash size={22} />}
+                                    onClick={() => onDelete?.(user)}
+                                />
+                            }
+                        </Flex>
                     </Td>
                 }
             </Tr>

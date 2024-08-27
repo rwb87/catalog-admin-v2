@@ -12,7 +12,9 @@ import Login from '@/pages/auth/login';
 import AppLayout from '@/layouts/app.layout';
 
 import AdminsView from '@/pages/admins';
+
 import ShoppersView from '@/pages/shoppers';
+import WaitlistView from '@/pages/shoppers/waitlist';
 
 import CreatorsView from '@/pages/creators';
 import IncomingCreatorsView from '@/pages/creators/incoming';
@@ -47,7 +49,9 @@ export default function Routes() {
 
                     {/* App Pages */}
                     <Route path="/administrators" element={<AdminsView />} />
+
                     <Route path="/shoppers" element={<ShoppersView />} />
+                    <Route path="/shoppers/waitlist" element={<WaitlistView />} />
 
                     <Route path="/creators" element={<CreatorsView />} />
                     <Route path="/creators/incoming" element={<IncomingCreatorsView />} />

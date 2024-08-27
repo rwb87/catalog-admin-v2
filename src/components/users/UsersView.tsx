@@ -53,7 +53,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
 
         try {
             const response = await fetch({
-                endpoint: `/users?type=${fetchUserType}&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
+                endpoint: `/users?type=${fetchUserType}&isLive=1&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
                 method: 'GET',
             });
             setUsers(response?.users);
@@ -73,6 +73,11 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
         const { value } = event.target;
 
         if (value === 'CREATOR_REQUESTS') routeTo('/creators/incoming');
+    }
+    const handleChangeShoppersType = (event: any) => {
+        const { value } = event.target;
+
+        if (value === 'WAITLIST') routeTo('/shoppers/waitlist');
     }
 
     const totalIncomingClickouts = useMemo(() => {
@@ -179,6 +184,28 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                                 <Text ml={2} color='blue.500'>Incoming <br />Discovers: {totalIncomingDiscovers || 0}</Text>
                                 <Divider orientation='vertical' height='40px' />
                                 <Text ml={2} color='green.500'>Incoming <br />Clickouts: {totalIncomingClickouts || 0}</Text>
+                            </>
+                        }
+                        {
+                            userType === ROLES.SHOPPER && <>
+                                <Select
+                                    variant='outline'
+                                    width={{
+                                        base: 'full',
+                                        lg: 32,
+                                    }}
+                                    size='sm'
+                                    rounded='full'
+                                    bgColor='white'
+                                    borderWidth={2}
+                                    borderColor='gray.100'
+                                    fontWeight='medium'
+                                    defaultValue='NORMAL'
+                                    onChange={handleChangeShoppersType}
+                                >
+                                    <option value='LIVE'>Live</option>
+                                    <option value='WAITLIST'>Waitlist</option>
+                                </Select>
                             </>
                         }
                         <Divider orientation='vertical' height='40px' />
