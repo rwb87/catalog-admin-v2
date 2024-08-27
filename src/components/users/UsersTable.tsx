@@ -111,14 +111,14 @@ const UsersTable = (props: UsersTableProps) => {
                 method: 'DELETE',
             });
 
-            if (response) notify('User deleted successfully', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('User deleted successfully');
+            else notify('An error occurred');
 
             window?.dispatchEvent(new CustomEvent('refresh:data'));
             setDeletingUser({});
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsDeleting(false);
@@ -498,7 +498,7 @@ const UserLooks = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
             });
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
             setLooks([]);
         }
 
@@ -620,7 +620,7 @@ const UserProducts = ({ isOpen, user }: { isOpen: boolean, user: any }) => {
             });
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
             setProducts([]);
         }
 

@@ -31,10 +31,10 @@ const Login = () => {
 
         if (isProcessing) return;
 
-        if(payload?.honeypot !== '') return notify('Honeypot trap triggered', 3000);
+        if(payload?.honeypot !== '') return notify('Honeypot trap triggered');
 
-        if (payload?.email?.trim() === '') return notify('Email is required', 3000);
-        if (payload?.password?.trim() === '') return notify('Password is required', 3000);
+        if (payload?.email?.trim() === '') return notify('Email is required');
+        if (payload?.password?.trim() === '') return notify('Password is required');
 
         setIsProcessing(true);
 
@@ -49,7 +49,7 @@ const Login = () => {
 
             if(!ALLOWED_ROLES.includes(user?.type)) {
                 setIsProcessing(false);
-                return notify('You are not allowed to login', 3000);
+                return notify('You are not allowed to login');
             }
 
             setToken(token);
@@ -61,7 +61,7 @@ const Login = () => {
             }, 100)
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);

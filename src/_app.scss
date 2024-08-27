@@ -66,12 +66,12 @@ $table-style: (
     }
 }
 
-.notification {
+#notification {
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     padding: 0.5rem 1rem;
-    background-color: var(--chakra-colors-primary-500);
+    background-color: #405D72;
     color: white;
     border-radius: 10rem;
     max-width: 30rem;
@@ -80,8 +80,22 @@ $table-style: (
     text-align: center;
     bottom: -10rem;
     transition: bottom 0.15s ease-in-out;
+    font-weight: 500;
+    font-size: 0.85rem;
     &.active {
         bottom: 1rem;
+    }
+    &.success {
+        background-color: #059212;
+    }
+    &.error {
+        background-color: #C7253E;
+    }
+    &.warning {
+        background-color: #E85C0D;
+    }
+    &.info {
+        background-color: #3FA2F6;
     }
 }
 

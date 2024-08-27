@@ -28,13 +28,13 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
     const handleUpdateUser = async () => {
         if(isProcessing) return;
 
-        if(editingUser?.name?.trim() === '') return notify('First Name is required', 3000);
-        if(editingUser?.email?.trim() === '') return notify('Email is required', 3000);
-        if(editingUser?.username?.trim() === '') return notify('Username is required', 3000);
-        if(editingUser?.type?.trim() === '') return notify('Role is required', 3000);
-        if(editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required', 3000);
+        if(editingUser?.name?.trim() === '') return notify('First Name is required');
+        if(editingUser?.email?.trim() === '') return notify('Email is required');
+        if(editingUser?.username?.trim() === '') return notify('Username is required');
+        if(editingUser?.type?.trim() === '') return notify('Role is required');
+        if(editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required');
         if(editingUser?.birthDate) {
-            if(!moment(editingUser?.birthDate).isValid()) return notify('Invalid Date of Birth', 3000);
+            if(!moment(editingUser?.birthDate).isValid()) return notify('Invalid Date of Birth');
 
             const futureDateMessages = [
                 'WOAAHHHH!!!! You are a time traveler? 😮',
@@ -44,7 +44,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                 'How the earth looks like in the future? 🤔',
             ];
 
-            if(moment(editingUser?.birthDate).isAfter(moment())) return notify(futureDateMessages[Math.floor(Math.random() * futureDateMessages.length)], 3000);
+            if(moment(editingUser?.birthDate).isAfter(moment())) return notify(futureDateMessages[Math.floor(Math.random() * futureDateMessages.length)]);
         }
 
         setIsProcessing(true);
@@ -67,7 +67,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         // Photos
         if (coverPhotoRef.current.files[0]) payload.append('cover', coverPhotoRef.current.files[0]);
         if (profilePhotoRef.current.files[0]) payload.append('picture', profilePhotoRef.current.files[0]);
-        if (editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required', 3000);
+        if (editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required');
 
         if (editingUser?.password) payload.append('password', editingUser?.password);
 
@@ -80,12 +80,12 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
                 hasFiles: true,
             });
 
-            if(response) notify(`User ${editingUser?.isNew ? 'created' : 'updated'} successfully`, 3000);
+            if(response) notify(`User saved successfully`);
             onSave(response, editingUser?.isNew);
             setEditingUser({});
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);

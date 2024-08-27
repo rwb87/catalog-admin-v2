@@ -56,7 +56,7 @@ const BrandsView = () => {
             setData(sortedData);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsLoading(false);
@@ -80,14 +80,14 @@ const BrandsView = () => {
                 method: 'DELETE',
             });
 
-            if (response) notify('Brand deleted successfully', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('Brand deleted successfully');
+            else notify('An error occurred');
 
             setData(data.filter((user: any) => user.id !== deletingData.id));
             setDeletingData({});
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsDeleting(false);

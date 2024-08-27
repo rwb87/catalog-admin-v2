@@ -82,11 +82,11 @@ const LooksTableRow = (props: TableRowProps) => {
                 },
             });
 
-            if (response) notify('Look saved successfully', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('Look saved successfully');
+            else notify('An error occurred');
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         if(refreshData) window.dispatchEvent(new CustomEvent('refresh:data'));
@@ -116,14 +116,14 @@ const LooksTableRow = (props: TableRowProps) => {
                 carouselEnabled: false,
             }, sendingLookDataToManagement?.id);
 
-            notify('Look saved successfully', 3000);
+            notify('Look saved successfully');
 
             setSendingLookDataToManagement({});
 
             window.dispatchEvent(new CustomEvent('refresh:data'));
             window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
-            notify('Look sent to management but message could not be sent', 5000);
+            notify('Look sent to management but message could not be sent');
         }
 
         setIsProcessing(false);
@@ -139,14 +139,14 @@ const LooksTableRow = (props: TableRowProps) => {
                 carouselEnabled: false,
             }, isSubmittingLookForApproval?.id);
 
-            notify('Look sent successfully', 3000);
+            notify('Look sent successfully');
 
             setSendingLookDataToManagement({});
 
             window.dispatchEvent(new CustomEvent('refresh:data'));
             window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
-            notify('Look sent for approval', 5000);
+            notify('Look sent for approval');
         }
 
         setIsProcessing(false);
@@ -161,15 +161,15 @@ const LooksTableRow = (props: TableRowProps) => {
                 method: 'DELETE',
             });
 
-            if (response) notify('Look deleted', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('Look deleted');
+            else notify('An error occurred');
 
             setDeletingData({});
             window.dispatchEvent(new CustomEvent('refresh:data'));
             window.dispatchEvent(new CustomEvent('refresh:looks'));
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsDeleting(false);

@@ -105,10 +105,10 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
     }
 
     const handleUpdateData = async () => {
-        if(!editingData?.name) return notify('Please enter a name', 3000);
-        // if(!editingData?.link) return notify('Please enter a link', 3000);
-        if(!editingData?.price) return notify('Please enter a price', 3000);
-        if(!editingData?.brand?.id) return notify('Please select a brand', 3000);
+        if(!editingData?.name) return notify('Please enter a name');
+        // if(!editingData?.link) return notify('Please enter a link');
+        if(!editingData?.price) return notify('Please enter a price');
+        if(!editingData?.brand?.id) return notify('Please select a brand');
 
         setIsProcessing(true);
 
@@ -140,14 +140,14 @@ const UpdateProductDrawer = ({ data, onSave, onClose }: UpdateProductDrawerProps
             });
 
             if (response) {
-                notify('Product saved successfully', 3000);
+                notify('Product saved successfully');
                 onSave(response);
                 setEditingData({});
                 window?.dispatchEvent(new CustomEvent('global:fetch-global-data'));
-            } else notify('An error occurred', 3000);
+            } else notify('An error occurred');
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message || 'An error occurred';
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);

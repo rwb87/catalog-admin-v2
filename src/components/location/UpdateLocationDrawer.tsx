@@ -21,11 +21,11 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
     }, [data]);
 
     const handleUpdateData = async () => {
-        if(!editingData?.place) return notify('Please enter a place', 3000);
-        if(!editingData?.type) return notify('Please enter a type', 3000);
-        if(!editingData?.city) return notify('Please enter a city', 3000);
-        if(!editingData?.state) return notify('Please enter a state', 3000);
-        if(!editingData?.country) return notify('Please enter a country', 3000);
+        if(!editingData?.place) return notify('Please enter a place');
+        if(!editingData?.type) return notify('Please enter a type');
+        if(!editingData?.city) return notify('Please enter a city');
+        if(!editingData?.state) return notify('Please enter a state');
+        if(!editingData?.country) return notify('Please enter a country');
 
         setIsProcessing(true);
 
@@ -54,13 +54,13 @@ const UpdateLocationDrawer = ({ data, onSave, onClose }: UpdateLocationDrawerPro
             });
 
             if (response) {
-                notify('Location saved successfully', 3000);
+                notify('Location saved successfully');
                 onSave(response);
                 setEditingData({});
-            } else notify('An error occurred', 3000);
+            } else notify('An error occurred');
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message || 'An error occurred';
-            notify(message || 'An error occurred', 3000);
+            notify(message || 'An error occurred');
         }
 
         setIsProcessing(false);

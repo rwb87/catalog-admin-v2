@@ -31,12 +31,12 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
     }, [data]);
 
     const handleUpdateData = async () => {
-        if(!editingData?.name) return notify('Brand name is required', 3000);
-        if(!editingData?.pageLink) return notify('Brand website is required', 3000);
-        if(editingData?.partnership === undefined) return notify('Brand partnership is required', 3000);
+        if(!editingData?.name) return notify('Brand name is required');
+        if(!editingData?.pageLink) return notify('Brand website is required');
+        if(editingData?.partnership === undefined) return notify('Brand partnership is required');
 
         if(editingData.photoMetadata?.width || editingData.photoMetadata?.height) {
-            if(isNaN(editingData.photoMetadata?.width) || isNaN(editingData.photoMetadata?.height)) return notify('Image width and height must be numbers', 3000);
+            if(isNaN(editingData.photoMetadata?.width) || isNaN(editingData.photoMetadata?.height)) return notify('Image width and height must be numbers');
         }
 
         setIsProcessing(true);
@@ -65,16 +65,16 @@ const UpdateBrandDrawer = ({ data, onSave, onClose }: UpdateBrandDrawerProps) =>
             });
 
             if (response) {
-                notify('Brand saved successfully', 3000);
+                notify('Brand saved successfully');
 
                 onSave?.(editingData?.isNew ? { ...response, isNew: true } : response);
 
                 setEditingData({});
                 onClose?.();
-            } else notify('An error occurred', 3000);
+            } else notify('An error occurred');
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);

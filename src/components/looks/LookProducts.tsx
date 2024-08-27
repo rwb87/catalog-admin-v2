@@ -130,11 +130,11 @@ const LookProducts = ({ look, onSave }: LookProductsProps) => {
 
             if (response) {
                 onSave(editedProducts);
-                notify('Look saved successfully', 3000);
-            } else notify('An error occurred', 3000);
+                notify('Look saved successfully');
+            } else notify('An error occurred');
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);

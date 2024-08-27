@@ -35,14 +35,14 @@ const ProductsTable = ({ data, isLoading, pagination, onPaginate, noUi = false, 
                 method: 'DELETE',
             });
 
-            if (response) notify('Product deleted successfully', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('Product deleted successfully');
+            else notify('An error occurred');
 
             window?.dispatchEvent(new CustomEvent('refresh:data'));
             setDeletingData({});
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsDeleting(false);
@@ -510,7 +510,7 @@ const ProductCreators = ({ isOpen, productId }: { isOpen: boolean, productId: nu
             setCreators(response);
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsLoading(false);

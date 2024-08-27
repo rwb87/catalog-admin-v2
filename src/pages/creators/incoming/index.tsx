@@ -55,7 +55,7 @@ const IncomingCreatorsView = () => {
             })
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsLoading(false);
@@ -317,11 +317,11 @@ const TableRow = ({ item }: TableRowProps) => {
                 }
             });
 
-            notify('Status updated successfully', 3000);
+            notify('Status updated successfully');
             window?.dispatchEvent(new CustomEvent('refresh:data'));
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setStatus(null);

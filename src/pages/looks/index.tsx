@@ -85,7 +85,7 @@ const LooksView = () => {
             });
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsLoading(false);
@@ -120,11 +120,11 @@ const LooksView = () => {
                 },
             });
 
-            notify('All submitted looks sent to management', 3000);
+            notify('All submitted looks sent to management');
             setSendingAllLookDataToManagement(false);
             getData();
         } catch (error: any) {
-            notify('All submitted looks sent to management but message could not be sent', 5000);
+            notify('All submitted looks sent to management but message could not be sent');
         }
     }
 
@@ -142,10 +142,10 @@ const LooksView = () => {
                 },
             });
 
-            notify('New look created successfully', 3000);
+            notify('New look created successfully');
             handleUpdateSearchParams('filter', LOOK_STATUSES.IN_EDIT);
         } catch (error: any) {
-            notify(error?.response?.data?.message || error?.message, 3000);
+            notify(error?.response?.data?.message || error?.message);
         }
 
         setIsCreatingNewLook(false);

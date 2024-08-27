@@ -104,12 +104,12 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                 data: { links: links },
             });
 
-            if (response) notify('Links saved successfully', 3000);
-            else notify('An error occurred', 3000);
+            if (response) notify('Links saved successfully');
+            else notify('An error occurred');
 
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
-            notify(message, 3000);
+            notify(message);
         }
 
         setIsProcessing(false);
