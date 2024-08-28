@@ -6,14 +6,15 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, IconButton, Input, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
-import { IconLoader2, IconPlus, IconSearch } from "@tabler/icons-react";
+import { IconLoader2, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import LooksTableRow from "@/components/looks/LooksTableRow";
 import { LOOK_STATUSES } from "@/_config";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import { useSearchParams } from "react-router-dom";
+import SearchBox from "@/components/SearchBox";
 
 const LooksView = () => {
     const { user } = useUser() as any;
@@ -54,14 +55,7 @@ const LooksView = () => {
         window?.addEventListener('refresh:data', getData);
 
         return () => window?.removeEventListener('refresh:data', getData);
-    }, [filter, pagination.page, sortBy]);
-
-    useEffect(() => {
-        if(search?.trim() !== '') setIsLoading(true);
-
-        const debounce = setTimeout(() => getData(), 500);
-        return () => clearTimeout(debounce);
-    }, [search]);
+    }, [search, filter, pagination.page, sortBy]);
 
     const getData = async () => {
         if(!filter) return;
@@ -254,47 +248,10 @@ const LooksView = () => {
                     </Select>
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search for creators...'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={setSearch}
+                    />
 
                     {/* Send all look data to management */}
                     {

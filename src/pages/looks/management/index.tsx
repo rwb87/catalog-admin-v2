@@ -9,8 +9,8 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Divider, Flex, Heading, IconButton, Image, Input, InputGroup, InputLeftElement, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
-import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconSearch, IconTrash } from "@tabler/icons-react";
+import { Box, Button, Divider, Flex, Heading, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
+import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { LOOK_STATUSES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
@@ -19,6 +19,7 @@ import AddMusicPopup from "@/components/music/AddMusicPopup";
 import LookLocations from "@/components/looks/LookLocations";
 import Avatar from "@/components/Avatar";
 import UnassignedLinksTable from "@/components/looks/UnassignedLinksTable";
+import SearchBox from "@/components/SearchBox";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
@@ -54,14 +55,7 @@ const LooksManagementView = () => {
         setIsLoading(true);
 
         getData();
-    }, [pagination.page]);
-
-    useEffect(() => {
-        if(search?.trim() !== '') setIsLoading(true);
-
-        const debounce = setTimeout(() => getData(), 500);
-        return () => clearTimeout(debounce);
-    }, [search]);
+    }, [search, pagination.page]);
 
     const getData = async () => {
         const filter = { status: [ LOOK_STATUSES.IN_DATA_MANAGEMENT ] };
@@ -166,47 +160,10 @@ const LooksManagementView = () => {
                     <h1 className="page-heading">Looks Management</h1>
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search for creators...'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={setSearch}
+                    />
                 </Flex>
             </Flex>
 

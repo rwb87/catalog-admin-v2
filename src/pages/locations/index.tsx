@@ -1,4 +1,5 @@
 import LocationTable from "@/components/location/LocationTable";
+import SearchBox from "@/components/SearchBox";
 import fetch from "@/helpers/fetch";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
@@ -28,12 +29,7 @@ const LocationView = () => {
         window?.addEventListener('refresh:data', getData);
 
         return () => window?.removeEventListener('refresh:data', getData);
-    }, [pagination?.offset]);
-
-    useEffect(() => {
-        const debounce = setTimeout(() => getData(), 500);
-        return () => clearTimeout(debounce);
-    }, [search]);
+    }, [search, pagination?.offset]);
 
     const getData = async () => {
         try {
@@ -112,47 +108,10 @@ const LocationView = () => {
                 >
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={setSearch}
+                    />
 
                     {/* Create button for Desktop */}
                     <Tooltip label='Add new music' placement="left">

@@ -1,14 +1,15 @@
 import { PRODUCT_REVIEW_OPTIONS } from "@/_config";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import ProductsTable from "@/components/products/ProductsTable";
+import SearchBox from "@/components/SearchBox";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { encodeAmpersand } from "@/helpers/utils";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Divider, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Text, Tooltip } from "@chakra-ui/react";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { Divider, Flex, IconButton, Select, Text, Tooltip } from "@chakra-ui/react";
+import { IconPlus, } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -55,12 +56,7 @@ const ProductsView = () => {
         window?.addEventListener('refresh:data', getData);
 
         return () => window?.removeEventListener('refresh:data', getData);
-    }, [sortBy, pagination.page, filterReviewStatusBy]);
-
-    useEffect(() => {
-        const debounce = setTimeout(() => getData(), 500);
-        return () => clearTimeout(debounce);
-    }, [search]);
+    }, [search, sortBy, pagination.page, filterReviewStatusBy]);
 
     const getData = async () => {
 
@@ -298,44 +294,10 @@ const ProductsView = () => {
                     </Select>
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            xl: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width='full'
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={setSearch}
+                    />
 
                     {/* Create button for Desktop */}
                     <Tooltip label='Add new product' placement="left">
