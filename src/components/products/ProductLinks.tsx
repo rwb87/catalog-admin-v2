@@ -1,11 +1,12 @@
-import { PRODUCT_LINK_TYPES } from "@/_config";
+import { PRODUCT_LINK_TYPES, PRODUCT_STATUS_OPTIONS } from "@/_config";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Button, Flex, IconButton, Input, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconAlertTriangle, IconArrowDown, IconArrowUp, IconCornerDownRight, IconDeviceFloppy, IconError404, IconPlus, IconShoppingCartExclamation, IconTrash, IconUnlink } from "@tabler/icons-react";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import Avatar from "@/components/Avatar";
+import { changeSelectBoxColorForProductStatus, handleProductLinkStatusUpdate } from "@/helpers/utils";
 
 type LookProductsProps = {
     links: any;
@@ -198,6 +199,7 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                         <Th>Status</Th>
                         <Th>Link For</Th>
                         <Th textAlign='center'>Link Status</Th>
+                        <Th textAlign='center'>Scraped Link Status</Th>
                         <Th textAlign='right'>Actions</Th>
                     </Tr>
                 </Thead>
@@ -205,6 +207,8 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                 <Tbody>
                     {
                         editedLinks?.map((link: any, index: number) => {
+                            const linkDetails = link?.scrapedDataParsed;
+
                             return (
                                 <Tr key={index}>
                                     <Td width='30px' textAlign='left'>
@@ -320,6 +324,26 @@ const ProductLinks = ({ links, productId, allowModify = true, onSave, onCancel }
                                             fontStyle={link?.user?.name === undefined ? 'italic' : 'normal'}
                                             onClick={() => handleOpenChangeCreatorDrawer(link)}
                                         ><Avatar user={link?.user} name={link?.user?.username || 'NIL'} /></Button>
+                                    </Td>
+                                    <Td textAlign='center'>
+                                        <Tooltip label={PRODUCT_STATUS_OPTIONS?.find(option => option.value === (linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status))?.label} placement="bottom">
+                                            <Select
+                                                variant='outline'
+                                                size='xs'
+                                                rounded='full'
+                                                width={24}
+                                                mx='auto'
+                                                background={changeSelectBoxColorForProductStatus(linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status, 'background')}
+                                                isTruncated={true}
+                                                color={changeSelectBoxColorForProductStatus(linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status, 'text')}
+                                                style={{
+                                                    color: changeSelectBoxColorForProductStatus(linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status, 'text'),
+                                                }}
+                                                borderColor={changeSelectBoxColorForProductStatus(linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status, 'border')}
+                                                defaultValue={linkDetails?.outOfStock ? 'out_of_stock' : linkDetails?.status}
+                                                onChange={(event: ChangeEvent<HTMLSelectElement>) =>  handleProductLinkStatusUpdate(event, link?.id, link)}
+                                            >{PRODUCT_STATUS_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}</Select>
+                                        </Tooltip>
                                     </Td>
                                     <Td textAlign='center'>{renderLinkStatus(link)}</Td>
                                     <Td

@@ -71,7 +71,7 @@ export const PRODUCT_STATUS_OPTIONS = [
         value: 'unknown',
     }, {
         label: 'Live',
-        value: 'live',
+        value: 200,
     }, {
         label: 'Out of stock',
         value: 'out_of_stock',
@@ -80,7 +80,7 @@ export const PRODUCT_STATUS_OPTIONS = [
         value: 'data_mismatch',
     }, {
         label: '404',
-        value: 'not_found',
+        value: 404,
     }
 ]
 export type PRODUCT_STATUS_OPTIONS = typeof PRODUCT_STATUS_OPTIONS[keyof typeof PRODUCT_STATUS_OPTIONS];

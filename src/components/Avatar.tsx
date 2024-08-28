@@ -22,6 +22,7 @@ export default function Avatar({ size = '2.2rem', name, user, showName = true, s
             alignItems='center'
             display='inline-flex'
             position='relative'
+            pr={showName ? 2 : 0}
         >
             <img
                 src={user?.smallPictureURL || randomAvatar}
