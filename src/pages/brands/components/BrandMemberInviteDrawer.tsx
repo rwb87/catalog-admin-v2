@@ -29,6 +29,7 @@ export default function BrandMemberInviteDrawer() {
                 id: user?.id || null,
             });
             setOpen(true);
+            setIsProcessing(false);
         }
 
         window.addEventListener('drawer:brand:members:invite', openDrawer);
