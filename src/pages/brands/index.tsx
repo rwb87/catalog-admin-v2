@@ -588,7 +588,6 @@ const BrandMembers = ({ brandId }: BrandMembersProps) => {
             try {
                 const response = await fetch({ endpoint: `/campaigns/users/list/${brandId}` });
                 setData(response?.users);
-                console.log(response?.users);
             } catch (error: any) {
                 console.error(error);
                 notify(error.message, 'error');
