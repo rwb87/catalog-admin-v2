@@ -11,6 +11,13 @@ export const ROLES = {
 }
 export type ROLES = typeof ROLES[keyof typeof ROLES];
 
+export const BRAND_ROLES = {
+    ADMIN: 'admin',
+    FINANCE: 'finance',
+    CREATIVE: 'creative',
+}
+export type BRAND_ROLES = typeof BRAND_ROLES[keyof typeof BRAND_ROLES];
+
 export const PRODUCT_LINK_TYPES = {
     AFFILIATE: 'AFFILIATE',
     BASIC: 'BASIC',

@@ -1,3 +1,4 @@
+import { BRAND_ROLES, ROLES } from "@/_config";
 import Confirmation from "@/components/Confirmation";
 import Pagination from "@/components/Pagination";
 import BrandProducts from "@/components/brands/BrandProducts";
@@ -7,9 +8,12 @@ import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconWorldWww } from "@tabler/icons-react";
+import { Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconUsersGroup, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import BrandMemberInviteDrawer from "./components/BrandMemberInviteDrawer";
+import BrandMemberDeleteConfirmation from "./components/BrandMemberDeleteConfirmation";
+import { useUser } from "@/_store";
 
 const BrandsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -405,6 +409,10 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
                 page={page || 1}
                 setPage={setPage}
             />
+
+            {/* Drawers */}
+            <BrandMemberInviteDrawer />
+            <BrandMemberDeleteConfirmation />
         </>
     )
 }
@@ -415,10 +423,18 @@ type TableRowProps = {
     onDelete: (item: any) => void,
 }
 const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
+    const { user } = useUser() as any;
     const [products, setProducts] = useState<any[] | null>(null);
+    const [isMembersExpanded, setIsMembersExpanded] = useState<boolean>(false);
 
     const handleExpandProducts = () => {
+        setIsMembersExpanded(false);
         setProducts(products !== null ? null : item?.products);
+    }
+
+    const handleExpandMembers = () => {
+        setProducts(null);
+        setIsMembersExpanded(!isMembersExpanded);
     }
 
     const handleOpenImage = (link: string) => {
@@ -469,48 +485,62 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 <Td textAlign='center'>{item?.partnership || 'None'}</Td>
                 <Td textAlign='center' color='green.500'>{item?.clickouts || 0}</Td>
                 <Td textAlign='right' whiteSpace='nowrap'>
-                    <IconButton
-                        aria-label="Edit"
-                        variant='ghost'
-                        rounded='full'
-                        size='sm'
-                        icon={<IconEdit size={22} />}
-                        onClick={() => onEdit?.(item)}
-                    />
+                    <Flex gap={4} justifyContent='flex-end' alignItems='center'>
+                        <IconButton
+                            aria-label="Edit"
+                            variant='ghost'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconEdit size={22} />}
+                            onClick={() => onEdit?.(item)}
+                        />
 
-                    <IconButton
-                        aria-label='Delete'
-                        variant='ghost'
-                        colorScheme='red'
-                        rounded='full'
-                        size='sm'
-                        ml={4}
-                        icon={<IconTrash size={22} />}
-                        onClick={() => onDelete?.(item)}
-                    />
-                    <IconButton
-                        aria-label='Expand'
-                        variant='ghost'
-                        rounded='full'
-                        size='sm'
-                        backgroundColor='black'
-                        color='white'
-                        ml={4}
-                        _hover={{
-                            backgroundColor: 'blackAlpha.700',
-                        }}
-                        _focusVisible={{
-                            backgroundColor: 'blackAlpha.800',
-                        }}
-                        icon={<IconChevronDown
-                            size={22}
-                            style={{
-                                transition: 'transform 0.15s',
-                                transform: products !== null ? 'rotate(180deg)' : 'rotate(0deg)'
-                            }}
-                        />}
-                        onClick={handleExpandProducts}
-                    />
+                        <IconButton
+                            aria-label='Delete'
+                            variant='ghost'
+                            colorScheme='red'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconTrash size={22} />}
+                            onClick={() => onDelete?.(item)}
+                        />
+                        {
+                            [ROLES.SUPER_ADMIN, ROLES.ADMIN].includes(user?.type) && <Tooltip label='Campaign Members' >
+                                <IconButton
+                                    aria-label='Campaign Members'
+                                    rounded='full'
+                                    size='sm'
+                                    icon={<IconUsersGroup size={22} />}
+                                    onClick={handleExpandMembers}
+                                />
+                            </Tooltip>
+                        }
+
+                        <Tooltip label='Brand Products' >
+                            <IconButton
+                                aria-label='Expand'
+                                variant='ghost'
+                                rounded='full'
+                                size='sm'
+                                backgroundColor='black'
+                                color='white'
+                                _hover={{
+                                    backgroundColor: 'blackAlpha.700',
+                                }}
+                                _focusVisible={{
+                                    backgroundColor: 'blackAlpha.800',
+                                }}
+                                icon={<IconChevronDown
+                                    size={22}
+                                    style={{
+                                        transition: 'transform 0.15s',
+                                        transform: products !== null ? 'rotate(180deg)' : 'rotate(0deg)'
+                                    }}
+                                />}
+                                onClick={handleExpandProducts}
+                            />
+                        </Tooltip>
+                    </Flex>
                 </Td>
             </Tr>
 
@@ -531,7 +561,143 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                     </Tr>
                     : null
             }
+
+            {/* Brand Members */}
+            {
+                isMembersExpanded && <Tr bgColor='gray.50'>
+                    <Td colSpan={20}>
+                        <BrandMembers brandId={item?.id} />
+                    </Td>
+                </Tr>
+            }
         </>
+    )
+}
+
+type BrandMembersProps = {
+    brandId: string;
+}
+const BrandMembers = ({ brandId }: BrandMembersProps) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState<any[]>([]);
+
+    useEffect(() => {
+        const getData = async () => {
+            setIsLoading(true);
+
+            try {
+                const response = await fetch({ endpoint: `/campaigns/users/list/${brandId}` });
+                setData(response?.users);
+                console.log(response?.users);
+            } catch (error: any) {
+                console.error(error);
+                notify(error.message, 'error');
+            }
+
+            setIsLoading(false);
+        }
+
+        getData();
+
+        window.addEventListener('reload:brand-members', getData);
+
+        return () => {
+            window.removeEventListener('reload:brand-members', getData);
+        }
+    }, [brandId]);
+
+    const renderRole = (role: string) => {
+        switch (role) {
+            case BRAND_ROLES.ADMIN: return <Text fontWeight='semibold' color='green.500'>Admin</Text>;
+            case BRAND_ROLES.CREATIVE: return <Text fontWeight='semibold' color='blue.500'>Creative</Text>;
+            case BRAND_ROLES.FINANCE: return <Text fontWeight='semibold' color='red.500'>Finance</Text>;
+            default: return <Text fontWeight='semibold' color='blue.500'>Creative</Text>;
+        }
+    }
+
+    const renderStatus = (status: string) => {
+        switch (status) {
+            case 'pending': return <Text fontWeight='semibold' color='yellow.500'>Pending</Text>;
+            case 'accepted': return <Text fontWeight='semibold' color='green.500'>Active</Text>;
+            case 'rejected': return <Text fontWeight='semibold' color='red.500'>Inactive</Text>;
+            default: return <Text fontWeight='semibold' color='yellow.500'>Pending</Text>;
+        }
+    }
+
+    return (
+        <Box>
+            <Table variant='simple'>
+                <Thead>
+                    <Tr>
+                        <Th>Name</Th>
+                        <Th>Email</Th>
+                        <Th>Role</Th>
+                        <Th>Joined At</Th>
+                        <Th>Authority</Th>
+                        <Th>Status</Th>
+                        <Th textAlign='right'>Actions</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {
+                        isLoading
+                            ? <Tr>
+                                <Td colSpan={20} textAlign='center'>
+                                    <Box display='inline-block' mx='auto'>
+                                        <IconLoader2
+                                            size={48}
+                                            className="animate-spin"
+                                        />
+                                    </Box>
+                                </Td>
+                            </Tr>
+                            : !data?.length
+                                ? <Tr><Td colSpan={20} textAlign='center'>No member</Td></Tr>
+                                : data?.map((item: any) => (
+                                    <Tr key={item?.id}>
+                                        <Td>{item?.name}</Td>
+                                        <Td>{item?.email}</Td>
+                                        <Td>{renderRole(item?.role)}</Td>
+                                        <Td>{item?.createdAt}</Td>
+                                        <Td>{item?.invitedBy === 'super_admin' ? 'Super Admin' : 'Brand Admin'}</Td>
+                                        <Td>{renderStatus(item?.invitationStatus)}</Td>
+                                        <Td>
+                                            <Flex justifyContent='flex-end' alignItems='center' gap={2}>
+                                                <IconButton
+                                                    aria-label='Edit'
+                                                    variant='ghost'
+                                                    rounded='full'
+                                                    size='sm'
+                                                    icon={<IconEdit size={22} />}
+                                                    onClick={() => window?.dispatchEvent(new CustomEvent('drawer:brand:members:edit', { detail: { ...item, brandId: brandId } }))}
+                                                />
+                                                <IconButton
+                                                    aria-label='Delete'
+                                                    variant='ghost'
+                                                    colorScheme='red'
+                                                    rounded='full'
+                                                    size='sm'
+                                                    icon={<IconTrash size={22} />}
+                                                    onClick={() => window?.dispatchEvent(new CustomEvent('confirmation:brand:members:delete', { detail: { ...item, brandId: brandId } }))}
+                                                />
+                                            </Flex>
+                                        </Td>
+                                    </Tr>
+                                ))
+                    }
+                </Tbody>
+            </Table>
+
+            <Button
+                mt={4}
+                colorScheme='green'
+                size='sm'
+                onClick={() => window?.dispatchEvent(new CustomEvent('drawer:brand:members:invite', { detail: { brandId } }))}
+            >
+                <IconPlus size={22} />
+                Add Member
+            </Button>
+        </Box>
     )
 }
 
