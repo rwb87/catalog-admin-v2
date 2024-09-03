@@ -22,7 +22,7 @@ export const getImageMetadata = async (file: File) => {
         }
     });
 }
-export const changeSelectBoxColorForProductReviewStatus = (status: string, type: 'background' | 'text' | 'border') => {
+export const changeSelectBoxColorForProductReviewStatus = (status: string = '', type: 'background' | 'text' | 'border') => {
     const isTextColor = type === 'text';
     const isBorderColor = type === 'border';
 
@@ -77,7 +77,7 @@ export const handleProductReviewStatusUpdate = (event: ChangeEvent<HTMLSelectEle
     window.dispatchEvent(new CustomEvent('action:change-product-review-status', { detail: { productId: itemId, reviewStatus: value } }))
 }
 
-export const changeSelectBoxColorForProductStatus = (status: string, type: 'background' | 'text' | 'border') => {
+export const changeSelectBoxColorForProductStatus = (status: string = '', type: 'background' | 'text' | 'border') => {
     status = status.toString();
     const isTextColor = type === 'text';
     const isBorderColor = type === 'border';
