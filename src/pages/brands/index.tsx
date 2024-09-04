@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import BrandMemberInviteDrawer from "./components/BrandMemberInviteDrawer";
 import BrandMemberDeleteConfirmation from "./components/BrandMemberDeleteConfirmation";
 import { useUser } from "@/_store";
+import formatDateTime from "@/helpers/formatDateTime";
 
 const BrandsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -657,7 +658,7 @@ const BrandMembers = ({ brandId }: BrandMembersProps) => {
                                         <Td>{item?.name}</Td>
                                         <Td>{item?.email}</Td>
                                         <Td>{renderRole(item?.role)}</Td>
-                                        <Td>{item?.createdAt}</Td>
+                                        <Td>{formatDateTime(item?.createdAt)}</Td>
                                         <Td>{item?.invitedBy === 'super_admin' ? 'Super Admin' : 'Brand Admin'}</Td>
                                         <Td>{renderStatus(item?.invitationStatus)}</Td>
                                         <Td>

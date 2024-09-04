@@ -15,6 +15,8 @@ export default function BrandMemberInviteDrawer() {
         brandId: null,
         role: 'admin',
         id: null,
+        password: '',
+        confirmPassword: '',
     });
 
     useEffect(() => {
@@ -27,6 +29,8 @@ export default function BrandMemberInviteDrawer() {
                 brandId: user?.brandId,
                 role: user?.role || 'admin',
                 id: user?.id || null,
+                password: '',
+                confirmPassword: '',
             });
             setOpen(true);
             setIsProcessing(false);
@@ -51,19 +55,24 @@ export default function BrandMemberInviteDrawer() {
         setIsProcessing(true);
 
         try {
+            const dataPayload = payload;
+            dataPayload.brandId = payload?.brandId;
+            dataPayload.role = payload?.role?.toLowerCase();
+
+            if(payload?.id === null || !payload?.password?.trim()?.length) {
+                delete dataPayload.password;
+                delete dataPayload.confirmPassword;
+            }
+
             const response = await fetch({
                 endpoint: payload?.id ? `/campaigns/users/${payload?.id}` : '/campaigns/users/invite',
                 method: payload?.id ? 'PUT' : 'POST',
-                data: {
-                    ...payload,
-                    brandId: payload?.brandId,
-                    role: payload?.role?.toLowerCase(),
-                }
+                data: dataPayload,
             });
 
             if(response) {
-                if(payload?.id) notify('Member Updated Successfully!', 'info');
-                else notify('Member Invited Successfully!', 'success');
+                if(payload?.id) notify('Member updated Successfully!', 'info');
+                else notify('Member invited Successfully!', 'success');
             } else notify('Something went wrong!', 'error');
 
             setOpen(false);
@@ -82,7 +91,7 @@ export default function BrandMemberInviteDrawer() {
     return (
         <CustomDrawer
             isOpen={open}
-            title="Invite Member"
+            title={payload?.id ? 'Edit Member' : 'Invite Member'}
             cancelText='Cancel'
             submitText={payload?.id ? 'Save' : 'Invite'}
             isProcessing={isProcessing}
@@ -127,6 +136,36 @@ export default function BrandMemberInviteDrawer() {
                     <option value={BRAND_ROLES.CREATIVE}>{capitalize(BRAND_ROLES.CREATIVE)}</option>
                     <option value={BRAND_ROLES.FINANCE}>{capitalize(BRAND_ROLES.FINANCE)}</option>
                 </Select>
+            </Box>
+
+            {/* Password */}
+            <Box
+                mt={4}
+                hidden={payload?.id === null}
+            >
+                <label className="block mb-1 text-sm font-semibold">Password</label>
+                <Input
+                    type="password"
+                    required
+                    autoComplete="off"
+                    value={payload.password}
+                    onChange={(e) => setPayload({ ...payload, password: e.target.value })}
+                />
+            </Box>
+
+            {/* Confirm Password */}
+            <Box
+                mt={4}
+                hidden={payload?.id === null}
+            >
+                <label className="block mb-1 text-sm font-semibold">Confirm Password</label>
+                <Input
+                    type="password"
+                    required
+                    autoComplete="off"
+                    value={payload.confirmPassword}
+                    onChange={(e) => setPayload({ ...payload, confirmPassword: e.target.value })}
+                />
             </Box>
         </CustomDrawer>
     )
