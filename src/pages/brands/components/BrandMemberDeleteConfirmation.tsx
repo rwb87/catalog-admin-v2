@@ -35,11 +35,11 @@ export default function BrandMemberDeleteConfirmation() {
 
             setOpen(false);
 
-            notify('Member Deleted Successfully!', 'success');
+            notify('Member deleted successfully!', 'success');
             window.dispatchEvent(new CustomEvent('reload:brand-members'));
         } catch (error) {
-            console.log(error);
-            notify('Something went wrong!', 'error');
+            const message = error?.response?.data?.message || error.message || 'Something went wrong!';
+            notify(message, 'error');
         }
 
         setIsProcessing(false);

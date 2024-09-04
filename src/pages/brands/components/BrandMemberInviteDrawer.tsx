@@ -71,14 +71,18 @@ export default function BrandMemberInviteDrawer() {
             });
 
             if(response) {
-                if(payload?.id) notify('Member updated Successfully!', 'info');
-                else notify('Member invited Successfully!', 'success');
-            } else notify('Something went wrong!', 'error');
+                if(payload?.id) notify('Member updated successfully!', 'info');
+                else notify('Member invited successfully!', 'success');
+            } else {
+                if(payload?.id) notify('Member could not be updated!', 'error');
+                else notify('Member could not be invited!', 'error');
+            }
 
             setOpen(false);
             window.dispatchEvent(new CustomEvent('reload:brand-members'));
         } catch (error) {
-            notify('Something went wrong!', 'error');
+            const message = error?.response?.data?.message || error?.message || 'Something went wrong!';
+            notify(message, 'error');
         }
 
         setIsProcessing(false);
