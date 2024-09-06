@@ -520,9 +520,9 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                         />
                         {
                             [ROLES.SUPER_ADMIN, ROLES.ADMIN].includes(user?.type) && <>
-                                <Tooltip label='Campaign Members'>
+                                <Tooltip label='Team'>
                                     <IconButton
-                                        aria-label='Campaign Members'
+                                        aria-label='Team'
                                         rounded='full'
                                         size='sm'
                                         icon={<IconUsersGroup size={22} />}
@@ -530,9 +530,9 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                     />
                                 </Tooltip>
 
-                                <Tooltip label='Brand Advertisements'>
+                                <Tooltip label='Advertisements'>
                                     <IconButton
-                                        aria-label='Brand Advertisements'
+                                        aria-label='Advertisements'
                                         rounded='full'
                                         size='sm'
                                         icon={<IconAd size={22} />}
