@@ -35,8 +35,8 @@ export default function BrandCampaignDeleteConfirmation() {
 
             setOpen(false);
 
-            notify('Ad deleted successfully!', 'success');
-            window.dispatchEvent(new CustomEvent('reload:brand-ads'));
+            notify('Campaign deleted successfully!', 'success');
+            window.dispatchEvent(new CustomEvent('reload:brand-campaigns'));
         } catch (error) {
             const message = error?.response?.data?.message || error.message || 'Something went wrong!';
             notify(message, 'error');
