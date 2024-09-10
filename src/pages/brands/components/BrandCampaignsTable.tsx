@@ -82,7 +82,7 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                                 </Td>
                             </Tr>
                             : !data?.length
-                                ? <Tr><Td colSpan={20} textAlign='center'>No advertisement</Td></Tr>
+                                ? <Tr><Td colSpan={20} textAlign='center'>No campaign</Td></Tr>
                                 : data?.map((item: any) => (
                                     <Tr key={item?.id}>
                                         <Td textAlign='center'>
