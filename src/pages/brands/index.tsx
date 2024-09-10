@@ -9,7 +9,7 @@ import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconAd, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconTrash, IconUnlink, IconUsersGroup, IconWorldWww } from "@tabler/icons-react";
+import { IconAd, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconSpeakerphone, IconTrash, IconUnlink, IconUsersGroup, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import BrandMemberInviteDrawer from "./components/BrandMemberInviteDrawer";
 import BrandMemberDeleteConfirmation from "./components/BrandMemberDeleteConfirmation";
@@ -17,6 +17,8 @@ import { useUser } from "@/_store";
 import BrandMembersTable from "./components/BrandMembersTable";
 import BrandAdsTable from "./components/BrandAdsTable";
 import BrandAdDeleteConfirmation from "./components/BrandAdDeleteConfirmation";
+import BrandCampaignsTable from "./components/BrandCampaignsTable";
+import BrandCampaignDeleteConfirmation from "./components/BrandCampaignDeleteConfirmation";
 
 const BrandsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -417,6 +419,7 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
             <BrandMemberInviteDrawer />
             <BrandMemberDeleteConfirmation />
             <BrandAdDeleteConfirmation />
+            <BrandCampaignDeleteConfirmation />
         </>
     )
 }
@@ -432,23 +435,34 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
 
     const [isMembersExpanded, setIsMembersExpanded] = useState<boolean>(false);
     const [isAdsExpanded, setIsAdsExpanded] = useState<boolean>(false);
+    const [isCampaignsExpanded, setIsCampaignsExpanded] = useState<boolean>(false);
 
     const handleExpandProducts = () => {
         setIsMembersExpanded(false);
         setIsAdsExpanded(false);
+        setIsCampaignsExpanded(false);
         setProducts(products !== null ? null : item?.products);
     }
 
     const handleExpandMembers = () => {
         setProducts(null);
         setIsAdsExpanded(false);
+        setIsCampaignsExpanded(false);
         setIsMembersExpanded(!isMembersExpanded);
     }
 
     const handleExpandAds = () => {
-        setIsAdsExpanded(!isAdsExpanded);
         setProducts(null);
         setIsMembersExpanded(false);
+        setIsCampaignsExpanded(false);
+        setIsAdsExpanded(!isAdsExpanded);
+    }
+
+    const handleExpandCampaigns = () => {
+        setProducts(null);
+        setIsMembersExpanded(false);
+        setIsAdsExpanded(false);
+        setIsCampaignsExpanded(!isCampaignsExpanded);
     }
 
     const handleOpenImage = (link: string) => {
@@ -539,6 +553,16 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                                         onClick={handleExpandAds}
                                     />
                                 </Tooltip>
+
+                                <Tooltip label='Campaigns'>
+                                    <IconButton
+                                        aria-label='Campaigns'
+                                        rounded='full'
+                                        size='sm'
+                                        icon={<IconSpeakerphone size={22} />}
+                                        onClick={handleExpandCampaigns}
+                                    />
+                                </Tooltip>
                             </>
                         }
 
@@ -602,6 +626,15 @@ const TableRow = ({ item, onEdit, onDelete }: TableRowProps) => {
                 isAdsExpanded && <Tr bgColor='gray.50'>
                     <Td colSpan={20}>
                         <BrandAdsTable brandId={item?.id} />
+                    </Td>
+                </Tr>
+            }
+
+            {/* Brand Campaigns */}
+            {
+                isCampaignsExpanded && <Tr bgColor='gray.50'>
+                    <Td colSpan={20}>
+                        <BrandCampaignsTable brandId={item?.id} />
                     </Td>
                 </Tr>
             }
