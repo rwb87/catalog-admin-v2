@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import notify from "@/helpers/notify";
 
 const SettingsViewAffiliateLinks = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [data, setData] = useState<any>([]);
 
@@ -22,12 +22,12 @@ const SettingsViewAffiliateLinks = () => {
             setData(response);
             if(!response?.length) handleAddNewRow();
 
+            setIsLoading(false);
         } catch (error) {
             console.error(error);
-            notify('Something went wrong. Please try again later.');
+            notify('Something went wrong. Please try again later.', 'error');
         }
 
-        setIsLoading(false);
     }
 
     const handleChange = (index: number, key: string, value: any) => {

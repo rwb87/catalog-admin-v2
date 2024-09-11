@@ -14,6 +14,10 @@ const TABS = [
         title: 'Creator Affiliate Links',
         path: '/settings/creator-affiliate-links',
     },
+    {
+        title: 'Ad Frequency',
+        path: '/settings/ad-frequency',
+    }
 ];
 
 export default function SettingsLayout({ children, isLoading = undefined }: { children: ReactNode, isLoading?: boolean | undefined }) {
@@ -54,7 +58,11 @@ export default function SettingsLayout({ children, isLoading = undefined }: { ch
                 defaultIndex={TABS.indexOf(currentTab)}
                 isLazy
             >
-                <TabList borderColor='gray.100'>
+                <TabList
+                    borderColor='gray.100'
+                    overflowX='auto'
+                    overflowY='hidden'
+                >
                     {
                         TABS.map((tab, index) => <Tab
                             key={index}
@@ -69,6 +77,12 @@ export default function SettingsLayout({ children, isLoading = undefined }: { ch
                                 _hover={{
                                     textDecoration: 'none',
                                 }}
+                                whiteSpace='nowrap'
+                                fontSize={{
+                                    base: 'sm',
+                                    lg: 'md',
+                                }}
+                                fontWeight='semibold'
                             >{tab.title}</Link>
                         </Tab>)
                     }
