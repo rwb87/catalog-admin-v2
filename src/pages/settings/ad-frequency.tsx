@@ -21,18 +21,10 @@ const SettingsViewAdFrequency = () => {
         const getData = async () => {
             setIsLoading(true);
 
-            const data = JSON.parse(JSON.stringify(payload));
             try {
                 const response = await fetch({ endpoint: '/settings/ad-frequencies' });
 
-                response?.map((setting: any) => {
-                    if(setting?.key === 'full_screen_number_of_looks') data.full_screen_number_of_looks = parseInt(setting?.value);
-                    if(setting?.key === 'full_screen_show_same_day') data.full_screen_show_same_day = parseInt(setting?.value);
-                    if(setting?.key === 'grad_number_of_looks') data.grad_number_of_looks = parseInt(setting?.value);
-                    if(setting?.key === 'grad_show_same_day') data.grad_show_same_day = parseInt(setting?.value);
-                });
-
-                setPayload(data);
+                setPayload(response);
                 setIsLoading(false);
             } catch (error) {
                 const message = error?.response?.data?.message || 'Failed to fetch data. Please try again later.';
@@ -55,22 +47,18 @@ const SettingsViewAdFrequency = () => {
                     {
                         key: 'full_screen_number_of_looks',
                         value: payload.full_screen_number_of_looks,
-                        type: 'ALL',
                     },
                     {
                         key: 'full_screen_show_same_day',
                         value: payload.full_screen_show_same_day,
-                        type: 'ALL',
                     },
                     {
                         key: 'grad_number_of_looks',
                         value: payload.grad_number_of_looks,
-                        type: 'ALL',
                     },
                     {
                         key: 'grad_show_same_day',
                         value: payload.grad_show_same_day,
-                        type: 'ALL',
                     },
                 ]
             });
