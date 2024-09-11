@@ -7,8 +7,8 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, IconButton, Input, InputGroup, InputLeftAddon, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
-import {  IconEdit, IconLoader2 } from "@tabler/icons-react"
+import { Box, Flex, FormControl, IconButton, Input, InputGroup, InputLeftAddon, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { IconEdit, IconLoader2 } from "@tabler/icons-react"
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { BiDollar } from "react-icons/bi";
@@ -18,7 +18,10 @@ const EarningsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
     const [data, setData] = useState<any>([]);
-    const [dailyPayout, setDailyPayout] = useState<any>({});
+    const [dailyPayout, setDailyPayout] = useState<any>({
+        payoutValue: 0,
+        customerAcquisitionCost: 0,
+    });
     const [isPayoutEditPopoverOpen, setIsPayoutEditPopoverOpen] = useState<boolean>(false);
 
     useAuthGuard('auth');
@@ -64,27 +67,35 @@ const EarningsView = () => {
                 method: 'GET'
             });
 
-            setDailyPayout(response);
+            setDailyPayout({
+                payoutValue: response?.payoutValue || 0,
+                customerAcquisitionCost: response?.customerAcquisitionCost || 0,
+            });
         } catch (error: any) {
             const message = error?.response?.data?.message || error?.message;
             notify(message);
         }
     }
 
-    const handleUpdatePayoutValue = async (event: any) => {
-        const value: number = parseFloat(event?.target?.value || 0);
+    const handleUpdatePayoutValue = async () => {
+        const payoutValue: number = parseFloat(dailyPayout?.payoutValue || 0);
+        const customerAcquisitionCost: number = parseFloat(dailyPayout?.customerAcquisitionCost || 0);
 
-        if(value <= 0) return;
+        if(payoutValue <= 0 || customerAcquisitionCost <= 0) return;
 
         try {
             fetch({
                 endpoint: `/discovers/dailypayout`,
                 method: 'POST',
                 data: {
-                    payoutValue: value
+                    payoutValue: payoutValue,
+                    customerAcquisitionCost: customerAcquisitionCost,
                 }
             }).then(response => {
-                setDailyPayout(response);
+                setDailyPayout({
+                    payoutValue: response?.payoutValue || 0,
+                    customerAcquisitionCost: response?.customerAcquisitionCost || 0,
+                });
             })
 
             notify('Daily payout updated successfully');
@@ -153,7 +164,10 @@ const EarningsView = () => {
                             placement='left'
                             closeOnBlur={true}
                             isOpen={isPayoutEditPopoverOpen}
-                            onClose={() => setIsPayoutEditPopoverOpen(false)}
+                            onClose={() => {
+                                setIsPayoutEditPopoverOpen(false)
+                                handleUpdatePayoutValue();
+                            }}
                         >
                             <PopoverTrigger>
                                 <IconButton
@@ -168,15 +182,16 @@ const EarningsView = () => {
                                 />
                             </PopoverTrigger>
 
-                            <PopoverContent>
+                            <PopoverContent mt={2}>
                                 <PopoverArrow />
-                                <PopoverHeader>Daily Payout Value</PopoverHeader>
+                                {/* <PopoverHeader>Daily Payout</PopoverHeader> */}
                                 <PopoverCloseButton />
 
                                 <PopoverBody>
-                                    <Box p={4}>
+                                    <Box>
                                         <FormControl>
-                                            <InputGroup>
+                                            <label>Daily Payout Value</label>
+                                            <InputGroup mt={1}>
                                                 <InputLeftAddon><BiDollar /></InputLeftAddon>
 
                                                 <Input
@@ -187,7 +202,23 @@ const EarningsView = () => {
                                                     min={0}
                                                     value={dailyPayout?.payoutValue || 0}
                                                     onChange={(e: any) => setDailyPayout({ ...dailyPayout, payoutValue: e.target.value })}
-                                                    onBlur={handleUpdatePayoutValue}
+                                                />
+                                            </InputGroup>
+                                        </FormControl>
+
+                                        <FormControl mt={4}>
+                                            <label>Customer Acquisition Cost</label>
+                                            <InputGroup mt={1}>
+                                                <InputLeftAddon><BiDollar /></InputLeftAddon>
+
+                                                <Input
+                                                    type="number"
+                                                    required
+                                                    autoComplete="customerAcquisitionCost"
+                                                    step={0.01}
+                                                    min={0}
+                                                    value={dailyPayout?.customerAcquisitionCost || 0}
+                                                    onChange={(e: any) => setDailyPayout({ ...dailyPayout, customerAcquisitionCost: e.target.value })}
                                                 />
                                             </InputGroup>
                                         </FormControl>
