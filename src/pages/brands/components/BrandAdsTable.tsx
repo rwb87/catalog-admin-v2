@@ -55,6 +55,7 @@ export default function BrandAdsTable({ brandId }: TableProps) {
                     <Tr>
                         <Th>Picture</Th>
                         <Th>Title</Th>
+                        <Th>Heading</Th>
                         <Th textAlign='center'>Call to Action</Th>
                         <Th textAlign='center'>Status</Th>
                         <Th textAlign='center'>Added By</Th>
@@ -96,6 +97,7 @@ export default function BrandAdsTable({ brandId }: TableProps) {
                                                 <Text>{item?.title}</Text>
                                             </Tooltip>
                                         </Td>
+                                        <Td>{item?.heading?.trim()?.length ? item?.heading : '-'}</Td>
                                         <Td textAlign='center'>{item?.callToAction}</Td>
                                         <Td textAlign='center'>{renderStatus(item?.status)}</Td>
                                         <Td textAlign='center'>{item?.user?.name || '-'}</Td>
