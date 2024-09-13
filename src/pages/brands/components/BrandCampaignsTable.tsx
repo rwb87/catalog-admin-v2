@@ -1,6 +1,7 @@
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
+import { capitalize, renderTargetGender } from "@/helpers/utils";
 import { Box, Flex, Table, Tbody, Td, Text, Th, Thead, Tr , IconButton } from "@chakra-ui/react";
 import { IconLoader2, IconTrash } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -55,6 +56,7 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                     <Tr>
                         <Th>Ad</Th>
                         <Th>Campaign Name</Th>
+                        <Th>Audience</Th>
                         <Th textAlign='center'>Daily Budget</Th>
                         <Th textAlign='center'>Total Spent</Th>
                         <Th textAlign='center'>Lifetime Spent</Th>
@@ -102,6 +104,19 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                                             }
                                         </Td>
                                         <Td>{item?.name}</Td>
+                                        <Td>
+                                            {
+                                                item?.audience
+                                                    ? <>
+                                                        <span>{item?.audience?.ageMin} - {item?.audience?.ageMax} years</span>
+                                                        <br />
+                                                        <span className="capitalize">{capitalize(renderTargetGender(item?.audience?.gender), true)}</span>
+                                                        <br />
+                                                        <span>{item?.audience?.location}</span>
+                                                    </>
+                                                    : '-'
+                                            }
+                                        </Td>
                                         <Td textAlign='center'>${item?.dailyBudget}</Td>
                                         <Td textAlign='center'>${item?.totalSpent || 0}</Td>
                                         <Td textAlign='center'>${item?.lifetimeSpent || 0}</Td>

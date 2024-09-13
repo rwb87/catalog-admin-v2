@@ -3,7 +3,12 @@ import fetch from "./fetch";
 import notify from "./notify";
 
 export const encodeAmpersand = (str: string) => str?.replaceAll('&', '%26');
-export const capitalize = (str: string) => str?.charAt(0)?.toUpperCase() + str?.slice(1);
+export const capitalize = (str: string, allWords: boolean = false) => {
+	if(!allWords) return str?.charAt(0)?.toUpperCase() + str?.slice(1);
+
+	return str?.split(' ')?.map((word) => capitalize(word))?.join(' ');
+}
+export const renderTargetGender = (genderStr: string) => genderStr?.toLowerCase() === 'all' ? 'men and women' : genderStr;
 
 export const getImageMetadata = async (file: File) => {
     const img = new Image();
