@@ -112,16 +112,16 @@ const SettingsViewAdFrequency = () => {
                                 width={20}
                                 height={10}
                                 borderWidth={1}
-                                borderColor={payload.full_screen_show_same_day ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR}
+                                borderColor={payload.full_screen_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR }
                                 display='inline-grid'
                                 placeItems='center'
                                 borderRadius='md'
-                                background={payload.full_screen_show_same_day ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR}
+                                background={payload.full_screen_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
                                 color='white'
                                 fontWeight='semibold'
                                 cursor='pointer'
                                 onClick={() => setPayload({ ...payload, full_screen_show_same_day: !payload.full_screen_show_same_day })}
-                            >{payload.full_screen_show_same_day ? 'ON' : 'OFF'}</Box>
+                            >{payload.full_screen_show_same_day ? 'OFF' : 'ON'}</Box>
                         </Box>
 
                         <Text flex={1}>Do not show the same full screen advertisement twice in the same day.</Text>
@@ -156,16 +156,16 @@ const SettingsViewAdFrequency = () => {
                                 width={20}
                                 height={10}
                                 borderWidth={1}
-                                borderColor={payload.grad_show_same_day ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR}
+                                borderColor={payload.grad_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
                                 display='inline-grid'
                                 placeItems='center'
                                 borderRadius='md'
-                                background={payload.grad_show_same_day ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR}
+                                background={payload.grad_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
                                 color='white'
                                 fontWeight='semibold'
                                 cursor='pointer'
                                 onClick={() => setPayload({ ...payload, grad_show_same_day: !payload.grad_show_same_day })}
-                            >{payload.grad_show_same_day ? 'ON' : 'OFF'}</Box>
+                            >{payload.grad_show_same_day ? 'OFF' : 'ON'}</Box>
                         </Box>
 
                         <Text flex={1}>Do not show the same grad advertisement twice in the same day.</Text>

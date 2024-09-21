@@ -20,7 +20,7 @@ const LooksView = () => {
     const { user } = useUser() as any;
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [searchParams, setSearchParams] = useSearchParams();
-1
+
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const filter = searchParams.get('filter') || LOOK_STATUSES.LIVE;
     const [data, setData] = useState<any>([]);
