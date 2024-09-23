@@ -20,12 +20,12 @@ import LookLocations from "@/components/looks/LookLocations";
 import Avatar from "@/components/Avatar";
 import UnassignedLinksTable from "@/components/looks/UnassignedLinksTable";
 import SearchBox from "@/components/SearchBox";
+import { useSearchParams } from "react-router-dom";
 
 const LooksManagementView = () => {
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -40,6 +40,10 @@ const LooksManagementView = () => {
         limit: 50,
         total: 0,
     });
+
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
 
     useAuthGuard('auth');
 
@@ -142,6 +146,13 @@ const LooksManagementView = () => {
         setIsDeleting(false);
     }
 
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
+    }
+
     return (
         <Content activePage="Looks Management">
 
@@ -162,7 +173,7 @@ const LooksManagementView = () => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
                 </Flex>
             </Flex>

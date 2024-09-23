@@ -3,14 +3,14 @@ import SearchBox from "@/components/SearchBox";
 import fetch from "@/helpers/fetch";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Flex, IconButton, Input, InputGroup, InputLeftElement, Tooltip } from "@chakra-ui/react";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { Flex, IconButton, Tooltip } from "@chakra-ui/react";
+import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const LocationView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -19,9 +19,32 @@ const LocationView = () => {
         total: 0,
     });
 
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
+
     useAuthGuard('auth');
 
     useEffect(() => {
+        const getData = async () => {
+            try {
+                const response = await fetch({
+                    endpoint: `/locations?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
+                    method: 'GET',
+                });
+
+                setData(response?.locations);
+                setPagination({
+                    ...pagination,
+                    total: response?.count,
+                });
+            } catch (error) {
+                console.log(error);
+            }
+
+            setIsLoading(false);
+        }
+
         setIsLoading(true);
 
         getData();
@@ -31,23 +54,11 @@ const LocationView = () => {
         return () => window?.removeEventListener('refresh:data', getData);
     }, [search, pagination?.offset]);
 
-    const getData = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/locations?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
-                method: 'GET',
-            });
-
-            setData(response?.locations);
-            setPagination({
-                ...pagination,
-                total: response?.count,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-
-        setIsLoading(false);
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
     }
 
     return (
@@ -110,7 +121,7 @@ const LocationView = () => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
 
                     {/* Create button for Desktop */}
@@ -143,7 +154,7 @@ const LocationView = () => {
                     page: pageNumber,
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
-                onDelete={getData}
+                onDelete={() => window?.dispatchEvent(new CustomEvent('refresh:data'))}
             />
         </Content>
     )

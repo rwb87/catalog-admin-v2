@@ -1,22 +1,22 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, Button, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton, Image, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
-import { IconLoader2, IconMail, IconPhoto, IconSearch } from "@tabler/icons-react";
+import { IconLoader2, IconMail, IconPhoto } from "@tabler/icons-react";
 import { encodeAmpersand } from "@/helpers/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Content } from "@/layouts/app.layout";
 import Pagination from "@/components/Pagination";
 import moment from "moment";
 import Confirmation from "@/components/Confirmation";
 import Avatar from "@/components/Avatar";
+import SearchBox from "@/components/SearchBox";
 
 const IncomingCreatorsView = () => {
     const routeTo = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -24,6 +24,10 @@ const IncomingCreatorsView = () => {
         limit: 50,
         total: 0,
     });
+
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
 
     useAuthGuard('auth');
 
@@ -38,6 +42,8 @@ const IncomingCreatorsView = () => {
     }, [pagination?.offset]);
 
     useEffect(() => {
+        setIsLoading(true);
+
         const debounce = setTimeout(() => getData(), 500);
         return () => clearTimeout(debounce);
     }, [search]);
@@ -65,6 +71,13 @@ const IncomingCreatorsView = () => {
         const { value } = event.target;
 
         if (value === 'NORMAL') routeTo('/creators');
+    }
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
     }
 
     return (
@@ -158,47 +171,10 @@ const IncomingCreatorsView = () => {
                 >
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={12} strokeWidth={2} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
+                    />
                 </Flex>
             </Flex>
 

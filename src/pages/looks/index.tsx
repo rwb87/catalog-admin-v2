@@ -19,13 +19,9 @@ import SearchBox from "@/components/SearchBox";
 const LooksView = () => {
     const { user } = useUser() as any;
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
-    const [searchParams, setSearchParams] = useSearchParams();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const filter = searchParams.get('filter') || LOOK_STATUSES.LIVE;
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [sendingAllLookDataToManagement, setSendingAllLookDataToManagement] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -38,6 +34,12 @@ const LooksView = () => {
         limit: 50,
         total: 0,
     });
+
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '',
+        filter = searchParams.get('filter') || LOOK_STATUSES.LIVE,
+        sortBy = searchParams.get('sort') || 'createdAt:desc';
 
     useAuthGuard('auth');
 
@@ -210,7 +212,7 @@ const LooksView = () => {
                         borderColor='gray.100'
                         fontWeight='medium'
                         value={sortBy}
-                        onChange={(event) => setSortBy(event.target.value)}
+                        onChange={(event) => handleUpdateSearchParams('sort', event.target.value)}
                     >
                         <optgroup label="Priority">
                             <option value='priority:asc'>Low - High</option>
@@ -250,7 +252,7 @@ const LooksView = () => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
 
                     {/* Send all look data to management */}
@@ -306,7 +308,7 @@ const LooksView = () => {
                         offset: (page - 1) * pagination.limit,
                     })
                 }}
-                setSortBy={setSortBy}
+                setSortBy={(field: string) => handleUpdateSearchParams('sort', field)}
                 isLoading={isLoading}
             />
 

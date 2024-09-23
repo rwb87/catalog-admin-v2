@@ -8,8 +8,8 @@ import notify from "@/helpers/notify";
 import sortData from "@/helpers/sorting";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, IconButton, Image, Input, InputGroup, InputLeftElement, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
-import { IconAd, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSearch, IconSpeakerphone, IconTrash, IconUnlink, IconUsersGroup, IconWorldWww } from "@tabler/icons-react";
+import { Box, Flex, IconButton, Image, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { IconAd, IconChevronDown, IconEdit, IconLoader2, IconPlus, IconSpeakerphone, IconTrash, IconUnlink, IconUsersGroup, IconWorldWww } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import BrandMemberInviteDrawer from "./components/BrandMemberInviteDrawer";
 import BrandMemberDeleteConfirmation from "./components/BrandMemberDeleteConfirmation";
@@ -19,12 +19,12 @@ import BrandAdsTable from "./components/BrandAdsTable";
 import BrandAdDeleteConfirmation from "./components/BrandAdDeleteConfirmation";
 import BrandCampaignsTable from "./components/BrandCampaignsTable";
 import BrandCampaignDeleteConfirmation from "./components/BrandCampaignDeleteConfirmation";
+import { useSearchParams } from "react-router-dom";
+import SearchBox from "@/components/SearchBox";
 
 const BrandsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt:desc');
 
     const [editingData, setEditingData] = useState<any>({});
     const [deletingData, setDeletingData] = useState<any>({});
@@ -32,13 +32,18 @@ const BrandsView = () => {
     const isManagement = location.pathname.includes('management');
     const pageName = isManagement ? 'Brands Management' : 'Brands';
 
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '',
+        sortBy = searchParams.get('sort') || 'createdAt:desc';
+
     useAuthGuard('auth');
 
     // Reset the whole page when the URL changes
     useEffect(() => {
         setIsLoading(true);
-        setSearch('');
-        setSortBy('createdAt:desc');
+        handleUpdateSearchParams('search', '');
+        handleUpdateSearchParams('sort', 'createdAt:desc');
         setEditingData({});
         setDeletingData({});
         getData();
@@ -107,6 +112,13 @@ const BrandsView = () => {
             return total + (parseInt(brand?.clickouts) || 0);
         }, 0);
     }, [data]);
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
+    }
 
     return (
         <Content activePage={pageName}>
@@ -218,7 +230,7 @@ const BrandsView = () => {
                         borderColor='gray.100'
                         fontWeight='medium'
                         value={sortBy}
-                        onChange={(event) => setSortBy(event.target.value)}
+                        onChange={(event) => handleUpdateSearchParams('sort', event.target.value)}
                     >
                         <optgroup label="Name">
                             <option value='name:asc'>A - Z</option>
@@ -235,47 +247,10 @@ const BrandsView = () => {
                     </Select>
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={16} strokeWidth={1.5} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
+                    />
 
                     {/* Create button for Desktop */}
                     <Tooltip label='Add new brand' placement="left">
