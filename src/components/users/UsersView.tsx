@@ -8,7 +8,7 @@ import { IconPlus, } from "@tabler/icons-react";
 import { useUser } from "@/_store";
 import { ROLES } from "@/_config";
 import { encodeAmpersand } from "@/helpers/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
 import SearchBox from "@/components/SearchBox";
 
@@ -20,10 +20,13 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
     const { role: userRole } = useUser() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt,desc');
-    const [filterShoppersByCreatedAt, setFilterShoppersByCreatedAt] = useState<string>('');
-    const [adminUserType, setAdminUserType] = useState<string>(ROLES.SUPER_ADMIN);
+
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '',
+        sortBy = searchParams.get('sort') || 'createdAt,desc',
+        filterShoppersByCreatedAt = searchParams.get('shoppers-joining') || '',
+        adminUserType = searchParams.get('admin-user-type') || ROLES.SUPER_ADMIN;
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -106,6 +109,13 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
 
         return 'Shoppers';
     }, [userType]);
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
+    }
 
     return (
         <>
@@ -269,7 +279,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                                 borderColor='gray.100'
                                 fontWeight='medium'
                                 value={adminUserType}
-                                onChange={(event: any) => setAdminUserType(event.target.value)}
+                                onChange={(event: any) => handleUpdateSearchParams('admin-user-type', event.target.value)}
                             >
                                 <option value={ROLES.SUPER_ADMIN}>Super Admins</option>
                                 <option value={ROLES.ADMIN}>Admins</option>
@@ -293,7 +303,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         borderColor='gray.100'
                         fontWeight='medium'
                         value={filterShoppersByCreatedAt}
-                        onChange={(event: any) => setFilterShoppersByCreatedAt(event.target.value)}
+                        onChange={(event: any) => handleUpdateSearchParams('shoppers-joining', event.target.value)}
                     >
                         <option value="today">Today</option>
                         <option value="yesterday">Yesterday</option>
@@ -316,7 +326,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                         borderColor='gray.100'
                         fontWeight='medium'
                         value={sortBy}
-                        onChange={(event: any) => setSortBy(event.target.value)}
+                        onChange={(event: any) => handleUpdateSearchParams('sort', event.target.value)}
                     >
                         <optgroup label="Username">
                             <option value='username,asc'>A - Z</option>
@@ -357,7 +367,7 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
 
                     {/* Create button for Desktop */}

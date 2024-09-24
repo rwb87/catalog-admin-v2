@@ -11,16 +11,14 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Divider, Flex, IconButton, Select, Text, Tooltip } from "@chakra-ui/react";
 import { IconPlus, } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const ProductsView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
-    const [sortBy, setSortBy] = useState<string>('createdAt,desc');
-    const [filterReviewStatusBy, setFilterReviewStatusBy] = useState<string>('');
 
     const location = useLocation();
+    const [lastLocation, setLastLocation] = useState(location.pathname);
     const isManagement = location.pathname.includes('management');
     const pageName = isManagement ? 'Products Management' : 'Products';
 
@@ -31,14 +29,23 @@ const ProductsView = () => {
         total: 0,
     });
 
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '',
+        sortBy = searchParams.get('sort') || 'createdAt,desc',
+        filterReviewStatusBy = searchParams.get('review-status') || '';
+
     useAuthGuard('auth');
 
-    // Reset the whole page when the URL changes
+    // Reset the whole page when url changes from '/product/management' to '/product' and vice versa
     useEffect(() => {
+        if(lastLocation === location.pathname) return;
+
+        setLastLocation(location.pathname);
         setIsLoading(true);
         setData([]);
-        setSearch('');
-        setSortBy('createdAt,desc');
+        handleUpdateSearchParams('search', '');
+        handleUpdateSearchParams('sort', 'createdAt,desc');
         setPagination({
             page: 1,
             offset: 0,
@@ -96,6 +103,13 @@ const ProductsView = () => {
 
         return data?.reduce((acc: number, item: any) => acc + (item?.alters || 0), 0);
     }, [data]);
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
+    }
 
     return (
         <Content activePage={pageName}>
@@ -209,7 +223,7 @@ const ProductsView = () => {
                             fontWeight='medium'
                             isTruncated={true}
                             defaultValue={filterReviewStatusBy}
-                            onChange={(e: any) => setFilterReviewStatusBy(e.target.value)}
+                            onChange={(e: any) => handleUpdateSearchParams('review-status', e.target.value)}
                         >
                             <option value="">All</option>
                             {PRODUCT_REVIEW_OPTIONS?.map((option: { label: string, value: string }, index: number) => <option key={index} value={option?.value}>{option?.label}</option>)}
@@ -273,7 +287,7 @@ const ProductsView = () => {
                         borderColor='gray.100'
                         fontWeight='medium'
                         value={sortBy}
-                        onChange={(event) => setSortBy(event.target.value)}
+                        onChange={(event) => handleUpdateSearchParams('sort', event.target.value)}
                     >
                         <optgroup label="Product Name">
                             <option value='name,asc'>A - Z</option>
@@ -296,7 +310,7 @@ const ProductsView = () => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
 
                     {/* Create button for Desktop */}

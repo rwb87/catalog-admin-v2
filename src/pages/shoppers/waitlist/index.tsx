@@ -1,21 +1,21 @@
 import { useAuthGuard } from "@/providers/AuthProvider";
 import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
-import { Box, Flex, IconButton, Input, InputGroup, InputLeftElement, Select, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Select, Tooltip } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { IconCheck, IconSearch } from "@tabler/icons-react";
+import { IconCheck } from "@tabler/icons-react";
 import { encodeAmpersand } from "@/helpers/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Content } from "@/layouts/app.layout";
 import UsersTable from "@/components/users/UsersTable";
 import { ROLES } from "@/_config";
 import Confirmation from "@/components/Confirmation";
+import SearchBox from "@/components/SearchBox";
 
 const WaitlistView = () => {
     const routeTo = useNavigate();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [users, setUsers] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -23,6 +23,10 @@ const WaitlistView = () => {
         limit: 50,
         total: 0,
     });
+
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
 
     useAuthGuard('auth');
 
@@ -37,6 +41,8 @@ const WaitlistView = () => {
     }, [pagination?.offset]);
 
     useEffect(() => {
+        setIsLoading(true);
+
         const debounce = setTimeout(() => getData(), 500);
         return () => clearTimeout(debounce);
     }, [search]);
@@ -64,6 +70,13 @@ const WaitlistView = () => {
         const { value } = event.target;
 
         if (value === 'LIVE') routeTo('/shoppers');
+    }
+
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
     }
 
     return (
@@ -157,47 +170,10 @@ const WaitlistView = () => {
                 >
 
                     {/* Search */}
-                    <InputGroup
-                        width={{
-                            base: 'full',
-                            lg: '250px',
-                        }}
-                    >
-                        <InputLeftElement
-                            pointerEvents='none'
-                            color='gray.300'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            rounded='full'
-                            width='2rem'
-                            height='2rem'
-                        >
-                            <IconSearch size={12} strokeWidth={2} />
-                        </InputLeftElement>
-
-                        <Input
-                            type='search'
-                            placeholder='Search'
-                            variant='outline'
-                            width={{
-                                base: 'full',
-                                lg: '250px',
-                            }}
-                            size='sm'
-                            rounded='full'
-                            bgColor='white'
-                            borderWidth={2}
-                            borderColor='gray.100'
-                            pl={10}
-                            fontWeight='medium'
-                            _focusVisible={{
-                                borderColor: 'gray.200 !important',
-                                boxShadow: 'none !important',
-                            }}
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                        />
-                    </InputGroup>
+                    <SearchBox
+                        value={search}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
+                    />
                 </Flex>
             </Flex>
 

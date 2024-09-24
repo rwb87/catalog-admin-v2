@@ -6,11 +6,11 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Flex, IconButton, Tooltip } from "@chakra-ui/react";
 import { IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const MusicView = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
-    const [search, setSearch] = useState<string>('');
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -19,9 +19,32 @@ const MusicView = () => {
         total: 0,
     });
 
+    // Search params
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get('search') || '';
+
     useAuthGuard('auth');
 
     useEffect(() => {
+        const getData = async () => {
+            try {
+                const response = await fetch({
+                    endpoint: `/musics?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
+                    method: 'GET',
+                });
+
+                setData(response?.musics);
+                setPagination({
+                    ...pagination,
+                    total: response?.count,
+                });
+            } catch (error) {
+                console.log(error);
+            }
+
+            setIsLoading(false);
+        }
+
         setIsLoading(true);
 
         getData();
@@ -31,23 +54,11 @@ const MusicView = () => {
         return () => window?.removeEventListener('refresh:data', getData);
     }, [search, pagination?.offset]);
 
-    const getData = async () => {
-        try {
-            const response = await fetch({
-                endpoint: `/musics?includeAll=true&search=${search}&offset=${pagination.offset}&limit=${pagination.limit}`,
-                method: 'GET',
-            });
-
-            setData(response?.musics);
-            setPagination({
-                ...pagination,
-                total: response?.count,
-            });
-        } catch (error) {
-            console.log(error);
-        }
-
-        setIsLoading(false);
+    const handleUpdateSearchParams = (key: string, value: string) => {
+        setSearchParams({
+            ...Object.fromEntries(searchParams),
+            [key]: value,
+        });
     }
 
     return (
@@ -110,7 +121,7 @@ const MusicView = () => {
                     {/* Search */}
                     <SearchBox
                         value={search}
-                        onChange={setSearch}
+                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
                     />
 
                     {/* Create button for Desktop */}
@@ -143,7 +154,7 @@ const MusicView = () => {
                     page: pageNumber,
                     offset: (pageNumber - 1) * pagination.limit,
                 })}
-                onDelete={getData}
+                onDelete={() => window.dispatchEvent(new Event('refresh:data'))}
             />
         </Content>
     )
