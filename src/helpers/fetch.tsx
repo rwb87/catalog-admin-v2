@@ -3,14 +3,11 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 const baseUrl = () => {
     switch (import.meta.env.VITE_APP_ENV) {
-        case 'local':
-            return import.meta.env.VITE_APP_API_URL
-        case 'prod':
-            return 'https://api.shopcatalog.app/api'
-        case 'preprod':
-            return 'https://api-preprod.shopcatalog.app/api'
-        default:
-            return 'https://api-dev.shopcatalog.app/api'
+        case 'local': return import.meta.env.VITE_APP_API_URL
+        case 'dev': return 'https://api-dev.shopcatalog.app/api'
+        case 'staging': return 'https://api-staging.shopcatalog.app/api'
+        case 'prod': return 'https://api.shopcatalog.app/api'
+        default: return 'https://api-dev.shopcatalog.app/api'
     }
 };
 

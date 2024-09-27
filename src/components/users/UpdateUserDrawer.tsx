@@ -33,6 +33,7 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
         if(editingUser?.username?.trim() === '') return notify('Username is required');
         if(editingUser?.type?.trim() === '') return notify('Role is required');
         if(editingUser?.isNew && editingUser?.password?.trim() === '') return notify('Password is required');
+        if(editingUser?.birthDate?.trim() === '') return notify('Date of Birth is required');
         if(editingUser?.birthDate) {
             if(!moment(editingUser?.birthDate).isValid()) return notify('Invalid Date of Birth');
 
@@ -278,10 +279,11 @@ const UpdateUserDrawer = ({ user, onSave, onClose }: UpdateUserDrawerProps) => {
 
                 {/* Date or Birth */}
                 <FormControl mt={4} id="dob" display={isCategoryAdmin ? 'none' : 'block'}>
-                    <FormLabel>Date of Birth</FormLabel>
+                    <FormLabel>Date of Birth <Text as='span' color='red.500'>*</Text></FormLabel>
                     <Input
                         type="date"
                         autoComplete="dob"
+                        required
                         value={editingUser?.birthDate !== null && editingUser?.birthDate?.trim() !== '' ? moment(editingUser?.birthDate).format('YYYY-MM-DD') : ''}
                         onChange={(e) => setEditingUser({ ...editingUser, birthDate: e.target.value })}
                     />
