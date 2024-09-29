@@ -1,4 +1,4 @@
-import { useGlobalVolatileStorage } from "@/_store";
+import { useGlobalVolatileStorage, useUser } from "@/_store";
 import Confirmation from "@/components/Confirmation";
 import LookPhotos from "@/components/looks/LookPhotos";
 import Pagination from "@/components/Pagination";
@@ -12,7 +12,7 @@ import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Button, Divider, Flex, Heading, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
 import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
-import { LOOK_STATUSES } from "@/_config";
+import { LOOK_STATUSES, ROLES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
 import LookMusics from "@/components/looks/LookMusics";
 import AddMusicPopup from "@/components/music/AddMusicPopup";
@@ -343,6 +343,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
     const [isImagesExpanded, setIsImagesExpanded] = useState<boolean>(false);
     const [isResourcesExpanded, setIsResourcesExpanded] = useState<boolean>(false);
 
+    const { role } = useUser() as any;
     const [images, setImages] = useState<any[]>([]);
 
     const adminMessages = useMemo(() => {
@@ -555,6 +556,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
                         colorScheme='red'
                         rounded='full'
                         size='sm'
+                        hidden={role === ROLES.DATA_MANAGER}
                         icon={<IconTrash size={22} />}
                         onClick={() => onDelete?.(item)}
                     />
