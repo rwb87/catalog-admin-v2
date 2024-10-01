@@ -13,8 +13,8 @@ const SettingsViewAdFrequency = () => {
     const [payload, setPayload] = useState({
         full_screen_number_of_looks: null,
         full_screen_show_same_day: false,
-        grad_number_of_looks: null,
-        grad_show_same_day: false,
+        grid_number_of_looks: null,
+        grid_show_same_day: false,
     })
 
     useEffect(() => {
@@ -53,12 +53,12 @@ const SettingsViewAdFrequency = () => {
                         value: payload.full_screen_show_same_day,
                     },
                     {
-                        key: 'grad_number_of_looks',
-                        value: payload.grad_number_of_looks,
+                        key: 'grid_number_of_looks',
+                        value: payload.grid_number_of_looks,
                     },
                     {
-                        key: 'grad_show_same_day',
-                        value: payload.grad_show_same_day,
+                        key: 'grid_show_same_day',
+                        value: payload.grid_show_same_day,
                     },
                 ]
             });
@@ -129,7 +129,7 @@ const SettingsViewAdFrequency = () => {
                 </Box>
 
                 <Box mt={10}>
-                    <Heading as='h5' size='xs'>Grad Advertisements</Heading>
+                    <Heading as='h5' size='xs'>Grid Advertisements</Heading>
 
                     <Flex gap={4} mt={4} alignItems='center'>
                         <Input
@@ -140,11 +140,11 @@ const SettingsViewAdFrequency = () => {
                             height={10}
                             autoComplete="off"
                             textAlign='center'
-                            value={payload.grad_number_of_looks || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPayload({ ...payload, grad_number_of_looks: parseInt(e.target.value) })}
+                            value={payload.grid_number_of_looks || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPayload({ ...payload, grid_number_of_looks: parseInt(e.target.value) })}
                         />
 
-                        <Text flex={1}>Number of look before a grad advertisement is shown.</Text>
+                        <Text flex={1}>Number of look before a grid advertisement is shown.</Text>
                     </Flex>
 
                     <Flex gap={4} mt={4} alignItems='center'>
@@ -156,19 +156,19 @@ const SettingsViewAdFrequency = () => {
                                 width={20}
                                 height={10}
                                 borderWidth={1}
-                                borderColor={payload.grad_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
+                                borderColor={payload.grid_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
                                 display='inline-grid'
                                 placeItems='center'
                                 borderRadius='md'
-                                background={payload.grad_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
+                                background={payload.grid_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
                                 color='white'
                                 fontWeight='semibold'
                                 cursor='pointer'
-                                onClick={() => setPayload({ ...payload, grad_show_same_day: !payload.grad_show_same_day })}
-                            >{payload.grad_show_same_day ? 'OFF' : 'ON'}</Box>
+                                onClick={() => setPayload({ ...payload, grid_show_same_day: !payload.grid_show_same_day })}
+                            >{payload.grid_show_same_day ? 'OFF' : 'ON'}</Box>
                         </Box>
 
-                        <Text flex={1}>Do not show the same grad advertisement twice in the same day.</Text>
+                        <Text flex={1}>Do not show the same grid advertisement twice in the same day.</Text>
                     </Flex>
                 </Box>
 
