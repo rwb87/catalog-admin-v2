@@ -112,7 +112,7 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                                                         <br />
                                                         <span className="capitalize">{capitalize(renderTargetGender(item?.audience?.gender), true)}</span>
                                                         <br />
-                                                        <span>{item?.audience?.location}</span>
+                                                        <span>{item?.audience?.location || 'NO LOCATION DEFINED'}</span>
                                                     </>
                                                     : '-'
                                             }
