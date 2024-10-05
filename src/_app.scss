@@ -14,6 +14,11 @@ html, body {
     color: #212121;
 }
 
+:root {
+    --table-header-blue: #3b82f6;
+    --table-header-green: #38a16d;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 9px;
