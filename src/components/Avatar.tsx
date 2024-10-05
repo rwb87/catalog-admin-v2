@@ -12,8 +12,8 @@ type AvatarProps = {
 }
 export default function Avatar({ size = '2.2rem', name, user, showName = true, showBadge = true, style = {} }: AvatarProps) {
     const randomAvatar = useMemo(() => {
-        return `https://ui-avatars.com/api/?background=random&name=${name}&size=96&format=svg`;
-    }, [name]);
+        return `https://ui-avatars.com/api/?background=random&name=${name || user.name}&size=96&format=svg`;
+    }, [name, user.name]);
 
     return (
         <Flex

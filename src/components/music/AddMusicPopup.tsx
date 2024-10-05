@@ -24,7 +24,7 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
         const togglePopup = (event?: any) => {
             const { music, lookId } = event?.detail || {};
 
-            setIsOpen(!isOpen);
+            setIsOpen((prev) => !prev);
             setLink('');
             setMusicDetails({});
             setIsLoading(false);
@@ -42,7 +42,7 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
         return () => {
             window.removeEventListener('modal:add-music', togglePopup);
         }
-    }, [isOpen]);
+    }, []);
 
     useEffect(() => {
         const debounce = setTimeout(() => fetchDetails(), 500);
@@ -127,6 +127,7 @@ export default function AddMusicPopup({ onComplete }: AddMusicPopupProps) {
 
     return (
         <Modal
+            id='add-music-modal'
             size='xl'
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}

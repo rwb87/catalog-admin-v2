@@ -10,7 +10,7 @@ import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
 import { Box, Button, Divider, Flex, Heading, IconButton, Image, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, Text, Tooltip } from "@chakra-ui/react";
-import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconTrash } from "@tabler/icons-react";
+import { IconChevronDown, IconLoader2, IconMessage, IconPhoto, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { LOOK_STATUSES, ROLES } from "@/_config";
 import KeywordsPopover from "@/components/KeywordsPopover";
@@ -23,6 +23,7 @@ import SearchBox from "@/components/SearchBox";
 import { useSearchParams } from "react-router-dom";
 
 const LooksManagementView = () => {
+    const { user } = useUser() as any;
     const { setBrands: setGlobalBrands } = useGlobalVolatileStorage() as any;
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
@@ -33,6 +34,8 @@ const LooksManagementView = () => {
     const [sendingToLive, setSendingToLive] = useState<any>({});
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+    const [isCreatingNewLook, setIsCreatingNewLook] = useState<boolean>(false);
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -153,6 +156,30 @@ const LooksManagementView = () => {
         });
     }
 
+    const handleCreateNewLook = async () => {
+        setIsProcessing(true);
+
+        try {
+            await fetch({
+                endpoint: '/looks',
+                method: 'POST',
+                data: {
+                    status: LOOK_STATUSES.IN_DATA_MANAGEMENT,
+                    enabled: false,
+                    userId: user?.id,
+                },
+            });
+
+            notify('New look created successfully');
+            window?.dispatchEvent(new CustomEvent('refresh:data'));
+        } catch (error: any) {
+            notify(error?.response?.data?.message || error?.message);
+        }
+
+        setIsCreatingNewLook(false);
+        setIsProcessing(false);
+    }
+
     return (
         <Content activePage="Looks Management">
 
@@ -167,14 +194,51 @@ const LooksManagementView = () => {
                 }}
             >
                 {/* Page Heading */}
-                <Flex gap={2} alignItems='center' justifyContent='space-between' width='full'>
+                <Flex
+                    gap={2}
+                    direction={{
+                        base: 'column',
+                        md: 'row',
+                    }}
+                    alignItems='center'
+                    justifyContent='space-between'
+                    width='full'
+                >
                     <h1 className="page-heading">Looks Management</h1>
 
                     {/* Search */}
-                    <SearchBox
-                        value={search}
-                        onChange={(value: string) => handleUpdateSearchParams('search', value)}
-                    />
+                    <Flex
+                        direction='row'
+                        gap={2}
+                        alignItems='center'
+                        justifyContent={{
+                            base: 'flex-end',
+                            md: 'space-between',
+                        }}
+                        width={{
+                            base: 'full',
+                            lg: 'auto',
+                        }}
+                    >
+                        <SearchBox
+                            value={search}
+                            onChange={(value: string) => handleUpdateSearchParams('search', value)}
+                        />
+
+                        {/* Create button for Desktop */}
+                        <Tooltip label='Add new look' placement="left">
+                            <IconButton
+                                aria-label="Add new product"
+                                variant='solid'
+                                rounded='full'
+                                borderWidth={2}
+                                borderColor='gray.100'
+                                size='sm'
+                                icon={<IconPlus size={20} />}
+                                onClick={() => setIsCreatingNewLook(true)}
+                            />
+                        </Tooltip>
+                    </Flex>
                 </Flex>
             </Flex>
 
@@ -238,6 +302,20 @@ const LooksManagementView = () => {
                     }, sendingToLive?.id)
                 }}
                 onCancel={() => setSendingToLive({})}
+            />
+
+            {/* Create new look alert */}
+            <Confirmation
+                isOpen={isCreatingNewLook}
+                title="Confirmation"
+                text="If you click <strong>Continue</strong>, a new look will be created and you can add products and photos to it. The look will have the status <strong>in data management</strong> and will not be visible to the public until you publish it. Are you sure you want to continue?"
+                isProcessing={isProcessing}
+                cancelText="Cancel"
+                confirmText="Continue"
+                processingConfirmText="Creating..."
+                isDangerous={false}
+                onConfirm={handleCreateNewLook}
+                onCancel={() => setIsCreatingNewLook(false)}
             />
         </Content>
     )
@@ -423,19 +501,7 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
 
                     {/* Creator */}
                     <Flex alignItems='center' gap={2}>
-                        {/* <Button
-                            variant='ghost'
-                            rounded='full'
-                            gap={2}
-                            pl={1}
-                            pt={1}
-                            pb={1}
-                            height='auto'
-                            fontWeight='normal'
-                            onClick={() => handleOpenChangeCreatorDrawer(item)}
-                        > */}
-                            <Avatar user={item?.user} />
-                        {/* </Button> */}
+                        <Avatar user={item?.user} />
                     </Flex>
                 </Flex>
 
@@ -672,7 +738,18 @@ const TableRow = ({ item, isLastItem, onSendLookFromManagement, onSendToLive, on
             </Box>
 
             {/* Add music popup */}
-            <AddMusicPopup onComplete={(music: any, lookId: number) => window.dispatchEvent(new CustomEvent('action:add-music-to-look', { detail: { music, lookId } }))} />
+            {
+                isResourcesExpanded && <AddMusicPopup
+                    onComplete={(music: any, lookId: number) => {
+                        window.dispatchEvent(new CustomEvent('action:add-music-to-look', {
+                            detail: {
+                                music: music,
+                                lookId: lookId
+                            }
+                        }))}
+                    }
+                />
+            }
         </Box>
     )
 }
