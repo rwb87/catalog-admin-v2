@@ -18,9 +18,10 @@ type RequestOptions = {
     method?: string,
     data?: AxiosRequestConfig['data'] | null,
     hasFiles?: boolean,
+    params?: object,
     options?: object,
 }
-const fetch = async({ endpoint = '', method = 'GET', data = null, hasFiles = false, options = {}}: RequestOptions) => {
+const fetch = async({ endpoint = '', method = 'GET', data = null, hasFiles = false, params = {}, options = {}}: RequestOptions) => {
     const supportedMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
     const { token }: any = await useUser.getState();
 
@@ -49,6 +50,7 @@ const fetch = async({ endpoint = '', method = 'GET', data = null, hasFiles = fal
         url: encodeURI(`${BASE_URL}${endpoint}`),
         method: method,
         headers: headersConfig,
+        params: params || {},
         data: data || undefined,
     })
     .then(response => response.data);

@@ -6,7 +6,7 @@ import fetch from "@/helpers/fetch";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Button, Flex, Heading, IconButton, Input, Select, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, IconButton, Input, Select, Switch, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { IconLoader2, IconPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -39,7 +39,8 @@ const LooksView = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const search = searchParams.get('search') || '',
         filter = searchParams.get('filter') || LOOK_STATUSES.LIVE,
-        sortBy = searchParams.get('sort') || 'createdAt:desc';
+        sortBy = searchParams.get('sort') || 'createdAt:desc',
+        featured = searchParams.get('featured') || '';
 
     useAuthGuard('auth');
 
@@ -57,21 +58,29 @@ const LooksView = () => {
         window?.addEventListener('refresh:data', getData);
 
         return () => window?.removeEventListener('refresh:data', getData);
-    }, [search, filter, pagination.page, sortBy]);
+    }, [search, filter, pagination.page, sortBy, featured]);
 
     const getData = async () => {
         if(!filter) return;
 
-        const urlFilter = { status: [filter] };
-
         const sortByString = sortBy?.split(':')[0];
         const orderByString = sortBy?.split(':')[1]?.toUpperCase();
-        const finalSortByString = `${sortByString}+${orderByString}`;
+        const finalSortByString = `${sortByString} ${orderByString}`;
 
         try {
             const response = await fetch({
-                endpoint: `/looks?filter=${JSON.stringify(urlFilter)}&search=${search?.trim()}&sortBy=${finalSortByString}&offset=${pagination?.offset}&limit=${pagination.limit}`,
+                endpoint: `/looks`,
                 method: 'GET',
+                params: {
+                    filter: JSON.stringify({
+                        status: [filter],
+                        carouselEnabled: featured === 'true' ? true : undefined
+                    }),
+                    search: search?.trim(),
+                    sortBy: finalSortByString,
+                    offset: pagination?.offset,
+                    limit: pagination.limit,
+                }
             });
 
             setData(response?.looks);
@@ -178,7 +187,40 @@ const LooksView = () => {
                 width='full'
             >
                 {/* Page Heading */}
-                <h1 className="page-heading">Looks</h1>
+                <Flex
+                    direction='row'
+                    gap={4}
+                    alignItems='center'
+                    justifyContent='space-between'
+                    width={{
+                        base: 'full',
+                        lg: 'auto',
+                    }}
+                >
+                    <h1 className="page-heading">Looks</h1>
+
+                    <Flex
+                        gap={2}
+                        alignItems='center'
+                    >
+                        <Switch
+                            size={{
+                                base: 'sm',
+                                lg: 'md',
+                                '2xl': 'lg',
+                            }}
+                            defaultChecked={featured && featured === 'true'}
+                            onChange={() => {
+                                setIsLoading(true);
+                                setTimeout(() => {
+                                    handleUpdateSearchParams('featured', featured === 'true' ? 'false' : 'true')
+                                }, 10);
+                            }}
+                        />
+
+                        <label>{featured && featured === 'true' ? 'Featured' : 'All'}</label>
+                    </Flex>
+                </Flex>
 
                 {/* Search and Filter */}
                 <Flex
