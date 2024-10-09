@@ -1,3 +1,4 @@
+import ImagePopover from "@/components/ImagePopover";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
@@ -35,10 +36,6 @@ export default function BrandAdsTable({ brandId }: TableProps) {
             window.removeEventListener('reload:brand-ads', getData);
         }
     }, [brandId]);
-
-    const handleOpenImage = (imageUrl: string) => {
-        window.dispatchEvent(new CustomEvent('lightcase', { detail: { image: imageUrl } }))
-    }
 
     // const renderStatus = (status: string) => {
     //     switch (status) {
@@ -108,16 +105,22 @@ export default function BrandAdsTable({ brandId }: TableProps) {
                                 : data?.map((item: any) => (
                                     <Tr key={item?.id}>
                                         <Td>
-                                            <img
-                                                src={item?.thumbnailUrl}
-                                                alt={item?.title}
-                                                width={70}
-                                                style={{
-                                                    borderRadius: '0.375rem',
-                                                    cursor: 'pointer'
+                                            <ImagePopover
+                                                image={{
+                                                    thumbnail: item?.thumbnailUrl,
+                                                    image: item?.imageUrl,
                                                 }}
-                                                onClick={() => handleOpenImage(item?.imageUrl)}
-                                            />
+                                            >
+                                                <img
+                                                    src={item?.thumbnailUrl}
+                                                    alt={item?.title}
+                                                    width={70}
+                                                    style={{
+                                                        borderRadius: '0.375rem',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                />
+                                            </ImagePopover>
                                         </Td>
                                         <Td textAlign='center'>{item?.type === 'portrait' ? 'Full' : 'Grid'}</Td>
                                         <Td textAlign='center'>

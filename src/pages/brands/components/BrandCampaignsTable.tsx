@@ -1,4 +1,5 @@
 import Confirmation from "@/components/Confirmation";
+import ImagePopover from "@/components/ImagePopover";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
@@ -42,10 +43,6 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
             window.removeEventListener('reload:brand-campaigns', getData);
         }
     }, [brandId]);
-
-    const handleOpenImage = (imageUrl: string) => {
-        window.dispatchEvent(new CustomEvent('lightcase', { detail: { image: imageUrl } }))
-    }
 
     // const renderStatus = (status: string) => {
     //     switch (status) {
@@ -161,16 +158,22 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                                         <Td textAlign='center'>
                                             {
                                                 item?.advertisement
-                                                    ? <img
-                                                        src={item?.advertisement?.thumbnailUrl}
-                                                        alt={item?.advertisement?.title}
-                                                        width={70}
-                                                        style={{
-                                                            borderRadius: '0.375rem',
-                                                            cursor: 'pointer',
+                                                    ? <ImagePopover
+                                                        image={{
+                                                            thumbnail: item?.advertisement?.thumbnailUrl,
+                                                            image: item?.advertisement?.imageUrl,
                                                         }}
-                                                        onClick={() => handleOpenImage(item?.advertisement?.imageUrl)}
-                                                    />
+                                                    >
+                                                        <img
+                                                            src={item?.advertisement?.thumbnailUrl}
+                                                            alt={item?.advertisement?.title}
+                                                            width={70}
+                                                            style={{
+                                                                borderRadius: '0.375rem',
+                                                                cursor: 'pointer',
+                                                            }}
+                                                        />
+                                                    </ImagePopover>
                                                     : '-'
                                             }
                                         </Td>
