@@ -15,6 +15,7 @@ const SettingsViewAdFrequency = () => {
         full_screen_show_same_day: false,
         grid_number_of_looks: null,
         grid_show_same_day: false,
+        number_of_campaigns_per_brand_at_a_time: null,
     })
 
     useEffect(() => {
@@ -60,6 +61,10 @@ const SettingsViewAdFrequency = () => {
                         key: 'grid_show_same_day',
                         value: payload.grid_show_same_day,
                     },
+                    {
+                        key: 'number_of_campaigns_per_brand_at_a_time',
+                        value: payload.number_of_campaigns_per_brand_at_a_time,
+                    }
                 ]
             });
 
@@ -84,10 +89,46 @@ const SettingsViewAdFrequency = () => {
                 <Heading as='h2' size='sm' mb={2}>Advertisement Frequency</Heading>
                 <Heading as='h3' size='xs' fontWeight='normal'>Set the frequency of advertisements shown to users.</Heading>
 
+                {/* Number of campaigns users will see from  brands at a time */}
+                <Box mt={6}>
+                    <Heading as='h5' size='xs'>General</Heading>
+
+                    <Flex
+                        gap={4}
+                        mt={4}
+                        alignItems={{
+                            base: 'flex-start',
+                            lg: 'center',
+                        }}
+                    >
+                        <Input
+                            type="number"
+                            placeholder="#"
+                            name="number"
+                            width={20}
+                            height={10}
+                            autoComplete="off"
+                            textAlign='center'
+                            value={payload.number_of_campaigns_per_brand_at_a_time || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPayload({ ...payload, number_of_campaigns_per_brand_at_a_time: parseInt(e.target.value) })}
+                        />
+
+                        <Box flex={1}>Number of campaigns users will see from  brands at a time.<br /><Text fontStyle='italic' fontWeight='semibold'>(EMPTY = No restriction)</Text></Box>
+                    </Flex>
+                </Box>
+
+                {/* Full Screen Advertisements */}
                 <Box mt={6}>
                     <Heading as='h5' size='xs'>Full Screen Advertisements</Heading>
 
-                    <Flex gap={4} mt={4} alignItems='center'>
+                    <Flex
+                        gap={4}
+                        mt={4}
+                        alignItems={{
+                            base: 'flex-start',
+                            lg: 'center',
+                        }}
+                    >
                         <Input
                             type="number"
                             placeholder="#"
@@ -103,7 +144,14 @@ const SettingsViewAdFrequency = () => {
                         <Text flex={1}>Number of look before a full screen advertisement is shown.</Text>
                     </Flex>
 
-                    <Flex gap={4} mt={4} alignItems='center'>
+                    <Flex
+                        gap={4}
+                        mt={4}
+                        alignItems={{
+                            base: 'flex-start',
+                            lg: 'center',
+                        }}
+                    >
                         <Box
                             width={20}
                             textAlign='center'
@@ -128,10 +176,18 @@ const SettingsViewAdFrequency = () => {
                     </Flex>
                 </Box>
 
+                {/* Grid Advertisements */}
                 <Box mt={10}>
                     <Heading as='h5' size='xs'>Grid Advertisements</Heading>
 
-                    <Flex gap={4} mt={4} alignItems='center'>
+                    <Flex
+                        gap={4}
+                        mt={4}
+                        alignItems={{
+                            base: 'flex-start',
+                            lg: 'center',
+                        }}
+                    >
                         <Input
                             type="number"
                             placeholder="#"
@@ -147,7 +203,14 @@ const SettingsViewAdFrequency = () => {
                         <Text flex={1}>Number of look before a grid advertisement is shown.</Text>
                     </Flex>
 
-                    <Flex gap={4} mt={4} alignItems='center'>
+                    <Flex
+                        gap={4}
+                        mt={4}
+                        alignItems={{
+                            base: 'flex-start',
+                            lg: 'center',
+                        }}
+                    >
                         <Box
                             width={20}
                             textAlign='center'
