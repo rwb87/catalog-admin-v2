@@ -25,6 +25,8 @@ import LooksManagementView from '@/pages/looks/management';
 import ProductsView from '@/pages/products';
 
 import BrandsView from '@/pages/brands';
+import BrandAdsView from '@/pages/brands/advertisements';
+import BrandCampaignsView from '@/pages/brands/campaigns';
 
 import MusicView from '@/pages/music';
 
@@ -62,6 +64,8 @@ export default function Routes() {
 
                     <Route path="/brands" element={<BrandsView />} />
                     <Route path="/brands/management" element={<BrandsView />} />
+                    <Route path="/brands/advertisements" element={<BrandAdsView />} />
+                    <Route path="/brands/campaigns" element={<BrandCampaignsView />} />
 
                     <Route path="/products" element={<ProductsView />} />
                     <Route path="/products/management" element={<ProductsView />} />

@@ -4,24 +4,24 @@ import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { capitalize, renderTargetGender } from "@/helpers/utils";
-import { Box, Flex, Table, Tbody, Td, Th, Thead, Tr , IconButton, Tooltip, Select } from "@chakra-ui/react";
+import { Box, Flex, Table, Tbody, Td, Th, Thead, Tr , IconButton, Tooltip, Select, Image } from "@chakra-ui/react";
 import { IconLoader2, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import BrandCampaignDeleteConfirmation from "./BrandCampaignDeleteConfirmation";
 
 type TableProps = {
-    brandId: string;
+    brandId?: number;
+    initialData?: any[];
+    isInitialDataLoading?: boolean;
 }
-export default function BrandCampaignsTable({ brandId }: TableProps) {
+export default function BrandCampaignsTable({ brandId, initialData, isInitialDataLoading }: TableProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<any[]>([]);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [changingStatus, setChangingStatus] = useState({
-        id: null,
-        status: null,
-    });
 
     useEffect(() => {
         const getData = async () => {
+            if(!brandId) return;
+
             setIsLoading(true);
 
             try {
@@ -44,47 +44,22 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
         }
     }, [brandId]);
 
-    // const renderStatus = (status: string) => {
-    //     switch (status) {
-    //         case 'active': return <Text fontWeight='semibold' color='green.500'>Active</Text>;
-    //         case 'inactive': return <Text fontWeight='semibold' color='red.500'>Inactive</Text>;
-    //         default: return <Text fontWeight='semibold' color='green.500'>Active</Text>;
-    //     }
-    // }
+    useEffect(() => {
+        if(initialData) setData(initialData);
+    }, [initialData]);
 
-    const handleUpdateStatus = async () => {
-        setIsProcessing(true);
+    useEffect(() => {
+        setIsLoading(isInitialDataLoading);
+    }, [isInitialDataLoading]);
 
-        try {
-            await fetch({
-                endpoint: `/campaigns/ad-campaigns/${changingStatus?.id}`,
-                method: 'PUT',
-                data: { status: changingStatus.status },
-            })
-
-            const newData = [...data];
-            const index = newData.findIndex(item => item?.id === changingStatus.id);
-            newData[index].status = changingStatus.status;
-
-            setData(newData);
-
-            notify(`Campaign ${changingStatus.status === 'active' ? 'activated' : 'paused'} successfully`, 'success');
-        } catch (error) {
-            console.error(error);
-            notify('An error occurred while updating campaign status', 'error');
-        }
-
-        setIsProcessing(false);
-        setChangingStatus({ id: null, status: null });
-
-        window.dispatchEvent(new CustomEvent('reload:data'));
-    }
+    const isStandalone = useMemo(() => !brandId, [brandId]);
 
     return (
-        <Box>
+        <Box className={isStandalone ? 'table-responsive' : ''}>
             <Table variant='simple'>
                 <Thead>
                     <Tr>
+                        { isStandalone && <Th textAlign='center'>Brand</Th> }
                         <Th>Status</Th>
                         <Th textAlign='center'>Ad</Th>
                         <Th textAlign='center'>Campaign Name</Th>
@@ -137,100 +112,183 @@ export default function BrandCampaignsTable({ brandId }: TableProps) {
                             </Tr>
                             : !data?.length
                                 ? <Tr><Td colSpan={20} textAlign='center'>No campaign</Td></Tr>
-                                : data?.map((item: any) => (
-                                    <Tr key={item?.id}>
-                                        <Td>
-                                            <Select
-                                                data-status={item?.status}
-                                                size='xs'
-                                                rounded='full'
-                                                isDisabled={isProcessing}
-                                                defaultValue={item?.status}
-                                                backgroundColor={item.status === 'active' ? 'green.500' : 'red.500'}
-                                                color='white'
-                                                style={{ color: 'white' }}
-                                                onChange={(e: any) => setChangingStatus({ id: item?.id, status: e.target.value })}
-                                            >
-                                                <option value='active'>Active</option>
-                                                <option value='inactive'>Paused</option>
-                                            </Select>
-                                        </Td>
-                                        <Td textAlign='center'>
-                                            {
-                                                item?.advertisement
-                                                    ? <ImagePopover
-                                                        image={{
-                                                            thumbnail: item?.advertisement?.thumbnailUrl,
-                                                            image: item?.advertisement?.imageUrl,
-                                                        }}
-                                                    >
-                                                        <img
-                                                            src={item?.advertisement?.thumbnailUrl}
-                                                            alt={item?.advertisement?.title}
-                                                            width={70}
-                                                            style={{
-                                                                borderRadius: '0.375rem',
-                                                                cursor: 'pointer',
-                                                            }}
-                                                        />
-                                                    </ImagePopover>
-                                                    : '-'
-                                            }
-                                        </Td>
-                                        <Td textAlign='center'>{item?.name}</Td>
-                                        <Td textAlign='center'>{item?.user?.name || '-'}</Td>
-                                        <Td textAlign='center'>
-                                            {
-                                                item?.audience
-                                                    ? <>
-                                                        <span>{item?.audience?.ageMin} - {item?.audience?.ageMax} years</span>
-                                                        <br />
-                                                        <span className="capitalize">{capitalize(renderTargetGender(item?.audience?.gender), true)}</span>
-                                                        {/* <br /> */}
-                                                        {/* <span>{item?.audience?.location || 'NO LOCATION DEFINED'}</span> */}
-                                                    </>
-                                                    : '-'
-                                            }
-                                        </Td>
-                                        <Td textAlign='center' color='var(--table-header-green)'>${item?.dailyBudget}</Td>
-                                        <Td textAlign='center' color='var(--table-header-blue)'>{item?.cpc || 0}</Td>
-                                        <Td textAlign='center' color='var(--table-header-green)'>${item?.totalSpent || 0}</Td>
-                                        <Td textAlign='center' color='var(--table-header-blue)'>{item?.impressions || 0}</Td>
-                                        <Td textAlign='center' color='var(--table-header-blue)'>{item?.clicks || 0}</Td>
-                                        <Td textAlign='center' color='var(--table-header-blue)'>{item?.ctr || 0}</Td>
-                                        <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
-                                        <Td>
-                                            <Flex justifyContent='flex-end' alignItems='center' gap={2}>
-                                                <IconButton
-                                                    aria-label='Delete'
-                                                    variant='ghost'
-                                                    colorScheme='red'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    icon={<IconTrash size={22} />}
-                                                    onClick={() => window?.dispatchEvent(new CustomEvent('confirmation:brand:campaigns:delete', { detail: { ...item, brandId: brandId } }))}
-                                                />
-                                            </Flex>
-                                        </Td>
-                                    </Tr>
-                                ))
+                                : data?.map((item: any) => <TableRow
+                                    key={item?.id}
+                                    item={item}
+                                    isStandalone={isStandalone}
+                                />)
                     }
                 </Tbody>
             </Table>
 
-            {/* Update Status Confirmation */}
-            <Confirmation
-                isOpen={changingStatus.status && changingStatus.id}
-                isProcessing={isProcessing}
-                title='Update Campaign Status'
-                html={<span>Are you sure you want to <b>{status === 'active' ? 'activate' : 'pause'}</b> this campaign?</span>}
-                cancelText='Nevermind'
-                confirmText={changingStatus.status === 'active' ? 'Yes, activate' : 'Yes, pause'}
-                processingConfirmText={changingStatus.status === 'active' ? 'Activating...' : 'Pausing...'}
-                isDangerous={false}
-                onConfirm={handleUpdateStatus}
-                onCancel={() => setChangingStatus({ id: null, status: null })}
-            />
+            {/* Delete Confirmation */}
+            <BrandCampaignDeleteConfirmation />
         </Box>
+    )
+}
+
+const TableRow = ({ item, isStandalone }: { item: any, isStandalone: boolean }) => {
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [initialStatus, setInitialStatus] = useState(item?.status);
+    const [changingStatus, setChangingStatus] = useState({
+        id: null,
+        status: null,
+    });
+
+    const handleUpdateStatus = async () => {
+        setIsProcessing(true);
+
+        try {
+            await fetch({
+                endpoint: `/campaigns/ad-campaigns/${changingStatus?.id}`,
+                method: 'PUT',
+                data: { status: changingStatus.status },
+            })
+
+            setInitialStatus(changingStatus.status);
+
+            notify(`Campaign ${changingStatus.status === 'active' ? 'activated' : 'paused'} successfully`, 'success');
+        } catch (error) {
+            console.error(error);
+            notify('An error occurred while updating campaign status', 'error');
+        }
+
+        setIsProcessing(false);
+        setChangingStatus({ id: null, status: null });
+
+        window.dispatchEvent(new CustomEvent('reload:data'));
+    }
+
+    const handleOpenImage = (imageUrl: string) => {
+        window.dispatchEvent(new CustomEvent('lightcase', { detail: { image: imageUrl } }))
+    }
+
+    const backgroundColor = useMemo(() => {
+        switch (initialStatus) {
+            case 'active': return 'green.500';
+            case 'inactive': return 'red.500';
+            default: return 'gray.500';
+        }
+    }, [initialStatus]);
+
+    return (
+        <>
+            <Tr key={item?.id}>
+                { isStandalone && <Td textAlign='center'>
+                    {
+                        item?.brand?.pictureURL
+                            ? <Image
+                                src={item?.brand?.smallPictureURL}
+                                width={28}
+                                height={28}
+                                objectFit='contain'
+                                alt={item?.brand?.name}
+                                rounded='md'
+                                cursor='pointer'
+                                loading="lazy"
+                                onClick={() => handleOpenImage(item?.brand?.pictureURL)}
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
+                            />
+                            : item?.brand?.name || '-'
+                    }
+                </Td> }
+                <Td>
+                    <Select
+                        data-status={item?.status}
+                        size='xs'
+                        rounded='full'
+                        isDisabled={isProcessing}
+                        defaultValue={item?.status}
+                        backgroundColor={backgroundColor}
+                        color='white'
+                        style={{ color: 'white' }}
+                        onChange={(e: any) => setChangingStatus({ id: item?.id, status: e.target.value })}
+                    >
+                        <option value='active'>Active</option>
+                        <option value='inactive'>Paused</option>
+                    </Select>
+                </Td>
+                <Td textAlign='center'>
+                    {
+                        item?.advertisement
+                            ? <ImagePopover
+                                image={{
+                                    thumbnail: item?.advertisement?.thumbnailUrl,
+                                    image: item?.advertisement?.imageUrl,
+                                }}
+                            >
+                                <img
+                                    src={item?.advertisement?.thumbnailUrl}
+                                    alt={item?.advertisement?.title}
+                                    width={70}
+                                    style={{
+                                        borderRadius: '0.375rem',
+                                        cursor: 'pointer',
+                                    }}
+                                />
+                            </ImagePopover>
+                            : '-'
+                    }
+                </Td>
+                <Td textAlign='center'>{item?.name}</Td>
+                <Td textAlign='center'>{item?.user?.name || '-'}</Td>
+                <Td textAlign='center'>
+                    {
+                        item?.audience
+                            ? <>
+                                <span>{item?.audience?.ageMin} - {item?.audience?.ageMax} years</span>
+                                <br />
+                                <span className="capitalize">{capitalize(renderTargetGender(item?.audience?.gender), true)}</span>
+                                {/* <br /> */}
+                                {/* <span>{item?.audience?.location || 'NO LOCATION DEFINED'}</span> */}
+                            </>
+                            : '-'
+                    }
+                </Td>
+                <Td textAlign='center' color='var(--table-header-green)'>${item?.dailyBudget}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.cpc || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-green)'>${item?.totalSpent || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.impressions || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.clicks || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.ctr || 0}</Td>
+                <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
+                <Td>
+                    <Flex justifyContent='flex-end' alignItems='center' gap={2}>
+                        <IconButton
+                            aria-label='Delete'
+                            variant='ghost'
+                            colorScheme='red'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconTrash size={22} />}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('confirmation:brand:campaigns:delete', { detail: { ...item } }))}
+                        />
+                    </Flex>
+                </Td>
+            </Tr>
+
+            {/* Alerts */}
+            <Tr display='contents'>
+                <Td display='contents'>
+
+                    {/* Update Status Confirmation */}
+                    <Confirmation
+                        isOpen={changingStatus.status && changingStatus.id}
+                        isProcessing={isProcessing}
+                        title='Update Campaign Status'
+                        html={<span>Are you sure you want to <b>{changingStatus.status === 'active' ? 'activate' : 'pause'}</b> this campaign?</span>}
+                        cancelText='Nevermind'
+                        confirmText={changingStatus.status === 'active' ? 'Yes, activate' : 'Yes, pause'}
+                        processingConfirmText={changingStatus.status === 'active' ? 'Activating...' : 'Pausing...'}
+                        isDangerous={false}
+                        onConfirm={handleUpdateStatus}
+                        onCancel={() => setChangingStatus({ id: null, status: null })}
+                    />
+                </Td>
+            </Tr>
+        </>
     )
 }

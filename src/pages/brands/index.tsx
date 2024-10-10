@@ -16,9 +16,7 @@ import BrandMemberDeleteConfirmation from "./components/BrandMemberDeleteConfirm
 import { useUser } from "@/_store";
 import BrandMembersTable from "./components/BrandMembersTable";
 import BrandAdsTable from "./components/BrandAdsTable";
-import BrandAdDeleteConfirmation from "./components/BrandAdDeleteConfirmation";
 import BrandCampaignsTable from "./components/BrandCampaignsTable";
-import BrandCampaignDeleteConfirmation from "./components/BrandCampaignDeleteConfirmation";
 import { useSearchParams } from "react-router-dom";
 import SearchBox from "@/components/SearchBox";
 
@@ -393,8 +391,6 @@ const BrandsTable = ({ data, isLoading, onEdit, onDelete }: BrandsTableProps) =>
             {/* Drawers */}
             <BrandMemberInviteDrawer />
             <BrandMemberDeleteConfirmation />
-            <BrandAdDeleteConfirmation />
-            <BrandCampaignDeleteConfirmation />
         </>
     )
 }

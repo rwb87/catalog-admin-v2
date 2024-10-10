@@ -2,23 +2,31 @@ import ImagePopover from "@/components/ImagePopover";
 import fetch from "@/helpers/fetch";
 import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
-import { Box, Flex, Table, Tbody, Td, Text, Th, Thead, Tr , IconButton, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Table, Tbody, Td, Text, Th, Thead, Tr , IconButton, Tooltip, Image } from "@chakra-ui/react";
 import { IconLoader2, IconTrash } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import BrandAdDeleteConfirmation from "./BrandAdDeleteConfirmation";
 
 type TableProps = {
-    brandId: string;
+    brandId?: number;
+    initialData?: any[];
+    isInitialDataLoading?: boolean;
 }
-export default function BrandAdsTable({ brandId }: TableProps) {
-    const [isLoading, setIsLoading] = useState(false);
+export default function BrandAdsTable({ brandId, initialData, isInitialDataLoading }: TableProps) {
+    const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState<any[]>([]);
 
     useEffect(() => {
         const getData = async () => {
+            if(!brandId) return;
+
             setIsLoading(true);
 
             try {
-                const response = await fetch({ endpoint: `/campaigns/advertisements/${brandId}` });
+                const response = await fetch({
+                    endpoint: `/campaigns/advertisements/${brandId}`,
+                });
+
                 setData(response?.ads);
             } catch (error: any) {
                 console.error(error);
@@ -37,19 +45,22 @@ export default function BrandAdsTable({ brandId }: TableProps) {
         }
     }, [brandId]);
 
-    // const renderStatus = (status: string) => {
-    //     switch (status) {
-    //         case 'active': return <Text fontWeight='semibold' color='green.500'>Active</Text>;
-    //         case 'inactive': return <Text fontWeight='semibold' color='red.500'>Inactive</Text>;
-    //         default: return <Text fontWeight='semibold' color='green.500'>Active</Text>;
-    //     }
-    // }
+    useEffect(() => {
+        if(initialData) setData(initialData);
+    }, [initialData]);
+
+    useEffect(() => {
+        setIsLoading(isInitialDataLoading);
+    }, [isInitialDataLoading]);
+
+    const isStandalone = useMemo(() => !brandId, [brandId]);
 
     return (
-        <Box>
+        <Box className={isStandalone ? 'table-responsive' : ''}>
             <Table variant='simple'>
                 <Thead>
                     <Tr>
+                        { isStandalone && <Th textAlign='center'>Brand</Th> }
                         <Th>Creative</Th>
                         <Th textAlign='center'>Type</Th>
                         <Th textAlign='center'>Title</Th>
@@ -102,59 +113,97 @@ export default function BrandAdsTable({ brandId }: TableProps) {
                             </Tr>
                             : !data?.length
                                 ? <Tr><Td colSpan={20} textAlign='center'>No advertisement</Td></Tr>
-                                : data?.map((item: any) => (
-                                    <Tr key={item?.id}>
-                                        <Td>
-                                            <ImagePopover
-                                                image={{
-                                                    thumbnail: item?.thumbnailUrl,
-                                                    image: item?.imageUrl,
-                                                }}
-                                            >
-                                                <img
-                                                    src={item?.thumbnailUrl}
-                                                    alt={item?.title}
-                                                    width={70}
-                                                    style={{
-                                                        borderRadius: '0.375rem',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                />
-                                            </ImagePopover>
-                                        </Td>
-                                        <Td textAlign='center'>{item?.type === 'portrait' ? 'Full' : 'Grid'}</Td>
-                                        <Td textAlign='center'>
-                                            <Tooltip label={item?.description} placement="bottom">
-                                                <Text>{item?.title}</Text>
-                                            </Tooltip>
-                                        </Td>
-                                        <Td textAlign='center'>{item?.user?.name || '-'}</Td>
-                                        <Td textAlign='center'>{item?.heading?.trim()?.length ? item?.heading : '-'}</Td>
-                                        <Td textAlign='center'>{item?.callToAction}</Td>
-                                        <Td textAlign='center'>{item?.impressions || 0}</Td>
-                                        <Td textAlign='center'>{item?.clicks || 0}</Td>
-                                        <Td textAlign='center'>${item?.cpc || 0}</Td>
-                                        <Td textAlign='center'>{item?.ctr || 0}</Td>
-                                        {/* <Td textAlign='center'>{renderStatus(item?.status)}</Td> */}
-                                        <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
-                                        <Td>
-                                            <Flex justifyContent='flex-end' alignItems='center' gap={2}>
-                                                <IconButton
-                                                    aria-label='Delete'
-                                                    variant='ghost'
-                                                    colorScheme='red'
-                                                    rounded='full'
-                                                    size='sm'
-                                                    icon={<IconTrash size={22} />}
-                                                    onClick={() => window?.dispatchEvent(new CustomEvent('confirmation:brand:advertisements:delete', { detail: { ...item, brandId: brandId } }))}
-                                                />
-                                            </Flex>
-                                        </Td>
-                                    </Tr>
-                                ))
+                                : data?.map((item: any) => <TableRow
+                                        key={item?.id}
+                                        item={item}
+                                        isStandalone={isStandalone}
+                                    />
+                                )
                     }
                 </Tbody>
             </Table>
+
+            <BrandAdDeleteConfirmation />
         </Box>
+    )
+}
+
+const TableRow = ({ item, isStandalone }: { item: any, isStandalone: boolean }) => {
+    const handleOpenImage = (imageUrl: string) => {
+        window.dispatchEvent(new CustomEvent('lightcase', { detail: { image: imageUrl } }))
+    }
+
+    return (
+        <>
+            <Tr key={item?.id}>
+                { isStandalone && <Td textAlign='center'>
+                    {
+                        item?.brand?.pictureURL
+                            ? <Image
+                                src={item?.brand?.smallPictureURL}
+                                width={28}
+                                height={28}
+                                objectFit='contain'
+                                alt={item?.brand?.name}
+                                rounded='md'
+                                cursor='pointer'
+                                loading="lazy"
+                                onClick={() => handleOpenImage(item?.brand?.pictureURL)}
+                                onError={(e: any) => {
+                                    e.target.src = '/images/cover-placeholder.webp';
+                                    e.target.onerror = null;
+                                }}
+                            />
+                            : item?.brand?.name || '-'
+                    }
+                </Td> }
+                <Td>
+                    <ImagePopover
+                        image={{
+                            thumbnail: item?.thumbnailUrl,
+                            image: item?.imageUrl,
+                        }}
+                    >
+                        <img
+                            src={item?.thumbnailUrl}
+                            alt={item?.title}
+                            width={70}
+                            style={{
+                                borderRadius: '0.375rem',
+                                cursor: 'pointer'
+                            }}
+                        />
+                    </ImagePopover>
+                </Td>
+                <Td textAlign='center'>{item?.type === 'portrait' ? 'Full' : 'Grid'}</Td>
+                <Td textAlign='center'>
+                    <Tooltip label={item?.description} placement="bottom">
+                        <Text>{item?.title}</Text>
+                    </Tooltip>
+                </Td>
+                <Td textAlign='center'>{item?.user?.name || '-'}</Td>
+                <Td textAlign='center'>{item?.heading?.trim()?.length ? item?.heading : '-'}</Td>
+                <Td textAlign='center'>{item?.callToAction}</Td>
+                <Td textAlign='center'>{item?.impressions || 0}</Td>
+                <Td textAlign='center'>{item?.clicks || 0}</Td>
+                <Td textAlign='center'>${item?.cpc || 0}</Td>
+                <Td textAlign='center'>{item?.ctr || 0}</Td>
+                {/* <Td textAlign='center'>{renderStatus(item?.status)}</Td> */}
+                <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
+                <Td>
+                    <Flex justifyContent='flex-end' alignItems='center' gap={2}>
+                        <IconButton
+                            aria-label='Delete'
+                            variant='ghost'
+                            colorScheme='red'
+                            rounded='full'
+                            size='sm'
+                            icon={<IconTrash size={22} />}
+                            onClick={() => window?.dispatchEvent(new CustomEvent('confirmation:brand:advertisements:delete', { detail: { ...item } }))}
+                        />
+                    </Flex>
+                </Td>
+            </Tr>
+        </>
     )
 }
