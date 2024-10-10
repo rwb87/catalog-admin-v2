@@ -47,7 +47,7 @@ const SettingsViewAdFrequency = () => {
                 data: [
                     {
                         key: 'full_screen_number_of_looks',
-                        value: payload.full_screen_number_of_looks,
+                        value: payload.full_screen_number_of_looks > 0 ? payload.full_screen_number_of_looks : null,
                     },
                     {
                         key: 'full_screen_show_same_day',
@@ -55,7 +55,7 @@ const SettingsViewAdFrequency = () => {
                     },
                     {
                         key: 'grid_number_of_looks',
-                        value: payload.grid_number_of_looks,
+                        value: payload.grid_number_of_looks > 0 ? payload.grid_number_of_looks : null,
                     },
                     {
                         key: 'grid_show_same_day',
@@ -63,7 +63,7 @@ const SettingsViewAdFrequency = () => {
                     },
                     {
                         key: 'number_of_campaigns_per_brand_at_a_time',
-                        value: payload.number_of_campaigns_per_brand_at_a_time,
+                        value: payload.number_of_campaigns_per_brand_at_a_time > 0 ? payload.number_of_campaigns_per_brand_at_a_time : null,
                     }
                 ]
             });
@@ -107,6 +107,7 @@ const SettingsViewAdFrequency = () => {
                             name="number"
                             width={20}
                             height={10}
+                            min={0}
                             autoComplete="off"
                             textAlign='center'
                             value={payload.number_of_campaigns_per_brand_at_a_time || ''}
@@ -135,6 +136,7 @@ const SettingsViewAdFrequency = () => {
                             name="number"
                             width={20}
                             height={10}
+                            min={0}
                             autoComplete="off"
                             textAlign='center'
                             value={payload.full_screen_number_of_looks || ''}
@@ -194,6 +196,7 @@ const SettingsViewAdFrequency = () => {
                             name="number"
                             width={20}
                             height={10}
+                            min={0}
                             autoComplete="off"
                             textAlign='center'
                             value={payload.grid_number_of_looks || ''}
