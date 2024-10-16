@@ -7,11 +7,12 @@ import formatDateTime from "@/helpers/formatDateTime";
 import notify from "@/helpers/notify";
 import { Content } from "@/layouts/app.layout"
 import { useAuthGuard } from "@/providers/AuthProvider";
-import { Box, Flex, FormControl, IconButton, Input, InputGroup, InputLeftAddon, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Box, Flex, FormControl, IconButton, Input, InputGroup, InputLeftAddon, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverTrigger, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@chakra-ui/react";
 import { IconEdit, IconLoader2 } from "@tabler/icons-react"
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { BiDollar } from "react-icons/bi";
+import CreatePayoutDrawer from "./components/CreatePayoutDrawer";
 
 const EarningsView = () => {
     const { role: authUserRole } = useUser() as any;
@@ -29,6 +30,9 @@ const EarningsView = () => {
     useEffect(() => {
         getData();
         getDailyPayout();
+
+        window?.addEventListener('refresh:data', getData);
+        return () => window?.removeEventListener('refresh:data', getData);
     }, []);
 
     useEffect(() => {
@@ -227,6 +231,20 @@ const EarningsView = () => {
                             </PopoverContent>
                         </Popover>
                     }
+
+                    {/* Create new payout */}
+                    <Tooltip label="Create payout" aria-label="Update Payout Value">
+                        <IconButton
+                            aria-label='Create Payout'
+                            variant='solid'
+                            rounded='full'
+                            borderWidth={2}
+                            borderColor='gray.100'
+                            size='sm'
+                            icon={<BiDollar />}
+                            onClick={() => window.dispatchEvent(new CustomEvent('drawer:create-payout'))}
+                        />
+                    </Tooltip>
                 </Flex>
             </Flex>
 
@@ -235,6 +253,9 @@ const EarningsView = () => {
                 data={data}
                 isLoading={isLoading}
             />
+
+            {/* Create Drawer */}
+            <CreatePayoutDrawer />
         </Content>
     )
 }
@@ -272,6 +293,7 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                             <Th>Date</Th>
                             <Th>Creator</Th>
                             <Th textAlign='center' color='blue.500'># of Discovers</Th>
+                            <Th textAlign='center' color='green.500'>Reward</Th>
                             <Th textAlign='right' color='green.500'>Daily Revenue Payout</Th>
                         </Tr>
                     </Thead>
@@ -301,7 +323,8 @@ const EarningsTable = ({ data, isLoading }: EarningsTableProps) => {
                                             <Td>
                                                 <Avatar user={item?.creator} />
                                             </Td>
-                                            <Td textAlign='center' color='blue.500'>{item?.creatorDailyTotal || 0}</Td>
+                                            <Td textAlign='center' color='blue.500' fontWeight='bold'>{item?.creatorDailyTotal || 0}</Td>
+                                            <Td textAlign='center' color='green.500' fontWeight='bold'>${parseFloat(item?.creatorDailyReward || 0)?.toFixed(2)}</Td>
                                             <Td textAlign='right' color='green.500' fontWeight='bold'>${parseFloat(item?.creatorDailyEarnings || 0)?.toFixed(2)}</Td>
                                         </Tr>
                                     ))

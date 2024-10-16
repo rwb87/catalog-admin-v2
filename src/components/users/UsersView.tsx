@@ -52,8 +52,17 @@ const UsersView = ({ userType = ROLES.ADMIN }: UsersViewProps) => {
 
         try {
             const response = await fetch({
-                endpoint: `/users?type=${fetchUserType}&isLive=1&filterShoppersByCreatedAt=${filterShoppersByCreatedAt}&limit=${pagination.limit}&offset=${pagination.offset}&search=${encodeAmpersand(search)}&order=${sortBy}`,
+                endpoint: `/users`,
                 method: 'GET',
+                params: {
+                    type: fetchUserType,
+                    isLive: 1,
+                    filterShoppersByCreatedAt: filterShoppersByCreatedAt,
+                    limit: pagination.limit,
+                    offset: pagination.offset,
+                    search: encodeAmpersand(search),
+                    order: sortBy,
+                }
             });
             setUsers(response?.users);
             setPagination({
