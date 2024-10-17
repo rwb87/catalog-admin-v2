@@ -184,10 +184,10 @@ const TableRow = ({ item, isStandalone }: { item: any, isStandalone: boolean }) 
                 <Td textAlign='center'>{item?.user?.name || '-'}</Td>
                 <Td textAlign='center'>{item?.heading?.trim()?.length ? item?.heading : '-'}</Td>
                 <Td textAlign='center'>{item?.callToAction}</Td>
-                <Td textAlign='center'>{item?.impressions || 0}</Td>
-                <Td textAlign='center'>{item?.clicks || 0}</Td>
-                <Td textAlign='center'>${item?.cpc || 0}</Td>
-                <Td textAlign='center'>{item?.ctr || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.views || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.clicks || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>${item?.cpc || 0}</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{parseFloat(item?.ctr || 0).toFixed(2)}%</Td>
                 {/* <Td textAlign='center'>{renderStatus(item?.status)}</Td> */}
                 <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
                 <Td>
