@@ -253,7 +253,7 @@ const TableRow = ({ item, isStandalone }: { item: any, isStandalone: boolean }) 
                 <Td textAlign='center' color='var(--table-header-green)'>${item?.totalSpent || 0}</Td>
                 <Td textAlign='center' color='var(--table-header-blue)'>{item?.views || 0}</Td>
                 <Td textAlign='center' color='var(--table-header-blue)'>{item?.clicks || 0}</Td>
-                <Td textAlign='center' color='var(--table-header-blue)'>{parseFloat(item?.ctr || 0).toFixed(2)}%</Td>
+                <Td textAlign='center' color='var(--table-header-blue)'>{item?.ctr}</Td>
                 <Td textAlign='center'>{formatDateTime(item?.createdAt)}</Td>
                 <Td>
                     <Flex justifyContent='flex-end' alignItems='center' gap={2}>
