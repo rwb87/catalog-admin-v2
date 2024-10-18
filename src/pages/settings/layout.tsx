@@ -15,8 +15,8 @@ const TABS = [
         path: '/settings/creator-affiliate-links',
     },
     {
-        title: 'Ad Frequency',
-        path: '/settings/ad-frequency',
+        title: 'Ad Settings',
+        path: '/settings/ad-settings',
     }
 ];
 

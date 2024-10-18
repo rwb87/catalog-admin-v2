@@ -36,7 +36,7 @@ import EarningsView from '@/pages/earnings';
 
 import SettingsViewGeneral from '@/pages/settings/general';
 import SettingsViewCreatorAffiliateLinks from '@/pages/settings/creator-affiliate-links';
-import SettingsViewAdFrequency from '@/pages/settings/ad-frequency';
+import SettingsViewAdSettings from '@/pages/settings/ad-settings';
 
 export default function Routes() {
     return(
@@ -78,7 +78,7 @@ export default function Routes() {
 
                     <Route path="/settings" element={<SettingsViewGeneral />} />
                     <Route path="/settings/creator-affiliate-links" element={<SettingsViewCreatorAffiliateLinks />} />
-                    <Route path="/settings/ad-frequency" element={<SettingsViewAdFrequency />} />
+                    <Route path="/settings/ad-settings" element={<SettingsViewAdSettings />} />
 
                     {/* Error Pages */}
                     <Route path="*" element={<FourOhFour />} />

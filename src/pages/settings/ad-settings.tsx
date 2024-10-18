@@ -7,7 +7,7 @@ import notify from "@/helpers/notify";
 const ACTIVE_SWITCH_COLOR = '#0B8494';
 const INACTIVE_SWITCH_COLOR = '#C7253E';
 
-const SettingsViewAdFrequency = () => {
+const SettingsViewAdSettings = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [payload, setPayload] = useState({
@@ -16,6 +16,7 @@ const SettingsViewAdFrequency = () => {
         grid_number_of_looks: null,
         grid_show_same_day: false,
         number_of_campaigns_per_brand_at_a_time: null,
+        save_unique_impressions: false,
     })
 
     useEffect(() => {
@@ -64,6 +65,10 @@ const SettingsViewAdFrequency = () => {
                     {
                         key: 'number_of_campaigns_per_brand_at_a_time',
                         value: payload.number_of_campaigns_per_brand_at_a_time > 0 ? payload.number_of_campaigns_per_brand_at_a_time : null,
+                    },
+                    {
+                        key: 'save_unique_impressions',
+                        value: payload.save_unique_impressions,
                     }
                 ]
             });
@@ -75,6 +80,41 @@ const SettingsViewAdFrequency = () => {
         }
 
         setIsSaving(false);
+    }
+
+    const ToggleSwitch = ({ label, checked, onToggle }: { label: string, checked: boolean, onToggle: () => void }) => {
+        return (
+            <Flex
+                gap={4}
+                mt={4}
+                alignItems={{
+                    base: 'flex-start',
+                    lg: 'center',
+                }}
+            >
+                <Box
+                    width={20}
+                    textAlign='center'
+                >
+                    <Box
+                        width={20}
+                        height={10}
+                        borderWidth={1}
+                        borderColor={checked ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR }
+                        display='inline-grid'
+                        placeItems='center'
+                        borderRadius='md'
+                        background={checked ? ACTIVE_SWITCH_COLOR : INACTIVE_SWITCH_COLOR}
+                        color='white'
+                        fontWeight='semibold'
+                        cursor='pointer'
+                        onClick={onToggle}
+                    >{checked ? 'ON' : 'OFF'}</Box>
+                </Box>
+
+                <Text flex={1}>{label}</Text>
+            </Flex>
+        )
     }
 
     return (
@@ -118,6 +158,17 @@ const SettingsViewAdFrequency = () => {
                     </Flex>
                 </Box>
 
+                {/* Unique ads */}
+                <Box mt={6}>
+                    <Heading as='h5' size='xs'>Unique Ads</Heading>
+
+                    <ToggleSwitch
+                        label='Save only the unique visitor impressions and clicks for each advertisement.'
+                        checked={payload.save_unique_impressions}
+                        onToggle={() => setPayload({ ...payload, save_unique_impressions: !payload.save_unique_impressions })}
+                    />
+                </Box>
+
                 {/* Full Screen Advertisements */}
                 <Box mt={6}>
                     <Heading as='h5' size='xs'>Full Screen Advertisements</Heading>
@@ -146,36 +197,11 @@ const SettingsViewAdFrequency = () => {
                         <Text flex={1}>Number of look before a full screen advertisement is shown.</Text>
                     </Flex>
 
-                    <Flex
-                        gap={4}
-                        mt={4}
-                        alignItems={{
-                            base: 'flex-start',
-                            lg: 'center',
-                        }}
-                    >
-                        <Box
-                            width={20}
-                            textAlign='center'
-                        >
-                            <Box
-                                width={20}
-                                height={10}
-                                borderWidth={1}
-                                borderColor={payload.full_screen_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR }
-                                display='inline-grid'
-                                placeItems='center'
-                                borderRadius='md'
-                                background={payload.full_screen_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
-                                color='white'
-                                fontWeight='semibold'
-                                cursor='pointer'
-                                onClick={() => setPayload({ ...payload, full_screen_show_same_day: !payload.full_screen_show_same_day })}
-                            >{payload.full_screen_show_same_day ? 'OFF' : 'ON'}</Box>
-                        </Box>
-
-                        <Text flex={1}>Do not show the same full screen advertisement twice in the same day.</Text>
-                    </Flex>
+                    <ToggleSwitch
+                        label='Do not show the same full screen advertisement twice in the same day.'
+                        checked={!payload.full_screen_show_same_day}
+                        onToggle={() => setPayload({ ...payload, full_screen_show_same_day: !payload.full_screen_show_same_day })}
+                    />
                 </Box>
 
                 {/* Grid Advertisements */}
@@ -206,38 +232,14 @@ const SettingsViewAdFrequency = () => {
                         <Text flex={1}>Number of look before a grid advertisement is shown.</Text>
                     </Flex>
 
-                    <Flex
-                        gap={4}
-                        mt={4}
-                        alignItems={{
-                            base: 'flex-start',
-                            lg: 'center',
-                        }}
-                    >
-                        <Box
-                            width={20}
-                            textAlign='center'
-                        >
-                            <Box
-                                width={20}
-                                height={10}
-                                borderWidth={1}
-                                borderColor={payload.grid_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
-                                display='inline-grid'
-                                placeItems='center'
-                                borderRadius='md'
-                                background={payload.grid_show_same_day ? INACTIVE_SWITCH_COLOR : ACTIVE_SWITCH_COLOR}
-                                color='white'
-                                fontWeight='semibold'
-                                cursor='pointer'
-                                onClick={() => setPayload({ ...payload, grid_show_same_day: !payload.grid_show_same_day })}
-                            >{payload.grid_show_same_day ? 'OFF' : 'ON'}</Box>
-                        </Box>
-
-                        <Text flex={1}>Do not show the same grid advertisement twice in the same day.</Text>
-                    </Flex>
+                    <ToggleSwitch
+                        label='Do not show the same grid advertisement twice in the same day.'
+                        checked={!payload.grid_show_same_day}
+                        onToggle={() => setPayload({ ...payload, grid_show_same_day: !payload.grid_show_same_day })}
+                    />
                 </Box>
 
+                {/* Save Settings */}
                 <Flex
                     mt={4}
                     justifyContent='space-between'
@@ -262,4 +264,4 @@ const SettingsViewAdFrequency = () => {
     )
 }
 
-export default SettingsViewAdFrequency;
+export default SettingsViewAdSettings;

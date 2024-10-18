@@ -101,8 +101,6 @@ const SIDEBAR_LINKS = [
 
 const EXTRA_LINKS = [
     '/settings',
-    '/settings/creator-affiliate-links',
-    '/settings/ad-frequency',
     '/shoppers/waitlist',
     '/creators/incoming'
 ];
@@ -319,7 +317,7 @@ const Sidebar = ({ activePage }: SidebarProps) => {
         )
     }
 
-    const isSidebarVisible = SIDEBAR_LINKS.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || EXTRA_LINKS.includes(location.pathname);
+    const isSidebarVisible = SIDEBAR_LINKS.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || location.pathname.match(/\/settings/g) || EXTRA_LINKS.includes(location.pathname);
 
     return (
         <Flex
@@ -526,7 +524,7 @@ const TopBar = ({ activePage }: SidebarProps) => {
         )
     }
 
-    const isTopNavBarVisible = SIDEBAR_LINKS.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || EXTRA_LINKS.includes(location.pathname);
+    const isTopNavBarVisible = SIDEBAR_LINKS.some((item) => [item?.link, `${item?.link}/`].includes(location.pathname)) || location.pathname.match(/\/settings/g) || EXTRA_LINKS.includes(location.pathname);
 
     return (
         <Flex
