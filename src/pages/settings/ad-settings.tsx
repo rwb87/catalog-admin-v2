@@ -17,7 +17,7 @@ const SettingsViewAdSettings = () => {
         grid_show_same_day: false,
         number_of_campaigns_per_brand_at_a_time: null,
         save_unique_impressions: false,
-        charge_brands_only_for_unique_impressions: false,
+        charge_brands_only_for_unique_clicks: false,
     })
 
     useEffect(() => {
@@ -72,8 +72,8 @@ const SettingsViewAdSettings = () => {
                         value: payload.save_unique_impressions,
                     },
                     {
-                        key: 'charge_brands_only_for_unique_impressions',
-                        value: payload.charge_brands_only_for_unique_impressions,
+                        key: 'charge_brands_only_for_unique_clicks',
+                        value: payload.charge_brands_only_for_unique_clicks,
                     }
                 ]
             });
@@ -173,9 +173,9 @@ const SettingsViewAdSettings = () => {
                         onToggle={() => setPayload({ ...payload, save_unique_impressions: !payload.save_unique_impressions })}
                     />
                     <ToggleSwitch
-                        label='Charge brands only for the unique impressions.'
-                        checked={payload.charge_brands_only_for_unique_impressions}
-                        onToggle={() => setPayload({ ...payload, charge_brands_only_for_unique_impressions: !payload.charge_brands_only_for_unique_impressions })}
+                        label='Charge brands only for the unique clicks.'
+                        checked={payload.charge_brands_only_for_unique_clicks}
+                        onToggle={() => setPayload({ ...payload, charge_brands_only_for_unique_clicks: !payload.charge_brands_only_for_unique_clicks })}
                     />
                 </Box>
 
